@@ -1,0 +1,28 @@
+{
+  "presets": ["es2015", "react", "stage-2"],
+  "env": {
+    "test": {
+      "plugins": ["rewire"]
+    },
+
+    "production": {
+      "plugins": [
+        ["module-resolver", {
+          "root": ["."],
+          "alias": {
+            "server": "./commons/server"
+          }
+        }]
+      ]  
+    }
+  },
+  "plugins": [
+    ["module-resolver", {
+      "root": ["."],
+      "alias": {
+        "server": "./melinda-ui-commons/server/",
+        "commons": "./melinda-ui-commons/frontend/js/",
+      }
+    }]
+  ]
+}
