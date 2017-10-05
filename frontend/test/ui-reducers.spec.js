@@ -33,6 +33,7 @@ import { INITIAL_STATE } from '../js/root-reducer';
 import reducer from '../js/root-reducer';
 import MarcRecord from 'marc-record-js';
 import { subrecordRows } from '../js/selectors/subrecord-selectors';
+import TargetRecord from '../js/config/target-record';
 
 describe('ui reducers', () => {
 
@@ -151,6 +152,7 @@ describe('ui reducers', () => {
 
       expect(nextState.get('targetRecord').toJS()).to.eql({
         state: 'ERROR',
+        record: TargetRecord,
         errorMessage: 'error-message'
       });
     });

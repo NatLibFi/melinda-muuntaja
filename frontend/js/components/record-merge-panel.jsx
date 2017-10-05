@@ -81,7 +81,7 @@ export class RecordMergePanel extends React.Component {
     return (       
       <RecordPanel
         showHeader
-        title="Poistuva tietue"
+        title="Lähde tietue"
         record={record}
         onFieldClick={(field) => this.toggleSourceRecordField(field)}>
         
@@ -99,7 +99,7 @@ export class RecordMergePanel extends React.Component {
     return (     
       <RecordPanel
         showHeader
-        title="Säilyvä tietue"
+        title="Pohja tietue"
         record={record}>
 
         { recordState === 'LOADING' ? <div className="card-content"><Preloader /></div> : null }

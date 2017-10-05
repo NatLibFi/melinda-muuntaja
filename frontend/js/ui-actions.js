@@ -187,21 +187,16 @@ export function locationDidChange(location) {
 
     dispatch(setLocation(location));
 
-    const match = _.get(location, 'pathname', '').match('/records/(\\d+)/and/(\\d+)$');
+    const match = _.get(location, 'pathname', '').match('/record/(\\d+)/?$');
+
     if (match !== null) {
-      const [, nextOtherId, nextPreferredId] = match;
+      const [, nextSourceId] = match;
 
-      const currentPreferredId = getState().getIn(['targetRecord', 'id']);
-      const currentOtherId = getState().getIn(['sourceRecord', 'id']);
+      const currentSourceId = getState().getIn(['sourceRecord', 'id']);
 
-      if (nextOtherId !== currentOtherId) {
-        dispatch(fetchRecord(nextOtherId, 'SOURCE'));
-        dispatch(setSourceRecordId(nextOtherId));
-      }
-
-      if (nextPreferredId !== currentPreferredId) {
-        dispatch(fetchRecord(nextPreferredId, 'TARGET'));
-        dispatch(setTargetRecordId(nextPreferredId));
+      if (nextSourceId !== currentSourceId) {
+        dispatch(fetchRecord(nextSourceId, 'SOURCE'));
+        dispatch(setSourceRecordId(nextSourceId));
       }
     }
   };

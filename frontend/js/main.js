@@ -58,7 +58,7 @@ const store = createStore(
 const routes = (
   <Route component={App}>
     <Route path='/' component={BaseComponentContainer} />
-    <Route path='/records/:otherId/and/:preferredId' component={BaseComponentContainer} />
+    <Route path='/record/:sourceId' component={BaseComponentContainer} />
   </Route>
 );
 
