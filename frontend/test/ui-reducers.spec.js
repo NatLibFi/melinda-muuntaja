@@ -105,6 +105,7 @@ describe('ui reducers', () => {
 
       expect(nextState.get('sourceRecord').toJS()).to.eql({
         state: 'LOADED',
+        hasSubrecords: false,
         record: testRecordObject
       });
     });
@@ -115,6 +116,7 @@ describe('ui reducers', () => {
 
       expect(nextState.get('sourceRecord').toJS()).to.eql({
         state: 'LOADED',
+        hasSubrecords: true,
         record: testRecordObject
       });
 
@@ -139,6 +141,7 @@ describe('ui reducers', () => {
 
       expect(nextState.get('targetRecord').toJS()).to.eql({
         state: 'LOADED',
+        hasSubrecords: false,
         record: testRecordObject
       });
     });
@@ -152,6 +155,7 @@ describe('ui reducers', () => {
 
       expect(nextState.get('targetRecord').toJS()).to.eql({
         state: 'ERROR',
+        hasSubrecords: false,
         record: TargetRecord,
         errorMessage: 'error-message'
       });

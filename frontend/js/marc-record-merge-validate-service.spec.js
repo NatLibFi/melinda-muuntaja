@@ -50,7 +50,7 @@ describe('marc-record-merge-validate-service', () => {
 
         it(testCase.testName, () => {
             
-          const {valid, validationFailureMessage} = testSuite.functionUnderTest.call(null, testCase.preferredRecord, testCase.otherRecord);
+          const {valid, validationFailureMessage} = testSuite.functionUnderTest.call(null, testCase.preferredRecord, testCase.otherRecord, testCase.preferredRecordHasSubrecords, testCase.otherRecordHasSubrecords);
 
           expect(valid, `Expected test case validation to be ${testCase.isValid}`).to.equal(testCase.isValid);
           if (testCase.isValid === false) {
@@ -71,7 +71,7 @@ describe('marc-record-merge-validate-service', () => {
       let result;
       let error;
       before(() => {
-        return MarcRecordMergeValidateService.validateMergeCandidates(allValidations, testCase.preferredRecord, testCase.otherRecord)
+        return MarcRecordMergeValidateService.validateMergeCandidates(allValidations, testCase.preferredRecord, testCase.otherRecord, testCase.preferredRecordHasSubrecords, testCase.otherRecordHasSubrecords)
           .then(_result => result = _result)
           .catch(_error => error = _error);
       });
@@ -128,6 +128,24 @@ function parseStories(storyText) {
         .head()
         .value();
 
+      const preferredRecordHasSubrecords = _.chain(lines)
+        .map(line => /Preferred has subrecords:\s*(true|false)/.exec(line))
+        .filter(matchResult => matchResult !== null)
+        .map(matchResult => matchResult[1])
+        .map(boolAsString => boolAsString === 'true')
+        .head()
+        .defaultTo(false)
+        .value();
+
+      const otherRecordHasSubrecords = _.chain(lines)
+        .map(line => /Other has subrecords:\s*(true|false)/.exec(line))
+        .filter(matchResult => matchResult !== null)
+        .map(matchResult => matchResult[1])
+        .map(boolAsString => boolAsString === 'true')
+        .head()
+        .defaultTo(false)
+        .value();
+
       const failureMessages = _.chain(lines)
         .map(line => /Expected failure message:\s*(.*)/.exec(line))
         .filter(matchResult => matchResult !== null)
@@ -137,7 +155,7 @@ function parseStories(storyText) {
       const failureMessage = _.head(failureMessages);
 
 
-      return { testName, preferredRecord, otherRecord, isValid, failureMessage, failureMessages };
+      return { testName, preferredRecord, preferredRecordHasSubrecords, otherRecordHasSubrecords, otherRecord, isValid, failureMessage, failureMessages };
     });
 
 }
