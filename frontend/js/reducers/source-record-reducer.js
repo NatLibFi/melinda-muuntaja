@@ -63,10 +63,11 @@ export function loadSourceRecord(state, recordId) {
   
 }
 
-export function setSourceRecord(state, record) {
+export function setSourceRecord(state, record, subrecords) {
   
   return state
     .updateIn(['state'], () => 'LOADED')
+    .updateIn(['hasSubrecords'], () => subrecords && subrecords.length > 0)
     .updateIn(['record'], () => record);
 }
 

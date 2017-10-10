@@ -33,6 +33,7 @@ import TargetRecord from '../config/target-record';
 
 const INITIAL_STATE = Map({
   state: 'LOADED',
+  hasSubrecords: false,
   record: TargetRecord
 });
 
@@ -60,10 +61,11 @@ export function loadTargetRecord(state, recordId) {
   });
 }
 
-export function setTargetRecord(state, record) {
+export function setTargetRecord(state, record, subrecords) {
 
   return state
     .set('state', 'LOADED')
+    .set('hasSubrecords', subrecords && subrecords.length > 0)
     .set('record', record);
 }
 

@@ -45,18 +45,18 @@ B warn: Other record has LOW: FENNI, but preferred does not.
 
  */
 
-const defaultPreset = [recordsHaveDifferentIds, preferredRecordIsNotDeleted, otherRecordIsNotDeleted, preferredRecordIsNotSuppressed, otherRecordIsNotSuppressed, recordsHaveSameType];
+const defaultPreset = [recordsHaveDifferentIds, preferredRecordIsNotDeleted, otherRecordIsNotDeleted, preferredRecordIsNotSuppressed, otherRecordIsNotSuppressed, recordsHaveSameType, preferredRecordIsNotComponentRecord, otherRecordIsNotComponentRecord, preferredRecordDoesNotHaveSubrecords, otherRecordDoesNotHaveSubrecords];
 
 export const preset = {
   defaults: defaultPreset,
-  melinda_host: _.concat(defaultPreset, [recordsHaveDifferentLOWTags, preferredRecordIsNotComponentRecord, otherRecordIsNotComponentRecord]),
+  melinda_host: _.concat(defaultPreset, [recordsHaveDifferentLOWTags]),
   melinda_component: _.concat(defaultPreset, [recordsHaveDifferentLOWTags]),
   melinda_warnings: [preferredRecordFromFENNI, preferredRecordHasAlephSplitFields, otherRecordHasAlephSplitFields]
 };
 
-export function validateMergeCandidates(validationFunctions, preferredRecord, otherRecord) {
+export function validateMergeCandidates(validationFunctions, preferredRecord, otherRecord, preferredHasSubrecords, otherRecordHasSubrecords) {
 
-  const validationResults = validationFunctions.map(fn => fn(preferredRecord, otherRecord));
+  const validationResults = validationFunctions.map(fn => fn(preferredRecord, otherRecord, preferredHasSubrecords, otherRecordHasSubrecords));
 
   return Promise.all(validationResults).then(results => {
     
@@ -148,6 +148,20 @@ export function otherRecordIsNotComponentRecord(preferredRecord, otherRecord) {
   return {
     valid: isComponentRecord === false,
     validationFailureMessage: 'Other record is a component record'
+  };
+}
+
+export function preferredRecordDoesNotHaveSubrecords(preferredRecord, otherRecord, preferredHasSubrecords) {
+  return {
+    valid: preferredHasSubrecords === false,
+    validationFailureMessage: 'Preferred record has subrecords'
+  };
+}
+
+export function otherRecordDoesNotHaveSubrecords(preferredRecord, otherRecord, preferredHasSubrecords, otherRecordHasSubrecords) {
+  return {
+    valid: otherRecordHasSubrecords === false,
+    validationFailureMessage: 'Other record has subrecords'
   };
 }
 

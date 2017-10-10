@@ -306,7 +306,9 @@ export function updateMergedRecord() {
   return function(dispatch, getState) {
 
     const preferredRecord = getState().getIn(['targetRecord', 'record']);
+    const preferredHasSubrecords = getState().getIn(['targetRecord', 'hasSubrecords']);
     const otherRecord = getState().getIn(['sourceRecord', 'record']);
+    const otherRecordHasSubrecords = getState().getIn(['sourceRecord', 'hasSubrecords']);
     
     if (preferredRecord && otherRecord) {
 
@@ -315,7 +317,7 @@ export function updateMergedRecord() {
 
       const merge = createRecordMerger(mergeConfiguration);
 
-      MergeValidation.validateMergeCandidates(validationRules, preferredRecord, otherRecord)
+      MergeValidation.validateMergeCandidates(validationRules, preferredRecord, otherRecord, preferredHasSubrecords, otherRecordHasSubrecords)
         .then(() => merge(preferredRecord, otherRecord))
         .then(mergedRecord => PostMerge.applyPostMergeModifications(postMergeFixes, preferredRecord, otherRecord, mergedRecord))
         .then(result => {
