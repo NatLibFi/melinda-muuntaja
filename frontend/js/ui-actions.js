@@ -184,19 +184,24 @@ export function resetWorkspace() {
 
 export function locationDidChange(location) {
   return function(dispatch, getState) {
-
     dispatch(setLocation(location));
 
-    const match = _.get(location, 'pathname', '').match('/record/(\\d+)/?$');
+    const match = _.get(location, 'pathname', '').match('/record/(\\d+)(?:/to/(\\d+))?/?$');
 
     if (match !== null) {
-      const [, nextSourceId] = match;
+      const [, nextSourceId, nextTargetId] = match;
 
       const currentSourceId = getState().getIn(['sourceRecord', 'id']);
+      const currentTargetId = getState().getIn(['targetRecord', 'id']);
 
       if (nextSourceId !== currentSourceId) {
         dispatch(fetchRecord(nextSourceId, 'SOURCE'));
         dispatch(setSourceRecordId(nextSourceId));
+      }
+
+      if (nextTargetId && nextTargetId !== currentTargetId) {
+        dispatch(fetchRecord(nextTargetId, 'TARGET'));
+        dispatch(setTargetRecordId(nextTargetId));
       }
     }
   };
@@ -226,6 +231,14 @@ export function loadSourceRecord(recordId) {
   };
 }
 
+export const RESET_SOURCE_RECORD = 'RESET_SOURCE_RECORD';
+
+export function resetSourceRecord() {
+  return {
+    'type': RESET_SOURCE_RECORD,
+  };
+}
+
 export const SET_SOURCE_RECORD = 'SET_SOURCE_RECORD';
 
 export function setSourceRecord(record, subrecords, recordId) {
@@ -243,6 +256,14 @@ export function loadTargetRecord(recordId) {
   return {
     type: LOAD_TARGET_RECORD,
     id: recordId
+  };
+}
+
+export const RESET_TARGET_RECORD = 'RESET_TARGET_RECORD';
+
+export function resetTargetRecord() {
+  return {
+    'type': RESET_TARGET_RECORD,
   };
 }
 
