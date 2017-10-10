@@ -76,36 +76,27 @@ mergeController.post('/commit-merge', cors(corsOptions), requireSession, require
 
   const client = new MelindaClient(clientConfig);
 
-  commitMerge(client, otherRecord, preferredRecord, mergedRecord)
+  commitMerge(client, preferredRecord, mergedRecord)
     .then((response) => {
       logger.log('info', 'Commit merge successful', response);
-      const mergedMainRecordResult = _.get(response, '[0]');
+      const mergedMainRecordResult = response;
 
       createArchive(username, otherRecord, preferredRecord, mergedRecord, unmodifiedRecord, mergedMainRecordResult.recordId).then((res) => {
         logger.log('info', `Created archive file of the merge action: ${res.filename} (${res.size} bytes)`);
       });
 
-      const createdRecordId = mergedMainRecordResult.recordId;
-      const subrecordIdList = _.chain(response).filter(res => res.operation === 'CREATE').map('recordId').tail().value();
+      const createdRecordId = response.recordId;
 
-      loadRecord(client, createdRecordId).then(({record, subrecords}) => {
+      loadRecord(client, createdRecordId).then(({record}) => {
 
         if (record.fields.length === 0) {
           logger.log('debug', `Record ${createdRecordId} appears to be empty record.`);
           return res.sendStatus(404);
         }
 
-        const subrecordsById = _.zipObject(subrecords.map(selectRecordId), subrecords);
-
-        const subrecordsInRequestOrder = subrecordIdList.map(id => subrecordsById[id]);
-
-        if (_.difference(subrecords, subrecordsInRequestOrder).length !== 0) {
-          logger.log('info', `Warning: merge request had ${subrecords.length} subrecords while merged response had ${subrecordsInRequestOrder.length}`);
-        }
-
         const response = _.extend({}, mergedMainRecordResult, {
           record, 
-          subrecords: subrecordsInRequestOrder
+          subrecords: []
         });
 
         res.send(response);
@@ -155,15 +146,4 @@ function transformToMarcRecordFamily(json) {
 
 function transformToMarcRecord(json) {
   return new MarcRecord(json);
-}
-
-function selectRecordId(record) {
-
-  const field001List = record.fields.filter(field => field.tag === '001');
-
-  if (field001List.length === 0) {
-    throw new Error('Could not parse record id');
-  } else {
-    return field001List[0].value;
-  }
 }
