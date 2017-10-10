@@ -28,7 +28,7 @@
 
 import { Map } from 'immutable'; 
 import {RESET_WORKSPACE} from '../constants/action-type-constants';
-import {LOAD_TARGET_RECORD, SET_TARGET_RECORD, SET_TARGET_RECORD_ERROR, SET_TARGET_RECORD_ID } from '../ui-actions';
+import {LOAD_TARGET_RECORD, SET_TARGET_RECORD, SET_TARGET_RECORD_ERROR, SET_TARGET_RECORD_ID, RESET_TARGET_RECORD } from '../ui-actions';
 import TargetRecord from '../config/target-record';
 
 const INITIAL_STATE = Map({
@@ -48,6 +48,7 @@ export default function targetRecord(state = INITIAL_STATE, action) {
       return setTargetRecordError(state, action.error);
     case SET_TARGET_RECORD_ID:
       return setTargetRecordId(state, action.recordId);
+    case RESET_TARGET_RECORD:
     case RESET_WORKSPACE:
       return INITIAL_STATE;
   }

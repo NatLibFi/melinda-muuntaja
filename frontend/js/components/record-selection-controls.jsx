@@ -54,11 +54,11 @@ export class RecordSelectionControls extends React.Component {
   constructor() {
     super();
     this.handleSourceChangeDebounced = _.debounce((event) => {
-      this.props.fetchRecord(event.target.value, 'SOURCE');
+      if (event.target.value.length > 0) this.props.fetchRecord(event.target.value, 'SOURCE');
     }, RECORD_LOADING_DELAY);
 
     this.handleTargetChangeDebounced = _.debounce((event) => {
-      this.props.fetchRecord(event.target.value, 'TARGET');
+      if (event.target.value.length > 0) this.props.fetchRecord(event.target.value, 'TARGET');
     }, RECORD_LOADING_DELAY);
   }
 
@@ -69,8 +69,14 @@ export class RecordSelectionControls extends React.Component {
 
   componentWillReceiveProps(next) {
 
-    if (_.identity(next.targetRecordId) || _.identity(next.sourceRecordId)) {
+    if (_.identity(next.targetRecordId) && _.identity(next.sourceRecordId)) {
+      hashHistory.push(`/record/${next.sourceRecordId}/to/${next.targetRecordId}`);
+    }
+    else if (_.identity(next.sourceRecordId)) {
       hashHistory.push(`/record/${next.sourceRecordId}`);
+    }
+    else {
+      hashHistory.push('/');
     }
   }
 
@@ -94,8 +100,23 @@ export class RecordSelectionControls extends React.Component {
     event.persist();
     
     if (event.target.id === 'source_record') {
-      this.props.setSourceRecordId(event.target.value);
-      this.handleSourceChangeDebounced(event);
+      if (event.target.value.length > 0) {
+        this.props.setSourceRecordId(event.target.value);
+        this.handleSourceChangeDebounced(event);
+      }
+      else {
+        this.props.resetSourceRecord();
+      }
+    
+    }
+    if (event.target.id === 'target_record') {
+      if (event.target.value.length > 0) {
+        this.props.setTargetRecordId(event.target.value);
+        this.handleTargetChangeDebounced(event);
+      }
+      else {
+        this.props.resetTargetRecord();
+      }
     }
   }
 
@@ -120,6 +141,13 @@ export class RecordSelectionControls extends React.Component {
           <label htmlFor="source_record">Lähde tietue</label>
         </div>
 
+        <div className="col s2" />
+
+        <div className="col s2 input-field">
+          <input id="target_record" type="tel" value={this.props.targetRecordId} onChange={this.handleChange.bind(this)} disabled={!controlsEnabled}/>
+          <label htmlFor="target_record">Pohja tietue</label>
+        </div>
+      
       </div>
     );
   }
