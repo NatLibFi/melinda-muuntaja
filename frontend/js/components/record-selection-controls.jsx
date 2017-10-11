@@ -40,9 +40,13 @@ export class RecordSelectionControls extends React.Component {
 
   static propTypes = {
     sourceRecordId: React.PropTypes.string.isRequired,
+    targetRecordId: React.PropTypes.string.isRequired,
+    resetSourceRecord: React.PropTypes.func.isRequired,
+    resetTargetRecord: React.PropTypes.func.isRequired,
     fetchRecord: React.PropTypes.func.isRequired,
     swapRecords: React.PropTypes.func.isRequired,
     setSourceRecordId: React.PropTypes.func.isRequired,
+    setTargetRecordId: React.PropTypes.func.isRequired,
     locationDidChange: React.PropTypes.func.isRequired,
     controlsEnabled: React.PropTypes.bool.isRequired
   }
@@ -115,6 +119,7 @@ export class RecordSelectionControls extends React.Component {
           <input id="source_record" type="tel" value={this.props.sourceRecordId} onChange={this.handleChange.bind(this)} disabled={!controlsEnabled} />
           <label htmlFor="source_record">Lähde tietue</label>
         </div>
+
       </div>
     );
   }

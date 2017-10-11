@@ -91,7 +91,7 @@ describe('marc-record-merge-validate-service', () => {
 
       it(testCase.testName, () => {
 
-        const postMergeFixers = MarcRecordMergePostmergeService.preset.defaults;
+        const postMergeFixers = MarcRecordMergePostmergeService.preset.all;
         const {record, notes} = MarcRecordMergePostmergeService.applyPostMergeModifications(postMergeFixers, testCase.preferredRecord, testCase.otherRecord, testCase.mergedRecord);
 
         expect(record.toString()).to.eql(testCase.expectedMergedRecord.toString());
