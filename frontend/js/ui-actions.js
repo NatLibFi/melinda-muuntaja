@@ -310,7 +310,7 @@ export function updateMergedRecord() {
     
     if (preferredRecord && otherRecord) {
 
-      const validationRules = MergeValidation.preset.melinda_host;
+      const validationRules = MergeValidation.preset.defaults;
       const postMergeFixes = PostMerge.preset.defaults;
 
       const merge = createRecordMerger(mergeConfiguration);

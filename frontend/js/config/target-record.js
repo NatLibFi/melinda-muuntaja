@@ -27,10 +27,6 @@ module.exports = new MarcRecord({
         {
           code: 'q',
           value: 'PDF'
-        },
-        {
-          code: 'q',
-          value: 'epub'
         }
       ]
     },
@@ -41,37 +37,7 @@ module.exports = new MarcRecord({
       subfields: [
         {
           code: 'a',
-          value: 'fin'
-        }
-      ]
-    },
-    {
-      tag: '264',
-      ind1: ' ',
-      ind2: '1',
-      subfields: [
-        {
-          code: 'a',
-          value: ' :'
-        },
-        {
-          code: 'b',
-          value: ' ,'
-        },
-        {
-          code: 'c',
-          value: ' .'
-        }
-      ]
-    },
-    {
-      tag: '300',
-      ind1: ' ',
-      ind2: ' ',
-      subfields: [
-        {
-          code: 'a',
-          value: '1 verkkoaineisto (XXX sivua)'
+          value: 'eng'
         }
       ]
     },
@@ -133,40 +99,28 @@ module.exports = new MarcRecord({
       ]
     },
     {
-      tag: '490',
-      ind1: '1',
+      tag: '538',
+      ind1: ' ',
       ind2: ' ',
       subfields: [
         {
           code: 'a',
-          value: ' ,'
+          value: 'Internet-yhteys.'
         },
         {
-          code: 'x',
-          value: ' ;'
-        },
-        {
-          code: 'v',
-          value: ''
+          code: '9',
+          value: 'FENNI<KEEP>'
         }
       ]
     },
     {
-      tag: '830',
+      tag: 'LOW',
       ind1: ' ',
-      ind2: '0',
+      ind2: ' ',
       subfields: [
         {
           code: 'a',
-          value: ' ,'
-        },
-        {
-          code: 'x',
-          value: ' ;'
-        },
-        {
-          code: 'v',
-          value: ' .'
+          value: 'FENNI'
         }
       ]
     }
