@@ -74,7 +74,7 @@ export class NavBar extends React.Component {
             
             <ul id="nav" className="right">
               <li><div className="status-info">{this.props.statusInfo}</div></li>
-              <li><button className="waves-effect waves-light btn" disabled={this.disableIfMergeNotPossible()} onClick={this.props.commitMerge} name="commit_merge">Yhdistä</button></li>
+              <li><button className="waves-effect waves-light btn" disabled={this.disableIfMergeNotPossible()} onClick={this.props.commitMerge} name="commit_merge">Tallenna muunnos</button></li>
               <li><a className="dropdown-navbar dropdown-button-menu" href="#" data-activates="mainmenu"><i className="material-icons">more_vert</i></a></li>
             </ul>
           </div>

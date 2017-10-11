@@ -42,14 +42,14 @@ const INITIAL_STATE = Map({
 export default function mergeStatus(state = INITIAL_STATE, action) {
   switch (action.type) {
     case COMMIT_MERGE_START:
-      state = setMergeStatus(state, CommitMergeStates.COMMIT_MERGE_ONGOING, 'Yhdistetään tietueita');
+      state = setMergeStatus(state, CommitMergeStates.COMMIT_MERGE_ONGOING, 'Tallennetaan tietueita');
       state = showDialog(state, true);
       return enableCloseDialog(state, false);
     case COMMIT_MERGE_ERROR:
       state = setMergeStatus(state, CommitMergeStates.COMMIT_MERGE_ERROR, action.error, action.response);
       return enableCloseDialog(state, true);
     case COMMIT_MERGE_SUCCESS:
-      state = setMergeStatus(state, CommitMergeStates.COMMIT_MERGE_COMPLETE, `Tietueet yhdistetty tietueeksi ${action.recordId}`, action.response);
+      state = setMergeStatus(state, CommitMergeStates.COMMIT_MERGE_COMPLETE, `Tietueet tallennettu tietueeksi ${action.recordId}`, action.response);
       return enableCloseDialog(state, true);
     case CLOSE_MERGE_DIALOG:
       return showDialog(state, false);
