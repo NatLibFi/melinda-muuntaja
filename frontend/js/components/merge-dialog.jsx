@@ -50,9 +50,9 @@ export class MergeDialog extends React.Component {
 
   title() {
     switch(this.props.status) {
-      case CommitMergeStates.COMMIT_MERGE_ONGOING: return 'Tietueita yhdistetään';
-      case CommitMergeStates.COMMIT_MERGE_ERROR: return 'Virhe tietueiden yhdistämisessä';
-      case CommitMergeStates.COMMIT_MERGE_COMPLETE: return 'Tietueet yhdistetty';
+      case CommitMergeStates.COMMIT_MERGE_ONGOING: return 'Tietueita tallennetaan';
+      case CommitMergeStates.COMMIT_MERGE_ERROR: return 'Virhe tietueiden tallentamisessa';
+      case CommitMergeStates.COMMIT_MERGE_COMPLETE: return 'Tietueet tallennettu';
     }
     return '';
   }
