@@ -29,14 +29,10 @@
 import { Map } from 'immutable'; 
 import {RESET_WORKSPACE} from '../constants/action-type-constants';
 import {LOAD_TARGET_RECORD, SET_TARGET_RECORD, SET_TARGET_RECORD_ERROR, SET_TARGET_RECORD_ID, RESET_TARGET_RECORD } from '../ui-actions';
-import TargetRecord from '../config/target-record';
 
 const INITIAL_STATE = Map({
-  state: 'LOADED',
-  hasSubrecords: false,
-  record: TargetRecord
+  state: 'EMPTY'
 });
-
 
 export default function targetRecord(state = INITIAL_STATE, action) {
   switch (action.type) {
