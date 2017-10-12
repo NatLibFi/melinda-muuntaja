@@ -33,7 +33,6 @@ import { INITIAL_STATE } from '../js/root-reducer';
 import reducer from '../js/root-reducer';
 import MarcRecord from 'marc-record-js';
 import { subrecordRows } from '../js/selectors/subrecord-selectors';
-import TargetRecord from '../js/config/target-record';
 
 describe('ui reducers', () => {
 
@@ -142,7 +141,7 @@ describe('ui reducers', () => {
       expect(nextState.get('targetRecord').toJS()).to.eql({
         state: 'LOADED',
         hasSubrecords: false,
-        record: testRecordObject
+        record: testRecordObject,
       });
     });
   });
@@ -155,8 +154,6 @@ describe('ui reducers', () => {
 
       expect(nextState.get('targetRecord').toJS()).to.eql({
         state: 'ERROR',
-        hasSubrecords: false,
-        record: TargetRecord,
         errorMessage: 'error-message'
       });
     });

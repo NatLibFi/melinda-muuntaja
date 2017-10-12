@@ -39,8 +39,10 @@ const RECORD_LOADING_DELAY = 500;
 export class RecordSelectionControls extends React.Component {
 
   static propTypes = {
+    selectedMergeConfig: React.PropTypes.string.isRequired,
     sourceRecordId: React.PropTypes.string.isRequired,
     targetRecordId: React.PropTypes.string.isRequired,
+    switchMergeConfig: React.PropTypes.func.isRequired,
     resetSourceRecord: React.PropTypes.func.isRequired,
     resetTargetRecord: React.PropTypes.func.isRequired,
     fetchRecord: React.PropTypes.func.isRequired,
@@ -48,7 +50,8 @@ export class RecordSelectionControls extends React.Component {
     setSourceRecordId: React.PropTypes.func.isRequired,
     setTargetRecordId: React.PropTypes.func.isRequired,
     locationDidChange: React.PropTypes.func.isRequired,
-    controlsEnabled: React.PropTypes.bool.isRequired
+    controlsEnabled: React.PropTypes.bool.isRequired,
+    mergeConfigurations: React.PropTypes.array
   }
 
   constructor() {
@@ -68,6 +71,7 @@ export class RecordSelectionControls extends React.Component {
   }
 
   componentWillReceiveProps(next) {
+    if (next.targetRecordId === this.props.targetRecordId && next.sourceRecordId === this.props.sourceRecordId) return;
 
     if (_.identity(next.targetRecordId) && _.identity(next.sourceRecordId)) {
       hashHistory.push(`/record/${next.sourceRecordId}/to/${next.targetRecordId}`);
@@ -83,12 +87,19 @@ export class RecordSelectionControls extends React.Component {
   componentDidUpdate() {
     // update text fields if they are prefilled.
     window.Materialize && window.Materialize.updateTextFields();
+
+    window.$(this.mergeConfigurationSelect).on('change', (event) => this.handleMergeConfigurationChange(event.target.value)).material_select();
   }
 
   componentWillUnmount() {
     if (typeof this.state.unlisten == 'function') {
       this.state.unlisten();
     }
+  }
+
+
+  handleMergeConfigurationChange(value) {
+    if (this.props.selectedMergeConfig !== value) this.props.switchMergeConfig(value);
   }
 
   handleChange(event) {
@@ -131,7 +142,7 @@ export class RecordSelectionControls extends React.Component {
 
   render() {
 
-    const { controlsEnabled } = this.props;
+    const { controlsEnabled, mergeConfigurations } = this.props;
 
     return (
       <div className="row row-margin-swap record-selection-controls">
@@ -141,13 +152,21 @@ export class RecordSelectionControls extends React.Component {
           <label htmlFor="source_record">Lähde tietue</label>
         </div>
 
-        <div className="col s2" />
-
-        <div className="col s2 input-field">
+        <div className="col s2 offset-s2 input-field">
           <input id="target_record" type="tel" value={this.props.targetRecordId} onChange={this.handleChange.bind(this)} disabled={!controlsEnabled}/>
           <label htmlFor="target_record">Pohja tietue</label>
         </div>
       
+        {mergeConfigurations.length > 1 && (
+          <div className="col s2 offset-s2 input-field">
+            <select ref={(ref) => this.mergeConfigurationSelect = ref}>
+              {mergeConfigurations.map(({key, name}) => (
+                <option key={key} value={key}>{name}</option>
+              ))}
+            </select>
+            <label>Muunnosprofiili</label>
+          </div>
+        )}
       </div>
     );
   }
@@ -158,6 +177,8 @@ function mapStateToProps(state) {
   return {
     sourceRecordId: state.getIn(['sourceRecord', 'id']) || '',
     targetRecordId: state.getIn(['targetRecord', 'id']) || '',
+    selectedMergeConfig: state.getIn(['config', 'selectedMergeConfig']),
+    mergeConfigurations: state.getIn(['config', 'mergeConfigurations']).map((value, key) => ({ key, name: value.name })).toList().toJS(),
     controlsEnabled: hostRecordActionsEnabled(state)
   };
 }
