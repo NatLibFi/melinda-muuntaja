@@ -34,12 +34,11 @@ export function commitMerge(client, preferredRecord, mergedRecord) {
 
   const jobId = uuid.v4().slice(0,8);
 
-  const preferredId = getRecordId(preferredRecord.record);
-
-  if (preferredId === '000000000') {
+  if (!preferredRecord) {
     return createRecord(mergedRecord.record);
   }
   else {
+    const preferredId = getRecordId(preferredRecord.record);
     if (!isValidId(preferredId)) {
       return Promise.reject(new Error('Id not found for preferred record.'));
     }
