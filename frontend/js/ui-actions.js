@@ -39,6 +39,7 @@ import { subrecordRows, sourceSubrecords, targetSubrecords, rowsWithResultRecord
 import { updateSubrecordArrangement, saveSubrecordSuccess } from './action-creators/subrecord-actions';
 import { match } from './component-record-match-service';
 import { decorateFieldsWithUuid } from './record-utils';
+import uuid from 'uuid';
 
 import * as MergeValidation from './marc-record-merge-validate-service';
 import * as PostMerge from './marc-record-merge-postmerge-service';
@@ -72,9 +73,14 @@ export function commitMerge() {
     const unmodifiedMergedSubrecordList = _(subrecords).map('unmodifiedMergedRecord').compact().value();
 
     const body = { 
+      operationType: getState().getIn(['targetRecord', 'state']) !== 'EMPTY' ? 'UPDATE' : 'CREATE',
       otherRecord: {
         record: sourceRecord,
         subrecords: sourceSubrecordList,
+      },
+      preferredRecord: {
+        record: targetRecord,
+        subrecords: targetSubrecordList
       },
       mergedRecord: {
         record: mergedRecord,
@@ -84,11 +90,6 @@ export function commitMerge() {
         record: unmodifiedRecord,
         subrecords: unmodifiedMergedSubrecordList
       }
-    };
-
-    if (getState().getIn(['targetRecord', 'state']) !== 'EMPTY') body.preferredRecord = {
-      record: targetRecord,
-      subrecords: targetSubrecordList
     };
 
     const fetchOptions = {
@@ -364,7 +365,8 @@ export function updateMergedRecord() {
               return field.tag === fieldInMerged.tag && _.isEqual(field.subfields, fieldInMerged.subfields);
             });
 
-            if (fields.length === 0) mergedRecord.appendField(field);
+
+            if (fields.length === 0) mergedRecord.appendField({ ...field, uuid: uuid.v4()});
           });
 
           return mergedRecord;

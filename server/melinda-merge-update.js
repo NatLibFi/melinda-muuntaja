@@ -30,14 +30,14 @@ import _ from 'lodash';
 import { logger } from 'server/logger';
 import uuid from 'uuid';
 
-export function commitMerge(client, preferredRecord, mergedRecord) {
+export function commitMerge(client, operationType, preferredRecord, mergedRecord) {
 
   const jobId = uuid.v4().slice(0,8);
 
-  if (!preferredRecord) {
+  if (operationType == 'CREATE') {
     return createRecord(mergedRecord.record);
   }
-  else {
+  else if (operationType == 'UPDATE') {
     const preferredId = getRecordId(preferredRecord.record);
     if (!isValidId(preferredId)) {
       return Promise.reject(new Error('Id not found for preferred record.'));
@@ -46,9 +46,11 @@ export function commitMerge(client, preferredRecord, mergedRecord) {
       return updateRecord(preferredId, mergedRecord.record);
     }
   }
+  else return Promise.reject(new Error(`Unknown operationType ${operationType}.`));
 
   function createRecord(record) {
     logger.log('info', `${jobId}] Creating new record`);
+
     return client.createRecord(record, {bypass_low_validation: 1, bypass_index_check: 1}).then(res => {
       logger.log('info', `${jobId}] Create record ok for ${res.recordId}`, res.messages);
       return _.assign({}, res, {operation: 'CREATE'});
@@ -60,10 +62,6 @@ export function commitMerge(client, preferredRecord, mergedRecord) {
 
   function updateRecord(recordId, record) {
     logger.log('info', `${jobId}] Updating record ${recordId}`);
-
-    const idFields = record.fields.filter(field => field.tag === '001');
-
-    idFields[0].value = recordId;
     
     return client.updateRecord(record, {bypass_low_validation: 1, bypass_index_check: 1}).then(res => {
       logger.log('info', `${jobId}] Update record ok for ${recordId}`, res.messages);

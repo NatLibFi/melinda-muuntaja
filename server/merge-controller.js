@@ -61,14 +61,14 @@ mergeController.set('etag', false);
 
 mergeController.options('/commit-merge', cors(corsOptions)); // enable pre-flight
 
-mergeController.post('/commit-merge', cors(corsOptions), requireSession, requireBodyParams('otherRecord', 'mergedRecord', 'unmodifiedRecord'), (req, res) => {
+mergeController.post('/commit-merge', cors(corsOptions), requireSession, requireBodyParams('operationType', 'otherRecord', 'mergedRecord', 'unmodifiedRecord'), (req, res) => {
   
   const {username, password} = req.session;
 
-  const [otherRecord, mergedRecord, unmodifiedRecord] = 
-        [req.body.otherRecord, req.body.mergedRecord, req.body.unmodifiedRecord].map(transformToMarcRecordFamily);
+  const { operationType } = req.body;
 
-  const preferredRecord = req.body.preferredRecord ? transformToMarcRecordFamily(req.body.preferredRecord) : null;
+  const [otherRecord, preferredRecord, mergedRecord, unmodifiedRecord] = 
+        [req.body.otherRecord, req.body.preferredRecord, req.body.mergedRecord, req.body.unmodifiedRecord].map(transformToMarcRecordFamily);
 
   const clientConfig = { 
     ...defaultConfig,
@@ -78,7 +78,7 @@ mergeController.post('/commit-merge', cors(corsOptions), requireSession, require
 
   const client = new MelindaClient(clientConfig);
 
-  commitMerge(client, preferredRecord, mergedRecord)
+  commitMerge(client, operationType, preferredRecord, mergedRecord)
     .then((response) => {
       logger.log('info', 'Commit merge successful', response);
       const mergedMainRecordResult = response;
