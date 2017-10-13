@@ -33,7 +33,6 @@ import { logger, expressWinston } from 'server/logger';
 import { readEnvironmentVariable } from 'server/utils';
 import { sessionController } from 'server/session-controller';
 import { marcIOController } from 'server/marc-io-controller';
-import { duplicateDatabaseController } from './duplicate-db-controller';
 import { mergeController } from './merge-controller';
 import cookieParser from 'cookie-parser';
 
@@ -45,10 +44,8 @@ const app = express();
 app.use(expressWinston);
 app.use(cookieParser());
 
-
 app.use('/api', marcIOController);
 app.use('/session', sessionController);
-app.use('/duplicates', duplicateDatabaseController);
 app.use('/merge', mergeController);
 
 app.use(express.static(path.resolve(__dirname, 'public')));
