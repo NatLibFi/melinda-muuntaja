@@ -1,6 +1,7 @@
 import MarcRecord from 'marc-record-js';
+import { decorateFieldsWithUuid } from '../record-utils';
 
-module.exports = new MarcRecord({
+const record = new MarcRecord({
   leader: '00000cam^a2200613^i^4500',
   fields: [
     {
@@ -73,3 +74,7 @@ module.exports = new MarcRecord({
     }
   ]
 });
+
+decorateFieldsWithUuid(record);
+
+module.exports = record;
