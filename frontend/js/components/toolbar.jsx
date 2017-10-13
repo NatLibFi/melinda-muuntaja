@@ -30,8 +30,6 @@ import React from 'react';
 import '../../styles/components/toolbar.scss';
 import {connect} from 'react-redux';
 import * as uiActionCreators from '../ui-actions';
-import * as duplicateDatabaseActionCreators from '../action-creators/duplicate-database-actions';
-import _ from 'lodash';
 
 export class ToolBar extends React.Component {
 
@@ -68,5 +66,5 @@ export class ToolBar extends React.Component {
 
 export const ToolBarContainer = connect(
   () => ({}),
-  _.assign({}, duplicateDatabaseActionCreators, uiActionCreators)
+  uiActionCreators
 )(ToolBar);

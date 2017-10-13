@@ -33,7 +33,6 @@ import _ from 'lodash';
 import createRecordMerger from '@natlibfi/marc-record-merge';
 import { exceptCoreErrors } from './utils';
 import {hashHistory} from 'react-router';
-import { markAsMerged } from './action-creators/duplicate-database-actions';
 import { RESET_WORKSPACE, TOGGLE_COMPACT_SUBRECORD_VIEW, SWITCH_MERGE_CONFIG } from './constants/action-type-constants';
 import { FetchNotOkError } from './errors';
 import { subrecordRows, sourceSubrecords, targetSubrecords, rowsWithResultRecord } from './selectors/subrecord-selectors';
@@ -117,8 +116,6 @@ export function commitMerge() {
             _.zip(rowIds, subrecords).forEach(([rowId, subrecord]) => {
               dispatch(saveSubrecordSuccess(rowId, subrecord));
             });
-
-            dispatch(markAsMerged());
          
           } else {
             switch (response.status) {
