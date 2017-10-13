@@ -52,7 +52,7 @@ describe('melinda merge update', function() {
 
       const merged =createRecordFamily();
   
-      commitMerge(clientStub, null, merged)
+      commitMerge(clientStub, 'CREATE', null, merged)
         .then(res => {
           expect(res).not.to.be.undefined;
           expect(res.recordId).to.equal(expectedRecordId);
@@ -69,7 +69,7 @@ describe('melinda merge update', function() {
 
       const [preferred, merged] = [createRecordFamily(expectedRecordId), createRecordFamily('000000000')];
     
-      commitMerge(clientStub, preferred, merged)
+      commitMerge(clientStub, 'UPDATE', preferred, merged)
         .then(res => {
           expect(res).not.to.be.undefined;
           expect(res.recordId).to.equal(expectedRecordId);
@@ -83,7 +83,7 @@ describe('melinda merge update', function() {
 
       const [preferred, merged] = [createRecordFamily(), createRecordFamily()];
 
-      commitMerge(clientStub, preferred, merged)
+      commitMerge(clientStub, 'UPDATE', preferred, merged)
         .then(expectFulfillmentToNotBeCalled(done))
         .catch(expectErrorMessage('Id not found for preferred record.', done));
 
