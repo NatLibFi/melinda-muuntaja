@@ -71,27 +71,29 @@ export function commitMerge() {
     const mergedSubrecordList = _(subrecords).map('mergedRecord').compact().value();
     const unmodifiedMergedSubrecordList = _(subrecords).map('unmodifiedMergedRecord').compact().value();
 
+    const body = { 
+      otherRecord: {
+        record: sourceRecord,
+        subrecords: sourceSubrecordList,
+      },
+      mergedRecord: {
+        record: mergedRecord,
+        subrecords: mergedSubrecordList
+      },
+      unmodifiedRecord: {
+        record: unmodifiedRecord,
+        subrecords: unmodifiedMergedSubrecordList
+      }
+    };
+
+    if (getState().getIn(['targetRecord', 'state']) !== 'EMPTY') body.preferredRecord = {
+      record: targetRecord,
+      subrecords: targetSubrecordList
+    };
 
     const fetchOptions = {
       method: 'POST',
-      body: JSON.stringify({ 
-        otherRecord: {
-          record: sourceRecord,
-          subrecords: sourceSubrecordList,
-        },
-        preferredRecord: {
-          record: targetRecord,
-          subrecords: targetSubrecordList,
-        },
-        mergedRecord: {
-          record: mergedRecord,
-          subrecords: mergedSubrecordList
-        },
-        unmodifiedRecord: {
-          record: unmodifiedRecord,
-          subrecords: unmodifiedMergedSubrecordList
-        }
-      }),
+      body: JSON.stringify(body),
       headers: new Headers({
         'Content-Type': 'application/json'
       }),

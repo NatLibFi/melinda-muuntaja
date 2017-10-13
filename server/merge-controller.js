@@ -61,12 +61,14 @@ mergeController.set('etag', false);
 
 mergeController.options('/commit-merge', cors(corsOptions)); // enable pre-flight
 
-mergeController.post('/commit-merge', cors(corsOptions), requireSession, requireBodyParams('otherRecord', 'preferredRecord', 'mergedRecord', 'unmodifiedRecord'), (req, res) => {
+mergeController.post('/commit-merge', cors(corsOptions), requireSession, requireBodyParams('otherRecord', 'mergedRecord', 'unmodifiedRecord'), (req, res) => {
   
   const {username, password} = req.session;
 
-  const [otherRecord, preferredRecord, mergedRecord, unmodifiedRecord] = 
-        [req.body.otherRecord, req.body.preferredRecord, req.body.mergedRecord, req.body.unmodifiedRecord].map(transformToMarcRecordFamily);
+  const [otherRecord, mergedRecord, unmodifiedRecord] = 
+        [req.body.otherRecord, req.body.mergedRecord, req.body.unmodifiedRecord].map(transformToMarcRecordFamily);
+
+  const preferredRecord = req.body.preferredRecord ? transformToMarcRecordFamily(req.body.preferredRecord) : null;
 
   const clientConfig = { 
     ...defaultConfig,

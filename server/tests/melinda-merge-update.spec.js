@@ -50,9 +50,9 @@ describe('melinda merge update', function() {
       clientStub.updateRecord.resolves('UPDATE-OK');
       clientStub.createRecord.resolves(createSuccessResponse(expectedRecordId));
 
-      const [preferred, merged] = [createRecordFamily('000000000'), createRecordFamily()];
+      const merged =createRecordFamily();
   
-      commitMerge(clientStub, preferred, merged)
+      commitMerge(clientStub, null, merged)
         .then(res => {
           expect(res).not.to.be.undefined;
           expect(res.recordId).to.equal(expectedRecordId);
