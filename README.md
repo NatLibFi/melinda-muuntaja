@@ -1,13 +1,22 @@
-# UI for merging MARC records [![NPM Version](https://img.shields.io/npm/v/@natlibfi/marc-merge-ui.svg)](https://npmjs.org/package/@natlibfi/marc-merge-ui) [![Build Status](https://travis-ci.org/NatLibFi/marc-merge-ui.svg?branch=master)](https://travis-ci.org/NatLibFi/marc-merge-ui)
+# UI for merging MARC records [![NPM Version](https://img.shields.io/npm/v/@natlibfi/melinda-eresouce-tool.svg)](https://npmjs.org/package/@natlibfi/melinda-eresouce-tool) [![Build Status](https://travis-ci.org/NatLibFi/melinda-eresouce-tool.svg?branch=master)](https://travis-ci.org/NatLibFi/melinda-eresouce-tool)
 ## Building the application
 
+Initialize submodules
+`git submodule update --init`
+
 Install all dependencies:
-`npm install`
+`npm install && cd melinda-ui-commons && npm install && cd ..`
 
 Run build task:
 `npm run build`
 
 This will build the application into `build` directory.
+
+### Building the container image
+After the building the application run:
+`bin/build-aci.sh`
+
+The command must be run as root ([acbuild](https://github.com/containers/build) must be installed)
 
 ## Start the application in production
 ```
