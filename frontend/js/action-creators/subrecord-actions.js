@@ -34,18 +34,19 @@ import { FetchNotOkError } from '../errors';
 
 import { 
   INSERT_SUBRECORD_ROW, REMOVE_SUBRECORD_ROW, CHANGE_SOURCE_SUBRECORD_ROW, CHANGE_TARGET_SUBRECORD_ROW, 
-  CHANGE_SUBRECORD_ROW, SET_SUBRECORD_ACTION, SET_MERGED_SUBRECORD, SET_MERGED_SUBRECORD_ERROR, 
+  CHANGE_SUBRECORD_ROW, SET_MERGED_SUBRECORDS, SET_SUBRECORD_ACTION, SET_MERGED_SUBRECORD, SET_MERGED_SUBRECORD_ERROR, 
   EXPAND_SUBRECORD_ROW, COMPRESS_SUBRECORD_ROW, ADD_SOURCE_SUBRECORD_FIELD, REMOVE_SOURCE_SUBRECORD_FIELD,
   UPDATE_SUBRECORD_ARRANGEMENT, EDIT_MERGED_SUBRECORD, SAVE_SUBRECORD_START, SAVE_SUBRECORD_SUCCESS, SAVE_SUBRECORD_FAILURE } from '../constants/action-type-constants';
 
 import { SubrecordActionTypes } from '../constants';
 import createRecordMerger from '@natlibfi/marc-record-merge';
-import mergeConfiguration from '../config/merge-config';
+// import mergeConfiguration from '../config/merge-config';
 import * as MergeValidation from '../marc-record-merge-validate-service';
 import * as PostMerge from '../marc-record-merge-postmerge-service';
 import { selectPreferredHostRecord, selectOtherHostRecord } from '../selectors/record-selectors';
 import _ from 'lodash';
-import { decorateFieldsWithUuid, selectRecordId, resetRecordId, resetComponentHostLinkSubfield } from '../record-utils';
+import { decorateFieldsWithUuid, selectRecordId, resetComponentHostLinkSubfield } from '../record-utils';
+import * as subrecordMergeTypes from '../config/subrecord-merge-types';
 
 export function expandSubrecordRow(rowId) {
   return { type: EXPAND_SUBRECORD_ROW, rowId };
@@ -112,8 +113,7 @@ export function setEveryMatchedSubrecordAction() {
       if (hasSource && hasTarget) {
         dispatch(setSubrecordAction(rowId, SubrecordActionTypes.MERGE));
         dispatch(updateMergedSubrecord(rowId));
-      }
-     
+      }   
         
     });
   };
@@ -129,6 +129,35 @@ export function changeSubrecordAction(rowId, actionType) {
     dispatch(setSubrecordAction(rowId, actionType));
     dispatch(updateMergedSubrecord(rowId));
   };
+}
+
+export function updateMergedSubrecords() {
+  return function(dispatch, getState) {
+    const rows = getState().getIn(['subrecords', 'index']);
+
+    const mergeProfile = getState().getIn(['config', 'mergeProfiles', getState().getIn(['config', 'selectedMergeProfile']), 'subrecords']);
+
+    const preferredHostRecord = selectPreferredHostRecord(getState());
+    const otherHostRecord = selectOtherHostRecord(getState());
+    let targetRecord = mergeProfile.get('targetRecord');
+
+    if (mergeProfile.has('mergeTargetRecordWithHost') && mergeProfile.get('mergeTargetRecordWithHost') !== undefined) targetRecord = mergeTargetRecordWithHost({targetRecord, otherHostRecord, preferredHostRecord, mergeConfiguration: mergeProfile.get('mergeTargetRecordWithHost')});
+
+    Promise.all(rows.map((rowId) => {
+      const row = getState().getIn(['subrecords', rowId]);
+
+      const preferredRecord = row.get('targetRecord');
+      const otherRecord = row.get('sourceRecord');
+
+      return mergeSubrecord({preferredRecord: preferredRecord || targetRecord, otherRecord, preferredHostRecord, otherHostRecord, mergeProfile})
+        .then(record => ({ rowId, record }))
+        .catch(error => ({ rowId, error }));
+    })).then((rows) => dispatch(setMergedSubrecords(rows, SubrecordActionTypes.MERGE)));
+  };
+}
+
+export function setMergedSubrecords(rows, actionType) {
+  return { 'type': SET_MERGED_SUBRECORDS, rows, actionType };
 }
 
 export function updateMergedSubrecord(rowId) {
@@ -157,9 +186,6 @@ export function updateMergedSubrecord(rowId) {
         recordToCopy = new MarcRecord(otherRecord);
       }
 
-      // reset 001      
-      resetRecordId(recordToCopy);
-
       // reset 773w
       recordToCopy.fields.filter(field => {
         return field.tag === '773' && field.subfields.filter(s => s.code === 'w').some(s => s.value === `(FI-MELINDA)${hostRecordId}`);
@@ -180,36 +206,102 @@ export function updateMergedSubrecord(rowId) {
     }
 
     if (selectedActionType === SubrecordActionTypes.MERGE) {
-      if (preferredRecord && otherRecord) {
+      const mergeProfile = getState().getIn(['config', 'mergeProfiles', getState().getIn(['config', 'selectedMergeProfile']), 'subrecords']);
 
-        const preferredHostRecordId = selectRecordId(selectPreferredHostRecord(getState()));
-        const otherHostRecordId = selectRecordId(selectOtherHostRecord(getState()));
+      const preferredHostRecord = selectPreferredHostRecord(getState());
+      const otherHostRecord = selectOtherHostRecord(getState());
 
+      let targetRecord = mergeProfile.get('targetRecord');
 
-        const componentRecordValidationRules = MergeValidation.preset.melinda_component;
-        const postMergeFixes = _.clone(PostMerge.preset.defaults);
+      if (mergeProfile.has('mergeTargetRecordWithHost') && mergeProfile.get('mergeTargetRecordWithHost') !== undefined) targetRecord = mergeTargetRecordWithHost({targetRecord, otherHostRecord, preferredHostRecord, mergeConfiguration: mergeProfile.get('mergeTargetRecordWithHost')});
 
+      return mergeSubrecord({preferredRecord: preferredRecord || targetRecord, otherRecord, preferredHostRecord, otherHostRecord, mergeProfile})
+        .then(record => dispatch(setMergedSubrecord(rowId, record)))
+        .catch(error => dispatch(setMergedSubrecordError(rowId, error)));
+    }
+  };
+}
+
+function mergeTargetRecordWithHost({targetRecord, otherHostRecord, preferredHostRecord, mergeConfiguration}) {
+  let sourceRecord, mergedRecord = _.clone(targetRecord);
+
+  if (preferredHostRecord) {
+    sourceRecord = _.clone(preferredHostRecord);
+
+    if (mergeConfiguration.both) {
+      const merge = createRecordMerger(mergeConfiguration.both);
+
+      mergedRecord = merge(mergedRecord, sourceRecord); 
+    }
+    if (mergeConfiguration.target) {
+      const merge = createRecordMerger(mergeConfiguration.target);
+
+      mergedRecord = merge(mergedRecord, sourceRecord); 
+    }
+  }
+  else {
+    sourceRecord = _.clone(otherHostRecord);
+
+    if (mergeConfiguration.both) {
+      const merge = createRecordMerger(mergeConfiguration.both);
+
+      mergedRecord = merge(mergedRecord, sourceRecord); 
+    }
+    if (mergeConfiguration.source) {
+      const merge = createRecordMerger(mergeConfiguration.source);
+
+      mergedRecord = merge(mergedRecord, sourceRecord); 
+    }
+  }
+
+  mergedRecord.fields.forEach((field) => {
+    delete field.wasUsed;
+    delete field.fromOther;
+  });
+
+  return mergedRecord;
+}
+
+function mergeSubrecord ({preferredRecord, otherRecord, preferredHostRecord, otherHostRecord, mergeProfile}) {
+  const mergeConfiguration = mergeProfile.get('mergeConfiguration');
+  const validationRules = mergeProfile.get('validationRules');
+  const postMergeFixes = _.clone(mergeProfile.get('postMergeFixes'));
+
+  let preferredHostRecordId, otherHostRecordId;
+
+  if (preferredHostRecord) preferredHostRecordId = selectRecordId(preferredHostRecord);
+  if (otherHostRecord) otherHostRecordId = selectRecordId(otherHostRecord);
+
+  if (otherRecord) {
+    if (mergeProfile.get('mergeType') === subrecordMergeTypes.SHARED) {
+      postMergeFixes.unshift(PostMerge.add035zFromOther);
+      postMergeFixes.unshift(PostMerge.addLOWSIDFieldsFromOther);
+    }
+    else {
+      const sortMergedRecordFieldsIndex = postMergeFixes.indexOf(PostMerge.sortMergedRecordFields);
+      if (sortMergedRecordFieldsIndex === -1) {
+        postMergeFixes.push(PostMerge.select773Fields(preferredHostRecordId, otherHostRecordId));
+      }
+      else {
         // insert select773 just before sort
-        postMergeFixes.splice(postMergeFixes.length-1, 0, PostMerge.select773Fields(preferredHostRecordId, otherHostRecordId));
-
-        const merge = createRecordMerger(mergeConfiguration);
-
-        MergeValidation.validateMergeCandidates(componentRecordValidationRules, preferredRecord, otherRecord)
-          .then(() => merge(preferredRecord, otherRecord))
-          .then(mergedRecord => PostMerge.applyPostMergeModifications(postMergeFixes, preferredRecord, otherRecord, mergedRecord))
-          .then(result => {
-            const fixedMergedRecord = result.record;
-            dispatch(setMergedSubrecord(rowId, fixedMergedRecord));
-          }).catch(error => {
-            dispatch(setMergedSubrecordError(rowId, error));
-          });
-
-      } else {
-        dispatch(setMergedSubrecordError(rowId, new Error('Cannot merge undefined records')));
+        postMergeFixes.splice(sortMergedRecordFieldsIndex, 0, PostMerge.select773Fields(preferredHostRecordId, otherHostRecordId));
       }
     }
 
-  };
+    const merge = createRecordMerger(mergeConfiguration);
+
+    return MergeValidation.validateMergeCandidates(validationRules, preferredRecord, otherRecord)
+      .then(() => merge(preferredRecord, otherRecord))
+      .then(mergedRecord => PostMerge.applyPostMergeModifications(postMergeFixes, preferredRecord, otherRecord, mergedRecord))
+      .then(result => {
+        return result.record;
+      }).catch(error => {
+        return Promise.reject(error);
+      });
+
+  } else {
+    return Promise.reject(new Error('Cannot merge undefined records'));
+  }
 }
 
 export function editMergedSubrecord(rowId, record) {

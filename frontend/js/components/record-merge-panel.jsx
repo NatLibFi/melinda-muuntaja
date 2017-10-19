@@ -192,7 +192,7 @@ function mapStateToProps(state) {
     sourceRecord: (state.getIn(['sourceRecord', 'record'])),
     sourceRecordError: state.getIn(['sourceRecord', 'errorMessage']),
     sourceRecordState: state.getIn(['sourceRecord', 'state']),
-    targetRecord: state.getIn(['targetRecord', 'state']) === 'EMPTY' ? state.getIn(['config', 'targetRecord']) : state.getIn(['targetRecord', 'record']),
+    targetRecord: state.getIn(['targetRecord', 'state']) === 'EMPTY' ? state.getIn(['config', 'mergeProfiles', state.getIn(['config', 'selectedMergeProfile']), 'record', 'targetRecord']) : state.getIn(['targetRecord', 'record']),
     targetRecordError: state.getIn(['targetRecord', 'state']) === 'EMPTY' ? null : state.getIn(['targetRecord', 'errorMessage']),
     targetRecordState: state.getIn(['targetRecord', 'state']) === 'EMPTY' ? 'LOADED' : state.getIn(['targetRecord', 'state']),
     saveButtonVisible: recordSaveActionAvailable(state)

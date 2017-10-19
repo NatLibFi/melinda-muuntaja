@@ -45,17 +45,15 @@ B warn: Other record has LOW: FENNI, but preferred does not.
 
  */
 
-const defaultPreset = [recordsHaveDifferentIds, preferredRecordIsNotDeleted, otherRecordIsNotDeleted, preferredRecordIsNotSuppressed, otherRecordIsNotSuppressed, recordsHaveSameType, preferredRecordIsNotComponentRecord, otherRecordIsNotComponentRecord, preferredRecordDoesNotHaveSubrecords, otherRecordDoesNotHaveSubrecords];
+const defaultPreset = [recordsHaveDifferentIds, preferredRecordIsNotDeleted, otherRecordIsNotDeleted, preferredRecordIsNotSuppressed, otherRecordIsNotSuppressed, recordsHaveSameType ];
 
 export const preset = {
-  defaults: defaultPreset,
-  melinda_host: _.concat(defaultPreset, [recordsHaveDifferentLOWTags]),
-  melinda_component: _.concat(defaultPreset, [recordsHaveDifferentLOWTags]),
+  melinda_host: _.concat(defaultPreset, [ preferredRecordIsNotComponentRecord, otherRecordIsNotComponentRecord ]),
+  melinda_component: _.concat(defaultPreset, []),
   melinda_warnings: [preferredRecordFromFENNI, preferredRecordHasAlephSplitFields, otherRecordHasAlephSplitFields]
 };
 
 export function validateMergeCandidates(validationFunctions, preferredRecord, otherRecord, preferredHasSubrecords, otherRecordHasSubrecords) {
-
   const validationResults = validationFunctions.map(fn => fn(preferredRecord, otherRecord, preferredHasSubrecords, otherRecordHasSubrecords));
 
   return Promise.all(validationResults).then(results => {

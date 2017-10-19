@@ -59,7 +59,6 @@ export function loadTargetRecord(state, recordId) {
 }
 
 export function setTargetRecord(state, record, subrecords) {
-
   return state
     .set('state', 'LOADED')
     .set('hasSubrecords', subrecords && subrecords.length > 0)
