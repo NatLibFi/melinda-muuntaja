@@ -45,7 +45,7 @@ describe('Archive service', () => {
 
   const username = 'test-user';
   
-  const removedRecord = {
+  const otherRecord = {
     record: new MarcRecord({fields: [{ tag: '001', value: '1' }]}),
     subrecords: []
   };
@@ -91,15 +91,15 @@ describe('Archive service', () => {
         return archive;
       });
 
-      return createArchive(username, removedRecord, preferredRecord, mergedRecord, unmodifiedMergedRecord, mergedRecordId);
+      return createArchive(username, otherRecord, preferredRecord, mergedRecord, unmodifiedMergedRecord, mergedRecordId);
     });
     afterEach(() => {
       RewireAPI.__ResetDependency__('fs');
       RewireAPI.__ResetDependency__('archiver');
     });
 
-    it('adds removed record to the archive', () => {
-      expect(callsTo(archiveAppendSpy)).to.include({data: removedRecord.record.toString(), name: 'removed.txt'});
+    it('adds other record to the archive', () => {
+      expect(callsTo(archiveAppendSpy)).to.include({data: otherRecord.record.toString(), name: 'other.txt'});
     });
 
     it('adds preferred record to the archive', () => {
@@ -114,8 +114,8 @@ describe('Archive service', () => {
       expect(callsTo(archiveAppendSpy)).to.include({data: unmodifiedMergedRecord.record.toString(), name: 'merged-unmodified.txt'});
     });
 
-    it('does not add subrecords of removed record to the archive', () => {
-      expect(callsTo(archiveAppendSpy).map(n => n.name)).not.to.include('removed-subrecords.txt');
+    it('does not add subrecords of other record to the archive', () => {
+      expect(callsTo(archiveAppendSpy).map(n => n.name)).not.to.include('other-subrecords.txt');
     });
 
     it('adds metadata to the archive', () => {
@@ -125,7 +125,7 @@ describe('Archive service', () => {
 
       expect(metadata).to.eql({
         username,
-        removedRecordId: '1',
+        otherRecordId: '1',
         preferredRecordId: '2',
         mergedRecordId: mergedRecordId
       });
@@ -156,12 +156,12 @@ describe('Archive service', () => {
         return archive;
       });
 
-      removedRecord.subrecords.push(new MarcRecord());
+      otherRecord.subrecords.push(new MarcRecord());
       preferredRecord.subrecords.push(new MarcRecord());
       mergedRecord.subrecords.push(new MarcRecord());
       unmodifiedMergedRecord.subrecords.push(new MarcRecord());
 
-      return createArchive(username, removedRecord, preferredRecord, mergedRecord, unmodifiedMergedRecord, mergedRecordId);
+      return createArchive(username, otherRecord, preferredRecord, mergedRecord, unmodifiedMergedRecord, mergedRecordId);
     });
     afterEach(() => {
       RewireAPI.__ResetDependency__('fs');
@@ -169,8 +169,8 @@ describe('Archive service', () => {
     });
 
 
-    it('adds subrecords of removed record to the archive', () => {
-      expect(callsTo(archiveAppendSpy).map(n => n.name)).to.include('removed-subrecords.txt');
+    it('adds subrecords of other record to the archive', () => {
+      expect(callsTo(archiveAppendSpy).map(n => n.name)).to.include('other-subrecords.txt');
     });
     
     it('adds subrecords of preferred record to the archive', () => {

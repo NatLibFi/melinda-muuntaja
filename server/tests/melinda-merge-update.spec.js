@@ -50,12 +50,12 @@ describe('melinda merge update', function() {
       clientStub.updateRecord.resolves('UPDATE-OK');
       clientStub.createRecord.resolves(createSuccessResponse(expectedRecordId));
 
-      const merged =createRecordFamily();
+      const [other, merged] = [createRecordFamily(), createRecordFamily()];
   
-      commitMerge(clientStub, 'CREATE', null, merged)
+      commitMerge(clientStub, 'CREATE', 'MERGE', other, null, merged)
         .then(res => {
           expect(res).not.to.be.undefined;
-          expect(res.recordId).to.equal(expectedRecordId);
+          expect(res[0].recordId).to.equal(expectedRecordId);
           done();
         })
         .catch(done);
@@ -67,12 +67,12 @@ describe('melinda merge update', function() {
       clientStub.updateRecord.resolves(createSuccessResponse(expectedRecordId));
       clientStub.createRecord.resolves('CREATE-OK');
 
-      const [preferred, merged] = [createRecordFamily(expectedRecordId), createRecordFamily('000000000')];
+      const [other, preferred, merged] = [createRecordFamily(), createRecordFamily(), createRecordFamily(expectedRecordId)];
     
-      commitMerge(clientStub, 'UPDATE', preferred, merged)
+      commitMerge(clientStub, 'UPDATE', 'MERGE', other, preferred, merged)
         .then(res => {
           expect(res).not.to.be.undefined;
-          expect(res.recordId).to.equal(expectedRecordId);
+          expect(res[0].recordId).to.equal(expectedRecordId);
           done();
         })
         .catch(done);
@@ -81,11 +81,11 @@ describe('melinda merge update', function() {
 
     it('requires that preferred record has id', function(done) {
 
-      const [preferred, merged] = [createRecordFamily(), createRecordFamily()];
+      const [other, preferred, merged] = [createRecordFamily(), createRecordFamily(), createRecordFamily()];
 
-      commitMerge(clientStub, 'UPDATE', preferred, merged)
+      commitMerge(clientStub, 'UPDATE', 'MERGE', other, preferred, merged)
         .then(expectFulfillmentToNotBeCalled(done))
-        .catch(expectErrorMessage('Id not found for preferred record.', done));
+        .catch(expectErrorMessage('Id not found for record.', done));
 
     });
   });
