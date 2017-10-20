@@ -42,6 +42,7 @@ jspm_packages
 
 build
 tmp
+aci-build
 
 # default dir for merge-action-archive
 merge-action-archive
