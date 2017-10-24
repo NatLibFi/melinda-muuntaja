@@ -5,7 +5,10 @@
   "author": {
     "name": "The National Library of Finland"
   },
-  "keywords": ["marc", "merge"],
+  "keywords": [
+    "marc",
+    "merge"
+  ],
   "homepage": "https://github.com/natlibfi/marc-merge-ui",
   "bugs": {
     "url": "https://github.com/natlibfi/marc-merge-ui/issues"
@@ -16,6 +19,7 @@
   },
   "main": "index.js",
   "scripts": {
+    "postinstall": "cd melinda-ui-commons && npm install",
     "clean:build": "node ./bin/clean.js createdir",
     "build:html": "node ./bin/buildHtml.js",
     "start": "NODE_PATH=build/commons node build/index.js",
@@ -39,6 +43,8 @@
   },
   "license": "AGPL-3.0+",
   "dependencies": {
+    "@natlibfi/marc-record-merge": "^3.3.0",
+    "@natlibfi/melinda-api-client": "^1.1.4",
     "archiver": "^1.1.0",
     "babel-eslint": "^7.1.0",
     "body-parser": "^1.15.2",
@@ -56,8 +62,6 @@
     "isomorphic-fetch": "^2.2.1",
     "lodash": "^4.15.0",
     "marc-record-js": "^0.3.1",
-    "@natlibfi/marc-record-merge": "^3.3.0",
-    "melinda-api-client": "1.1.0",
     "mkdirp": "^0.5.1",
     "moment": "^2.15.1",
     "object-assign": "^4.1.0",
