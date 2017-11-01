@@ -87,7 +87,8 @@ mustBeIdentical (true|false)
 /*eslint-disable quotes*/
 
 module.exports = {
-  fields: {
+  "name": "Finna",
+  "fields": {
     "020": { "action": "createFrom", "options": { "convertTag": "776", "ind1": "0", "ind2": "8", "subfields": { "i": { "replaceValue": "Painettu:" }, "a": { convertCode: "z", modifications: [ { type: "replace", args: [/-/g, ""] } ] } } } },
     "041": { "action": "copy", "options": { "dropOriginal": true } },
     "080": { "action": "copy", "options": { "copyIf": { "9": { "value": "FENNI<KEEP>" } } } },
@@ -111,7 +112,7 @@ module.exports = {
     "776": { "action": "createFrom", "options": { "convertTag": "020", "ind1": " ", "ind2": " ", "subfields": { "z": {} } } },
     // "830": { "action": "copy", "options": { "dropOriginal": true } }
   },
-  newFields: [
+  "newFields": [
     { tag: '337', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'tietokonekäyttöinen' }, { code: 'b', value: 'c' }, { code: '2', value: 'rdamedia' } ] },
     { tag: '338', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'verkkoaineisto' }, { code: 'b', value: 'cr' }, { code: '2', value: 'rdacarrier' } ] }, 
     { tag: '538', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'Internet-yhteys.' }, { code: '9', value: 'FENNI<KEEP>' } ] } 

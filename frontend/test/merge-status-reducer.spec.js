@@ -54,7 +54,7 @@ describe('Merge status reducer', () => {
     });
 
     it('sets the message', () => {
-      expect(mergeStatus.message).to.eql('Yhdistetään tietueita');
+      expect(mergeStatus.message).to.eql('Tallennetaan tietueita');
     });
 
     it('unsets the response', () => {
@@ -116,7 +116,7 @@ describe('Merge status reducer', () => {
     });
 
     it('sets the message to error', () => {
-      expect(mergeStatus.message).to.eql('Tietueet yhdistetty tietueeksi ok');
+      expect(mergeStatus.message).to.eql('Tietueet tallennettu tietueeksi ok');
     });
 
     it('sets the response', () => {

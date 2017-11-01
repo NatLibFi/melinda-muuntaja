@@ -31,19 +31,28 @@ import MarcRecord from 'marc-record-js';
 import HttpStatus from 'http-status-codes';
 import _ from 'lodash';
 import createRecordMerger from '@natlibfi/marc-record-merge';
-import mergeConfiguration from './config/merge-config';
 import { exceptCoreErrors } from './utils';
 import {hashHistory} from 'react-router';
-import { markAsMerged } from './action-creators/duplicate-database-actions';
-import { RESET_WORKSPACE, TOGGLE_COMPACT_SUBRECORD_VIEW } from './constants/action-type-constants';
+import { RESET_WORKSPACE, TOGGLE_COMPACT_SUBRECORD_VIEW, SWITCH_MERGE_CONFIG } from './constants/action-type-constants';
 import { FetchNotOkError } from './errors';
 import { subrecordRows, sourceSubrecords, targetSubrecords, rowsWithResultRecord } from './selectors/subrecord-selectors';
 import { updateSubrecordArrangement, saveSubrecordSuccess } from './action-creators/subrecord-actions';
 import { match } from './component-record-match-service';
 import { decorateFieldsWithUuid } from './record-utils';
+import uuid from 'uuid';
 
 import * as MergeValidation from './marc-record-merge-validate-service';
 import * as PostMerge from './marc-record-merge-postmerge-service';
+
+export function switchMergeConfig(config) {
+  return function(dispatch) {
+    dispatch({
+      type: SWITCH_MERGE_CONFIG,
+      config
+    });
+    dispatch(updateMergedRecord());
+  };
+}
 
 export function commitMerge() {
 
@@ -63,27 +72,29 @@ export function commitMerge() {
     const mergedSubrecordList = _(subrecords).map('mergedRecord').compact().value();
     const unmodifiedMergedSubrecordList = _(subrecords).map('unmodifiedMergedRecord').compact().value();
 
+    const body = { 
+      operationType: getState().getIn(['targetRecord', 'state']) !== 'EMPTY' ? 'UPDATE' : 'CREATE',
+      otherRecord: {
+        record: sourceRecord,
+        subrecords: sourceSubrecordList,
+      },
+      preferredRecord: {
+        record: targetRecord,
+        subrecords: targetSubrecordList
+      },
+      mergedRecord: {
+        record: mergedRecord,
+        subrecords: mergedSubrecordList
+      },
+      unmodifiedRecord: {
+        record: unmodifiedRecord,
+        subrecords: unmodifiedMergedSubrecordList
+      }
+    };
 
     const fetchOptions = {
       method: 'POST',
-      body: JSON.stringify({ 
-        otherRecord: {
-          record: sourceRecord,
-          subrecords: sourceSubrecordList,
-        },
-        preferredRecord: {
-          record: targetRecord,
-          subrecords: targetSubrecordList,
-        },
-        mergedRecord: {
-          record: mergedRecord,
-          subrecords: mergedSubrecordList
-        },
-        unmodifiedRecord: {
-          record: unmodifiedRecord,
-          subrecords: unmodifiedMergedSubrecordList
-        }
-      }),
+      body: JSON.stringify(body),
       headers: new Headers({
         'Content-Type': 'application/json'
       }),
@@ -108,8 +119,6 @@ export function commitMerge() {
             _.zip(rowIds, subrecords).forEach(([rowId, subrecord]) => {
               dispatch(saveSubrecordSuccess(rowId, subrecord));
             });
-
-            dispatch(markAsMerged());
          
           } else {
             switch (response.status) {
@@ -184,24 +193,24 @@ export function resetWorkspace() {
 
 export function locationDidChange(location) {
   return function(dispatch, getState) {
-
     dispatch(setLocation(location));
 
-    const match = _.get(location, 'pathname', '').match('/records/(\\d+)/and/(\\d+)$');
+    const match = _.get(location, 'pathname', '').match('/record/(\\d+)(?:/to/(\\d+))?/?$');
+
     if (match !== null) {
-      const [, nextOtherId, nextPreferredId] = match;
+      const [, nextSourceId, nextTargetId] = match;
 
-      const currentPreferredId = getState().getIn(['targetRecord', 'id']);
-      const currentOtherId = getState().getIn(['sourceRecord', 'id']);
+      const currentSourceId = getState().getIn(['sourceRecord', 'id']);
+      const currentTargetId = getState().getIn(['targetRecord', 'id']);
 
-      if (nextOtherId !== currentOtherId) {
-        dispatch(fetchRecord(nextOtherId, 'SOURCE'));
-        dispatch(setSourceRecordId(nextOtherId));
+      if (nextSourceId !== currentSourceId) {
+        dispatch(fetchRecord(nextSourceId, 'SOURCE'));
+        dispatch(setSourceRecordId(nextSourceId));
       }
 
-      if (nextPreferredId !== currentPreferredId) {
-        dispatch(fetchRecord(nextPreferredId, 'TARGET'));
-        dispatch(setTargetRecordId(nextPreferredId));
+      if (nextTargetId && nextTargetId !== currentTargetId) {
+        dispatch(fetchRecord(nextTargetId, 'TARGET'));
+        dispatch(setTargetRecordId(nextTargetId));
       }
     }
   };
@@ -231,6 +240,17 @@ export function loadSourceRecord(recordId) {
   };
 }
 
+export const RESET_SOURCE_RECORD = 'RESET_SOURCE_RECORD';
+
+export function resetSourceRecord() {
+  return function(dispatch) {
+    dispatch({
+      'type': RESET_SOURCE_RECORD,
+    });
+    dispatch(updateMergedRecord());
+  }; 
+}
+
 export const SET_SOURCE_RECORD = 'SET_SOURCE_RECORD';
 
 export function setSourceRecord(record, subrecords, recordId) {
@@ -248,6 +268,17 @@ export function loadTargetRecord(recordId) {
   return {
     type: LOAD_TARGET_RECORD,
     id: recordId
+  };
+}
+
+export const RESET_TARGET_RECORD = 'RESET_TARGET_RECORD';
+
+export function resetTargetRecord() {
+  return function(dispatch) {
+    dispatch({
+      'type': RESET_TARGET_RECORD,
+    });
+    dispatch(updateMergedRecord());
   };
 }
 
@@ -299,7 +330,6 @@ export function setSourceRecordId(recordId) {
   return { 'type': SET_SOURCE_RECORD_ID, 'recordId': recordId };
 }
 
-
 export const SET_TARGET_RECORD_ID = 'SET_TARGET_RECORD_ID';
 
 export function setTargetRecordId(recordId) {
@@ -310,18 +340,37 @@ export function updateMergedRecord() {
 
   return function(dispatch, getState) {
 
-    const preferredRecord = getState().getIn(['targetRecord', 'record']);
+    const preferredState = getState().getIn(['targetRecord', 'state']);
+    const preferredRecord = preferredState === 'EMPTY' ? getState().getIn(['config', 'targetRecord']) : getState().getIn(['targetRecord', 'record']);
+    const preferredHasSubrecords = preferredState ? false : getState().getIn(['targetRecord', 'hasSubrecords']);
     const otherRecord = getState().getIn(['sourceRecord', 'record']);
+    const otherRecordHasSubrecords = getState().getIn(['sourceRecord', 'hasSubrecords']);
     
     if (preferredRecord && otherRecord) {
+      const mergeConfiguration = getState().getIn(['config', 'mergeConfigurations', getState().getIn(['config', 'selectedMergeConfig'])]);
+      const validationRules = getState().getIn(['config', 'validationRules']);
+      const postMergeFixes = getState().getIn(['config', 'postMergeFixes']);
 
-      const validationRules = MergeValidation.preset.melinda_host;
-      const postMergeFixes = PostMerge.preset.defaults;
+      const merge = createRecordMerger({ fields: mergeConfiguration.fields });
 
-      const merge = createRecordMerger(mergeConfiguration);
-
-      MergeValidation.validateMergeCandidates(validationRules, preferredRecord, otherRecord)
+      MergeValidation.validateMergeCandidates(validationRules, preferredRecord, otherRecord, preferredHasSubrecords, otherRecordHasSubrecords)
         .then(() => merge(preferredRecord, otherRecord))
+        .then((originalMergedRecord) => {
+          if (!mergeConfiguration.newFields) return originalMergedRecord;
+
+          var mergedRecord = new MarcRecord(originalMergedRecord);
+
+          mergeConfiguration.newFields.forEach(field => {
+            const fields = mergedRecord.fields.filter(fieldInMerged => {
+              return field.tag === fieldInMerged.tag && _.isEqual(field.subfields, fieldInMerged.subfields);
+            });
+
+
+            if (fields.length === 0) mergedRecord.appendField({ ...field, uuid: uuid.v4()});
+          });
+
+          return mergedRecord;
+        })
         .then(mergedRecord => PostMerge.applyPostMergeModifications(postMergeFixes, preferredRecord, otherRecord, mergedRecord))
         .then(result => {
           dispatch(setMergedRecord(result.record));
@@ -337,7 +386,6 @@ export function updateMergedRecord() {
 
       const matchedSubrecordPairs = match(sourceSubrecordList, targetSubrecordList);
       dispatch(updateSubrecordArrangement(matchedSubrecordPairs));
-
     }
   };
 }

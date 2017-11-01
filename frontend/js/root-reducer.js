@@ -33,12 +33,12 @@ import { RESET_STATE } from './ui-actions';
 
 import session from 'commons/reducers/session-reducer';
 import subrecords from './reducers/subrecord-reducer';
-import duplicateDatabase from './reducers/duplicate-db-reducer';
 import location from './reducers/location-reducer';
 import sourceRecord from './reducers/source-record-reducer';
 import targetRecord from './reducers/target-record-reducer';
 import mergedRecord from './reducers/merged-record-reducer';
 import mergeStatus from  './reducers/merge-status-reducer';
+import config from  './reducers/config-reducer';
 import ui from  './reducers/ui-reducer';
 
 export const DEFAULT_MERGED_RECORD = Map({
@@ -58,12 +58,12 @@ export const combinedRootReducer = combineReducers({
   ui,
   location,
   session,
-  duplicateDatabase,
   sourceRecord,
   targetRecord,
   mergedRecord,
   mergeStatus,
-  subrecords
+  subrecords,
+  config
 });
 
 function normalizeMergedRecord(state) {

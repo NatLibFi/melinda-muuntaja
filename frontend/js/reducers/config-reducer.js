@@ -26,45 +26,35 @@
 *
 */
 
-import React from 'react';
-import '../../styles/components/toolbar.scss';
-import {connect} from 'react-redux';
-import * as uiActionCreators from '../ui-actions';
+import { Map } from 'immutable'; 
+import { SWITCH_MERGE_CONFIG } from '../constants/action-type-constants';
+import { CREATE_SESSION_SUCCESS } from 'commons/constants/action-type-constants';
+import { preset } from '../config/config-presets';
 
-export class ToolBar extends React.Component {
+const INITIAL_STATE = Map({
+  selectedMergeConfig: 'default'
+});
 
-  static propTypes = {
-    resetWorkspace: React.PropTypes.func.isRequired,
+export default function ui(state = INITIAL_STATE, action) {
+  switch (action.type) {
+    case SWITCH_MERGE_CONFIG:
+      return state.set('selectedMergeConfig', action.config);
+
+    case CREATE_SESSION_SUCCESS:
+      return setConfiguration(state, action.userinfo.department.toLowerCase());
   }
-
-  startNewPair(event) {
-    event.preventDefault();
-    this.props.resetWorkspace();
-  }
-
-  renderNewPairButton() {
-    return (
-      <div className="group">
-        <ul id="nav">
-          <li><a href="#" onClick={(e) => this.startNewPair(e)}><i className="material-icons tooltip" title="Aloita uusi">add</i></a></li>
-        </ul>
-        <span className="group-label">Uusi</span>
-      </div>
-    );
-  }
-
-  render() {
-    return (
-      <nav className="toolbar">
-        <div className="nav-wrapper">
-          {this.renderNewPairButton()}
-        </div>
-      </nav>
-    );
-  }
+  return state;
 }
 
-export const ToolBarContainer = connect(
-  () => ({}),
-  uiActionCreators
-)(ToolBar);
+function setConfiguration(state, department) {
+  let configPreset;
+
+  if (preset.hasOwnProperty(department)) configPreset = preset[department];
+  else configPreset = preset.defaults;
+
+  return state
+    .set('targetRecord', configPreset.targetRecord)
+    .set('mergeConfigurations', Map(configPreset.mergeConfigurations))
+    .set('validationRules', configPreset.validationRules)
+    .set('postMergeFixes', configPreset.postMergeFixes);
+}

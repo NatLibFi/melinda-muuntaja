@@ -53,12 +53,18 @@ import moment from 'moment';
 import { selectValues, selectRecordId, selectFieldsByValue, fieldHasSubfield, resetComponentHostLinkSubfield, isLinkedFieldOf } from './record-utils';
 import { fieldOrderComparator } from './marc-field-sort';
 
+
 const defaultPreset = [
+  check041aLength, setAllZeroRecordId, sortMergedRecordFields
+];
+
+const allPreset = [
   check041aLength, addLOWSIDFieldsFromOther, addLOWSIDFieldsFromPreferred, add035zFromOther, add035zFromPreferred, removeExtra035aFromMerged, 
   setAllZeroRecordId, add583NoteAboutMerge, removeCATHistory, add500ReprintInfo, handle880Fields, sortMergedRecordFields];
 
 export const preset = {
-  defaults: defaultPreset
+  defaults: defaultPreset,
+  all: allPreset
 };
 
 export function applyPostMergeModifications(postMergeFunctions, preferredRecord, otherRecord, originalMergedRecord) {

@@ -87,35 +87,10 @@ mustBeIdentical (true|false)
 /*eslint-disable quotes*/
 
 module.exports = {
-  fields: {
-    "020": { "action": "createFrom", "options": { "convertTag": "776", "ind1": "0", "ind2": "8", "subfields": { "i": { "replaceValue": "Painettu:" }, "a": { convertCode: "z", modifications: [ { type: "replace", args: [/-/g, ""] } ] } } } },
-    "041": { "action": "copy", "options": { "dropOriginal": true } },
-    "080": { "action": "copy", "options": { "copyIf": { "9": { "value": "FENNI<KEEP>" } } } },
-    "084": { "action": "copy", "options": { "copyIf": { "9": { "value": "FENNI<KEEP>" } } } },
-    "245": { "action": "copy", "options": { "dropOriginal": true } },
-    "246": { "action": "copy" },
-    "260": { "action": "copy" },
-    "263": { "action": "copy" },
+  "name": "Oletus",
+  "fields": {
     "1..": { "action": "copy", "options": { "dropOriginal": true } },
-    // "222": { "action": 'createFrom', "options": { "subfields": { "a": {}, "b": { "replaceValue": "(Verkkoaineisto)" } }} },
-    "300": { "action": "createFrom", "options": { "subfields": { "a": { modifications: [ { type: "replace", args: [/ [;:]$/, ""] }, { type: "replace", args: [/ s\./, " sivua"] }, { type: "wrap", args: ["1 verkkoaineisto (", ")"] } ] } } } },
-    "6..": { "action": "copy", "options": { "copyIf": { "9": { "value": "FENNI<KEEP>" } } } },
-    "500": { "action": "copy", "options": { "copyIf": { "9": { "value": "FENNI<KEEP>" } } } },
-    "502": { "action": "copy", "options": { "copyIf": { "9": { "value": "FENNI<KEEP>" } } } },
-    "520": { "action": "copy", "options": { "copyIf": { "9": { "value": "FENNI<KEEP>" } } } },
-    "567": { "action": "copy", "options": { "copyIf": { "9": { "value": "FENNI<KEEP>" } } } },
-    "700": { "action": "copy", "options": { "copyUnless": { "9": { "value": "FENNI<DROP>" } } } },
-    "710": { "action": "copy", "options": { "copyUnless": { "9": { "value": "FENNI<DROP>" } } } },
-    "711": { "action": "copy", "options": { "copyUnless": { "9": { "value": "FENNI<DROP>" } } } },
-    "490": { "action": "copy", "options": { "dropOriginal": true } },
-    "776": { "action": "createFrom", "options": { "convertTag": "020", "ind1": " ", "ind2": " ", "subfields": { "z": {} } } },
-    // "830": { "action": "copy", "options": { "dropOriginal": true } }
-  },
-  newFields: [
-    { tag: '337', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'tietokonekäyttöinen' }, { code: 'b', value: 'c' }, { code: '2', value: 'rdamedia' } ] },
-    { tag: '338', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'verkkoaineisto' }, { code: 'b', value: 'cr' }, { code: '2', value: 'rdacarrier' } ] }, 
-    { tag: '538', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'Internet-yhteys.' }, { code: '9', value: 'FENNI<KEEP>' } ] } 
-  ]
+  }
 };
 
 /*eslint-enable quotes*/

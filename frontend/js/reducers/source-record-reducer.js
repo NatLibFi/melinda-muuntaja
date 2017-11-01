@@ -27,7 +27,7 @@
 */
 
 import { Map } from 'immutable'; 
-import {LOAD_SOURCE_RECORD, SET_SOURCE_RECORD, SET_SOURCE_RECORD_ERROR, SET_SOURCE_RECORD_ID, ADD_SOURCE_RECORD_FIELD, REMOVE_SOURCE_RECORD_FIELD } from '../ui-actions';
+import {LOAD_SOURCE_RECORD, SET_SOURCE_RECORD, SET_SOURCE_RECORD_ERROR, SET_SOURCE_RECORD_ID, ADD_SOURCE_RECORD_FIELD, REMOVE_SOURCE_RECORD_FIELD, RESET_SOURCE_RECORD } from '../ui-actions';
 import {RESET_WORKSPACE} from '../constants/action-type-constants';
 import MarcRecord from 'marc-record-js';
 
@@ -49,6 +49,7 @@ export default function sourceRecord(state = INITIAL_STATE, action) {
       return setFieldSelected(state, action.field);
     case REMOVE_SOURCE_RECORD_FIELD:
       return setFieldUnselected(state, action.field);
+    case RESET_SOURCE_RECORD:
     case RESET_WORKSPACE:
       return INITIAL_STATE;
   }
@@ -63,10 +64,11 @@ export function loadSourceRecord(state, recordId) {
   
 }
 
-export function setSourceRecord(state, record) {
+export function setSourceRecord(state, record, subrecords) {
   
   return state
     .updateIn(['state'], () => 'LOADED')
+    .updateIn(['hasSubrecords'], () => subrecords && subrecords.length > 0)
     .updateIn(['record'], () => record);
 }
 

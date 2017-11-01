@@ -44,53 +44,48 @@ describe('melinda merge update', function() {
       clientStub = createClientStub();
     });
 
-    it('requires that preferred main record has id', function(done) {
-
-      const [preferred, other, merged, unmodified] = [createRecordFamily(), createRecordFamily(), createRecordFamily(), createRecordFamily()];
-
-      commitMerge(clientStub, preferred, other, merged, unmodified)
-        .then(expectFulfillmentToNotBeCalled(done))
-        .catch(expectErrorMessage('Id not found for preferred record.', done));
-
-    });
-
-    it('requires that other main record has id', function(done) {
-
-      const [preferred, other, merged, unmodified] = [createRandomRecordFamily(), createRecordFamily(), createRecordFamily(), createRecordFamily()];
-
-      commitMerge(clientStub, preferred, other, merged, unmodified)
-        .then(expectFulfillmentToNotBeCalled(done))
-        .catch(expectErrorMessage('Id not found for other record.', done));
-
-    });
-
-    it('requires that preferred subrecords have ids', function(done) {
-
-      const [preferred, other, merged, unmodified] = [createRandomRecordFamily(), createRandomRecordFamily(), createRecordFamily(), createRecordFamily()];
-
-      preferred.subrecords[1].fields = preferred.subrecords[1].fields.filter(f => f.tag !== '001');
-
-      commitMerge(clientStub, preferred, other, merged, unmodified)
-        .then(expectFulfillmentToNotBeCalled(done))
-        .catch(expectErrorMessage('Id not found for 2. subrecord from preferred record.', done));
-        
-    });
-
-    it('returns metadata of successful operation', function(done) {
+    it('returns metadata of successful create operation', function(done) {
       const expectedRecordId = 15;
 
       clientStub.updateRecord.resolves('UPDATE-OK');
       clientStub.createRecord.resolves(createSuccessResponse(expectedRecordId));
 
-      const [preferred, other, merged, unmodified] = [createRandomRecordFamily(), createRandomRecordFamily(), createRecordFamily(), createRecordFamily()];
+      const merged =createRecordFamily();
   
-      commitMerge(clientStub, preferred, other, merged, unmodified)
+      commitMerge(clientStub, 'CREATE', null, merged)
         .then(res => {
           expect(res).not.to.be.undefined;
-          expect(res[0].recordId).to.equal(expectedRecordId);
+          expect(res.recordId).to.equal(expectedRecordId);
           done();
         })
         .catch(done);
+    });
+
+    it('returns metadata of successful update operation', function(done) {
+      const expectedRecordId = 123456789;
+
+      clientStub.updateRecord.resolves(createSuccessResponse(expectedRecordId));
+      clientStub.createRecord.resolves('CREATE-OK');
+
+      const [preferred, merged] = [createRecordFamily(expectedRecordId), createRecordFamily('000000000')];
+    
+      commitMerge(clientStub, 'UPDATE', preferred, merged)
+        .then(res => {
+          expect(res).not.to.be.undefined;
+          expect(res.recordId).to.equal(expectedRecordId);
+          done();
+        })
+        .catch(done);
+    });
+
+
+    it('requires that preferred record has id', function(done) {
+
+      const [preferred, merged] = [createRecordFamily(), createRecordFamily()];
+
+      commitMerge(clientStub, 'UPDATE', preferred, merged)
+        .then(expectFulfillmentToNotBeCalled(done))
+        .catch(expectErrorMessage('Id not found for preferred record.', done));
 
     });
   });
@@ -119,29 +114,17 @@ function expectErrorMessage(msg, done) {
 }
 
 
-function createRecordFamily() {
+function createRecordFamily(id = false) {
   return {
-    record: createRecord(),
+    record: createRecord(id),
     subrecords: []
   };
 }
 
-function createRecord() {
-  return new MarcRecord();
-}
-
-function createRandomRecordFamily() {
-  return {
-    record: createRandomRecord(),
-    subrecords: [createRandomRecord(), createRandomRecord(), createRandomRecord()]
-  }; 
-}
-
-function createRandomRecord() {
+function createRecord(id = false) {
   const record = new MarcRecord();
-  
-  record.appendControlField(['001', Math.floor(Math.random()*1000000)]);
-  
+  if (id) record.appendControlField(['001', id]);
+
   return record;
 }
 

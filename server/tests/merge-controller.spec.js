@@ -96,6 +96,7 @@ describe('MARC IO controller', () => {
         .post('/commit-merge')
         .set('Cookie', `sessionToken=${sessionToken}`)
         .send({
+          'operationType': 'CREATE',
           'otherRecord': createFakeRecordFamily(), 
           'preferredRecord': createFakeRecordFamily(), 
           'mergedRecord': createFakeRecordFamily(),
@@ -113,6 +114,7 @@ describe('MARC IO controller', () => {
         .post('/commit-merge')
         .set('Cookie', `sessionToken=${sessionToken}`)
         .send({
+          'operationType': 'CREATE',
           'otherRecord': createFakeRecordFamily(), 
           'preferredRecord': createFakeRecordFamily(), 
           'mergedRecord': createFakeRecordFamily(),
