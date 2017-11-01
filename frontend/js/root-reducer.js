@@ -39,6 +39,7 @@ import targetRecord from './reducers/target-record-reducer';
 import mergedRecord from './reducers/merged-record-reducer';
 import mergeStatus from  './reducers/merge-status-reducer';
 import config from  './reducers/config-reducer';
+import search from  './reducers/search-reducer';
 import ui from  './reducers/ui-reducer';
 
 export const DEFAULT_MERGED_RECORD = Map({
@@ -63,7 +64,8 @@ export const combinedRootReducer = combineReducers({
   mergedRecord,
   mergeStatus,
   subrecords,
-  config
+  config,
+  search
 });
 
 function normalizeMergedRecord(state) {

@@ -26,34 +26,42 @@
 *
 */
 
-'use strict';
-import express from 'express';
-import path from 'path';
-import { logger, expressWinston } from 'server/logger';
-import { readEnvironmentVariable } from 'server/utils';
-import { sessionController } from 'server/session-controller';
-import { marcIOController } from 'server/marc-io-controller';
-import { mergeController } from './merge-controller';
-import { sruController } from './sru-controller';
-import cookieParser from 'cookie-parser';
+import { Map, List } from 'immutable'; 
+import {OPEN_SEARCH_DIALOG, CLOSE_SEARCH_DIALOG, SET_SEARCH_QUERY, EXECUTE_SEARCH, SET_SEARCH_RESULTS} from '../ui-actions';
 
-//const NODE_ENV = readEnvironmentVariable('NODE_ENV', 'dev');
-const PORT = readEnvironmentVariable('HTTP_PORT', 3001);
+const INITIAL_STATE = Map({
+  query: '',
+  visible: false,
+  loading: false,
+  results: Map({
+    numberOfRecords: 0,
+    records: List()
+  })
+});
 
-const app = express();
-
-app.use(expressWinston);
-app.use(cookieParser());
-
-app.use('/api', marcIOController);
-app.use('/sru', sruController);
-app.use('/session', sessionController);
-app.use('/merge', mergeController);
-
-app.use(express.static(path.resolve(__dirname, 'public')));
-
-
-const server = app.listen(PORT, () => logger.log('info', `Application started on port ${PORT}`));
-
-server.timeout = 1800000; // Half an hour
+export default function location(state = INITIAL_STATE, action) {
+  switch (action.type) {
+    case CLOSE_SEARCH_DIALOG:
+      return INITIAL_STATE;
+    case OPEN_SEARCH_DIALOG:
+      return state.set('visible', true);
+    case SET_SEARCH_QUERY:
+      return state
+        .set('query', action.query)
+        .set('results', Map({
+          numberOfRecords: 0,
+          records: List()
+        }));
+    case EXECUTE_SEARCH:
+      return state.set('loading', true);
+    case SET_SEARCH_RESULTS: 
+      return state
+        .set('results', Map({
+          numberOfRecords: action.results.numberOfRecords,
+          records: List(action.results.records)
+        }))
+        .set('loading', false);
+  }
+  return state;
+}
 

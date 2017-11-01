@@ -213,6 +213,65 @@ export function resetWorkspace() {
   };
 }
 
+export const OPEN_SEARCH_DIALOG = 'OPEN_SEARCH_DIALOG';
+
+export function openSearchDialog() {
+  return {
+    type: OPEN_SEARCH_DIALOG
+  };
+}
+
+export const CLOSE_SEARCH_DIALOG = 'CLOSE_SEARCH_DIALOG';
+
+export function closeSearchDialog() {
+  return {
+    type: CLOSE_SEARCH_DIALOG
+  };
+}
+
+export function handleSearch(query) {
+  const APIBasePath = __DEV__ ? 'http://localhost:3001/sru': '/sru';
+
+  return function(dispatch) {
+    dispatch(executeSearch(query));
+
+    return fetch(`${APIBasePath}/?q=${query}`)
+      .then(validateResponseStatus)
+      .then(response => response.json())
+      .then(json => {
+        dispatch(setSearchResults(json));
+      });
+  }
+}
+
+export const EXECUTE_SEARCH = "EXECUTE_SEARCH";
+
+export function executeSearch(query) {
+  return {
+    type: EXECUTE_SEARCH,
+    query
+  };
+}
+
+export const SET_SEARCH_RESULTS = "SET_SEARCH_RESULTS";
+
+export function setSearchResults(results) {
+  return {
+    type: SET_SEARCH_RESULTS,
+    results
+  };
+}
+
+
+export const SET_SEARCH_QUERY = "SET_SEARCH_QUERY";
+
+export function setSearchQuery(query) {
+  return {
+    type: SET_SEARCH_QUERY,
+    query
+  };
+}
+
 
 export function locationDidChange(location) {
   return function(dispatch, getState) {
