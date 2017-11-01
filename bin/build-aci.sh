@@ -43,6 +43,8 @@ $ACBUILD_CMD set-exec -- /bin/bash -c '/usr/bin/node index.js 2>&1 | tee -a /opt
 $ACBUILD_CMD mount add logs /opt/melinda-eresouce-tool/logs
 $ACBUILD_CMD mount add --read-only conf /opt/melinda-eresource-tool/conf
 
+$ACBUILD_CMD port add http tcp 80
+
 $ACBUILD_CMD copy aci-build/app /opt/melinda-eresource-tool/app
 
 if [ $ACBUILD_ENGINE == 'chroot' ];then
