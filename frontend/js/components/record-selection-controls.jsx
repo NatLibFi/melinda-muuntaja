@@ -149,12 +149,12 @@ export class RecordSelectionControls extends React.Component {
       
         <div className="col s2 offset-s1 input-field">
           <input id="source_record" type="tel" value={this.props.sourceRecordId} onChange={this.handleChange.bind(this)} disabled={!controlsEnabled} />
-          <label htmlFor="source_record">Lähde tietue</label>
+          <label htmlFor="source_record">Lähdetietue</label>
         </div>
 
         <div className="col s2 offset-s2 input-field">
           <input id="target_record" type="tel" value={this.props.targetRecordId} onChange={this.handleChange.bind(this)} disabled={!controlsEnabled}/>
-          <label htmlFor="target_record">Pohja tietue</label>
+          <label htmlFor="target_record">Kohdetietue</label>
         </div>
       
         {mergeConfigurations.length > 1 && (
