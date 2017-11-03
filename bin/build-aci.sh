@@ -14,8 +14,11 @@ ACI_NAME_GROUP="melinda"
 ACI_NAME="eresource-tool"
 ACI_VERSION="1.0.0"
 
-rm -rf aci-build && mkdir aci-build && cp -rp build aci-build/app &&
-cp package.json aci-build/app/ && cp melinda-ui-commons/package.json aci-build/app/commons/ &&
+rm -rf aci-build
+mkdir aci-build
+cp -rp build aci-build/app
+cp package.json aci-build/app/
+cp -r aci-build/app/{commons,melinda-ui-commons}
 
 cat <<EOF > aci-build/nodesource.list
 deb https://deb.nodesource.com/node_7.x xenial main
@@ -59,7 +62,6 @@ $ACBUILD_CMD copy aci-build/nodesource.pref /etc/apt/preferences.d/nodesource.pr
 
 $ACBUILD_CMD run --engine $ACBUILD_ENGINE -- /bin/bash -c 'apt-get -y update && apt-get -y install nodejs'
 $ACBUILD_CMD run --engine $ACBUILD_ENGINE --working-dir /opt/melinda-eresource-tool/app -- /bin/bash -c 'npm install --production'
-$ACBUILD_CMD run --engine $ACBUILD_ENGINE --working-dir /opt/melinda-eresource-tool/app/commons -- /bin/bash -c 'npm install --production'
 
 $ACBUILD_CMD run --engine $ACBUILD_ENGINE -- /bin/bash -c 'apt-get -y update && apt-get -y install tzdata'
 $ACBUILD_CMD run --engine $ACBUILD_ENGINE -- /bin/bash -c 'ln -fs /usr/share/zoneinfo/Europe/Helsinki /etc/localtime'
