@@ -5,7 +5,7 @@ Initialize submodules
 `git submodule update --init`
 
 Install all dependencies:
-`npm install && cd melinda-ui-commons && npm install && cd ..`
+`npm install`
 
 Run build task:
 `npm run build`
