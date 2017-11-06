@@ -48,7 +48,7 @@ export class SearchDialog extends React.Component {
     }, SEARCH_DELAY);
 
     this.state = {
-      selectedRecord: 0
+      selectedRecord: 0,
     };
   }
 
@@ -85,7 +85,7 @@ export class SearchDialog extends React.Component {
   handleRecordTransfer(event) {
     event.preventDefault();
 
-    const record = this.props.results.getIn(['records', this.state.selectedRecord]);
+    const record = this.props.results.records[this.state.selectedRecord];
 
     const recordId = selectRecordId(record);
 
@@ -99,10 +99,64 @@ export class SearchDialog extends React.Component {
     }
   }
 
-  renderRecordSelector() {
-    const { loading } = this.props;
+  switchNextPage(event) {
+    event.preventDefault();
 
-    const records = this.props.results.get('records');
+    if (this.props.currentPage === this.props.numberOfPages) return
+
+    const page = this.props.currentPage + 1;
+
+    this.props.setSearchPage(page);
+    this.props.handleSearch(this.props.query, page);
+  }
+
+  switchPrevPage(event) {
+    event.preventDefault();
+
+    if (this.props.currentPage === 1) return
+
+    const page = this.props.currentPage + 0;
+
+    this.props.setSearchPage(page);
+    this.props.handleSearch(this.props.query, page);
+  }
+
+  switchPage(event) {
+    event.preventDefault();
+
+    const page = parseInt(event.target.dataset.page, 10); 
+
+    this.props.setSearchPage(page);
+    this.props.handleSearch(this.props.query, page);
+  }
+
+  getPaginationArray (currentPage, totalPages) {
+    let result;
+
+    const startPage = _.max([1, currentPage - (3 + _.max([0, currentPage - totalPages + 3]))]);
+    const endPage = _.min([totalPages + 1, startPage + 7]);
+
+    result = _.range(startPage, endPage);
+
+    if (startPage > 1) {
+      result.unshift('...');
+      result.unshift(1);
+    }
+
+    if (endPage <= totalPages) {
+      result.push('...');
+      result.push(totalPages);
+    }
+
+    return result;
+  }
+
+  renderRecordSelector() {
+    const { loading, currentPage } = this.props;
+
+    const { numberOfRecords, numberOfPages, records } = this.props.results;
+   
+    const paginationArray = this.getPaginationArray(currentPage, numberOfPages);
 
     return (
       <div className="col s6">
@@ -115,12 +169,29 @@ export class SearchDialog extends React.Component {
             )
           })}
         </div>
+
+        <ul className="pagination">
+          <li className={classNames({"waves-effect": currentPage !== 1, disabled: currentPage === 1})}><a href="#!"><i className="material-icons" onClick={(e) => this.switchPrevPage(e)}>chevron_left</i></a></li>
+
+          {paginationArray.map(page => {
+            if (page === '...') {
+              return (
+                <li className="disabled valign-bottom"><a href="#!">...</a></li>
+              );
+            }
+            return (
+              <li className={classNames({"waves-effect": page !== currentPage, "active": page === currentPage})}><a href="#" data-page={page} onClick={(e) => this.switchPage(e)} >{page}</a></li>
+            )
+          }
+          )}
+          <li className={classNames({"waves-effect": currentPage !== numberOfPages, disabled: currentPage === numberOfPages})}><a href="#" onClick={(e) => this.switchNextPage(e)}><i className="material-icons">chevron_right</i></a></li>
+        </ul>
       </div>
     )
   }
 
   renderRecordPanel() {
-    const selectedRecord = this.props.results.getIn(['records', this.state.selectedRecord]);
+    const selectedRecord = this.props.results.records[this.state.selectedRecord];
 
     return (
       <div className="col s6">
@@ -173,7 +244,7 @@ export class SearchDialog extends React.Component {
 
             <div className="divider"></div>
 
-            {this.props.loading ? <Preloader /> : this.props.results.get('numberOfRecords') > 0 ? this.renderResultsRow(): null}
+            {this.props.loading ? <Preloader /> : this.props.results.numberOfRecords > 0 ? this.renderResultsRow(): null}
           </div>
           <div className="card-action right-align">
             <a href="#" onClick={(e) => this.close(e)}>Valmis</a>
@@ -187,8 +258,9 @@ export class SearchDialog extends React.Component {
 function mapStateToProps(state) {
   return {
     query: state.getIn(['search', 'query']),
-    results: state.getIn(['search', 'results']),
-    loading: state.getIn(['search', 'loading'])
+    results: state.getIn(['search', 'results']).toJS(),
+    loading: state.getIn(['search', 'loading']),
+    currentPage: state.getIn(['search', 'currentPage'])
   };
 }
 

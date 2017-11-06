@@ -40,26 +40,33 @@ import _ from 'lodash';
 import { createArchive } from './archive-service';
 import marc_record_converters from '@natlibfi/marc-record-converters';
 
+const RECORDS_PER_PAGE = 15;
+
 const sruClient = require('@natlibfi/sru-client')({
   url: readEnvironmentVariable('SRU_URL'),
   recordSchema: 'marcxml',
-  maximumRecords: 15 
+  maximumRecords: RECORDS_PER_PAGE 
 });
-
-console.log(sruClient);
 
 export const sruController = express();
 
 sruController.options('/', cors(corsOptions)); // enable pre-flight
 
 sruController.get('/', cors(corsOptions), (req, res) => {
-  logger.log('info', `SRU query: '${req.query.q}'`);
-  sruClient.searchRetrieve(req.query.q).then(result => {
+  const { q, page = 1 } = req.query;
+
+  const startRecord = (page - 1) * RECORDS_PER_PAGE + 1;
+
+  logger.log('info', `SRU query: '${q}'`);
+  sruClient.searchRetrieve(req.query.q, startRecord).then(result => {
     logger.log('info', `SRU records found: ${result.numberOfRecords}`);
 
-    result.records = result.records.map(recordxml => marc_record_converters.marc21slimXML.from(recordxml));
-
-    res.send(result);
+    res.send({
+      numberOfRecords: result.numberOfRecords,
+      numberOfPages: Math.ceil(result.numberOfRecords / RECORDS_PER_PAGE),
+      currentPage: page,
+      records: result.records.map(recordxml => marc_record_converters.marc21slimXML.from(recordxml)),
+    });
   }).catch(error => {
     logger.log('error', 'SRU error:', error);
     res.status(500).send(error);

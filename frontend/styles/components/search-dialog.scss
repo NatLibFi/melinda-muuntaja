@@ -28,6 +28,15 @@
       overflow: auto;
     }
 
+    .pagination {
+
+      li {
+        a {
+          // width: 50px;
+        }
+      }
+    }
+
     .card-title {
       .material-icons {
         cursor: pointer;

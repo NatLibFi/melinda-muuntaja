@@ -27,14 +27,16 @@
 */
 
 import { Map, List } from 'immutable'; 
-import {OPEN_SEARCH_DIALOG, CLOSE_SEARCH_DIALOG, SET_SEARCH_QUERY, EXECUTE_SEARCH, SET_SEARCH_RESULTS} from '../ui-actions';
+import {OPEN_SEARCH_DIALOG, CLOSE_SEARCH_DIALOG, SET_SEARCH_QUERY, EXECUTE_SEARCH, SET_SEARCH_RESULTS,SET_SEARCH_PAGE} from '../ui-actions';
 
 const INITIAL_STATE = Map({
   query: '',
   visible: false,
   loading: false,
+  currentPage: 1,
   results: Map({
     numberOfRecords: 0,
+    numberOfPages: 0,
     records: List()
   })
 });
@@ -48,16 +50,18 @@ export default function location(state = INITIAL_STATE, action) {
     case SET_SEARCH_QUERY:
       return state
         .set('query', action.query)
-        .set('results', Map({
-          numberOfRecords: 0,
-          records: List()
-        }));
+        .set('results', INITIAL_STATE.get('results'));
+    case SET_SEARCH_PAGE:
+      return state
+        .set('currentPage', action.page)
+        .set('results', INITIAL_STATE.get('results'));
     case EXECUTE_SEARCH:
       return state.set('loading', true);
     case SET_SEARCH_RESULTS: 
       return state
         .set('results', Map({
           numberOfRecords: action.results.numberOfRecords,
+          numberOfPages: action.results.numberOfPages,
           records: List(action.results.records)
         }))
         .set('loading', false);

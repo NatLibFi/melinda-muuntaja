@@ -229,16 +229,22 @@ export function closeSearchDialog() {
   };
 }
 
-export function handleSearch(query) {
+export function handleSearch(query, page = 1) {
   const APIBasePath = __DEV__ ? 'http://localhost:3001/sru': '/sru';
 
   return function(dispatch) {
     dispatch(executeSearch(query));
 
-    return fetch(`${APIBasePath}/?q=${query}`)
+    return fetch(`${APIBasePath}/?q=${query}&page=${page}`)
       .then(validateResponseStatus)
       .then(response => response.json())
       .then(json => {
+        json.records = json.records.map(record => {
+          const marcRecord = new MarcRecord(record);
+          decorateFieldsWithUuid(marcRecord);
+
+          return marcRecord;
+        })
         dispatch(setSearchResults(json));
       });
   }
@@ -272,6 +278,14 @@ export function setSearchQuery(query) {
   };
 }
 
+export const SET_SEARCH_PAGE = "SET_SEARCH_PAGE";
+
+export function setSearchPage(page) {
+  return {
+    type: SET_SEARCH_PAGE,
+    page
+  };
+}
 
 export function locationDidChange(location) {
   return function(dispatch, getState) {
