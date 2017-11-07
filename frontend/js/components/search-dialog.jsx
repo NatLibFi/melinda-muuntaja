@@ -234,8 +234,8 @@ export class SearchDialog extends React.Component {
           <RecordPanel record={selectedRecord}>
             {selectedRecord ? (
               <div className="card-action">
-                <a href="#" className="valign" id="move-to-source" onClick={(e) => this.handleRecordTransfer(e)}>Siirrä lähde tietueeksi</a>
-                <a href="#" className="valign" id="move-to-target" onClick={(e) => this.handleRecordTransfer(e)}>Siirrä kohde tietueeksi</a>
+                <a href="#" className="valign" id="move-to-source" onClick={(e) => this.handleRecordTransfer(e)}>Siirrä lähdetietueeksi</a>
+                <a href="#" className="valign" id="move-to-target" onClick={(e) => this.handleRecordTransfer(e)}>Siirrä kohdetietueeksi</a>
               </div> 
             ) : null}
           </RecordPanel>
