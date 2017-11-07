@@ -86,6 +86,9 @@ export class SearchDialog extends React.Component {
     if (value.length >= 3) {
       this.handleChangeDebounced(value);
     }
+    else {
+      this.props.clearSearchResults();
+    }
   }
 
   handleRecordChange(event) {
@@ -123,6 +126,9 @@ export class SearchDialog extends React.Component {
 
     this.props.setSearchPage(page);
     this.props.handleSearch(this.props.query, page);
+    this.setState(() => ({
+      selectedRecord: 0
+    }));
   }
 
   switchPrevPage(event) {
@@ -134,6 +140,9 @@ export class SearchDialog extends React.Component {
 
     this.props.setSearchPage(page);
     this.props.handleSearch(this.props.query, page);
+    this.setState(() => ({
+      selectedRecord: 0
+    }));
   }
 
   switchPage(event) {
@@ -143,6 +152,9 @@ export class SearchDialog extends React.Component {
 
     this.props.setSearchPage(page);
     this.props.handleSearch(this.props.query, page);
+    this.setState(() => ({
+      selectedRecord: 0
+    }));
   }
 
   getPaginationArray (currentPage, totalPages) {
@@ -180,7 +192,7 @@ export class SearchDialog extends React.Component {
             <Preloader />
           </div>
           ) : (
-          <ul className="card darken-1 collection modal-search-dialog-record-selector">
+          <ul className="card darken-1 modal-search-dialog-record-selector">
             {records.map((record, index) => {
               const recordId = selectRecordId(record);
               
@@ -195,7 +207,7 @@ export class SearchDialog extends React.Component {
               };
 
               return (
-                <li key={recordId} data-index={index} className={classNames('collection-item', {'active': this.state.selectedRecord === index})} onClick={(e) => this.handleRecordChange(e)}>
+                <li key={recordId} data-index={index} className={classNames({'active': this.state.selectedRecord === index})} onClick={(e) => this.handleRecordChange(e)}>
                   <MarcRecordPanel record={trimmedRecord} />
                 </li>
               );
@@ -257,6 +269,7 @@ export class SearchDialog extends React.Component {
   renderQueryInput() {
     const { query } = this.props;
 
+
     return (
       <div className="row">
         <div className="input-field col s2">
@@ -268,6 +281,12 @@ export class SearchDialog extends React.Component {
   }
 
   render() {
+    const { loading, results: { numberOfRecords } } = this.props;
+
+
+    const shouldRenderResultRow = loading || numberOfRecords > 0;
+    console.log(loading, numberOfRecords, shouldRenderResultRow);
+
     return (
       <div className="row modal-search-dialog">
         <div className="modal-search-dialog-outer card">
@@ -280,7 +299,7 @@ export class SearchDialog extends React.Component {
 
             <div className="divider" />
 
-            {this.renderResultsRow()}
+            {shouldRenderResultRow && this.renderResultsRow()}
           </div>
           <div className="card-action right-align">
             <a href="#" onClick={(e) => this.close(e)}>Valmis</a>

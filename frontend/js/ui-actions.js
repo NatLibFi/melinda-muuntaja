@@ -229,6 +229,14 @@ export function closeSearchDialog() {
   };
 }
 
+export const CLEAR_SEARCH_RESULTS = 'CLEAR_SEARCH_RESULTS';
+
+export function clearSearchResults() {
+  return {
+    type: CLEAR_SEARCH_RESULTS
+  };
+}
+
 export function handleSearch(query, page = 1) {
   const APIBasePath = __DEV__ ? 'http://localhost:3001/sru': '/sru';
 

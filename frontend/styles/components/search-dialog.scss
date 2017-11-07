@@ -30,25 +30,29 @@
 
     .modal-search-dialog-record-selector.loading {
       padding: 20px;
+      height: 650px;
     }
-    .modal-search-dialog-record-selector {
-      min-height: 650px;
 
-      .collection-item {
+    .modal-search-dialog-record-selector {
+      min-height: 100px;
+
+      li {
         cursor: pointer;
+        padding: 10px 20px;
+        margin: 0;
+        border-bottom: 1px solid #e0e0e0;
 
         .marc-record-panel {
           pointer-events: none;
         }
       }
 
-      .collection-item:hover {
+      li:hover {
         background-color: #ddd;
       }
 
-      .collection-item.active {
+      li.active {
         background-color: #b2dfdb;
-        color: inherit;
       }
     }
 
