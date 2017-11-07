@@ -35,6 +35,7 @@ import * as uiActionCreators from '../ui-actions';
 import '../../styles/components/search-dialog.scss';
 import { RecordPanel } from 'commons/components/record-panel';
 import { Preloader } from 'commons/components/preloader';
+import { MarcRecordPanel } from 'commons/components/marc-record-panel';
 
 const SEARCH_DELAY = 500;
 
@@ -166,7 +167,7 @@ export class SearchDialog extends React.Component {
   }
 
   renderRecordSelector() {
-    const { currentPage } = this.props;
+    const { currentPage, loading } = this.props;
 
     const { numberOfPages, records } = this.props.results;
    
@@ -174,32 +175,52 @@ export class SearchDialog extends React.Component {
 
     return (
       <div className="col s6">
-        <div className="collection">               
-          {records.map((record, index) => {
-            const recordId = selectRecordId(record);
+        {loading ? (
+          <div className="card darken-1 collection modal-search-dialog-record-selector loading">
+            <Preloader />
+          </div>
+          ) : (
+          <ul className="card darken-1 collection modal-search-dialog-record-selector">
+            {records.map((record, index) => {
+              const recordId = selectRecordId(record);
+              
+              const visibleFields = ['245', '336'];
 
-            return (
-              <a href="#" key={recordId} data-index={index} className={classNames('collection-item', {'active': this.state.selectedRecord === index})} onClick={(e) => this.handleRecordChange(e)}>{recordId}</a>
-            );
-          })}
-        </div>
+              const selectedFields = record.fields
+                .filter(f => _.includes(visibleFields, f.tag))
+                .filter(f => f.subfields.length !== 0);
 
-        <ul className="pagination">
-          <li className={classNames({'waves-effect': currentPage !== 1, disabled: currentPage === 1})}><a href="#!"><i className="material-icons" onClick={(e) => this.switchPrevPage(e)}>chevron_left</i></a></li>
+              const trimmedRecord = {
+                fields: selectedFields
+              };
 
-          {paginationArray.map((page,index) => {
-            if (page === '...') {
               return (
-                <li key={index} className="disabled valign-bottom"><a href="#!">...</a></li>
+                <li key={recordId} data-index={index} className={classNames('collection-item', {'active': this.state.selectedRecord === index})} onClick={(e) => this.handleRecordChange(e)}>
+                  <MarcRecordPanel record={trimmedRecord} />
+                </li>
+              );
+            })}
+          </ul>
+        )}
+        
+        {numberOfPages > 1 ? (
+          <ul className="pagination">
+            <li className={classNames({'waves-effect': currentPage !== 1, disabled: currentPage === 1})}><a href="#!"><i className="material-icons" onClick={(e) => this.switchPrevPage(e)}>chevron_left</i></a></li>
+
+            {paginationArray.map((page,index) => {
+              if (page === '...') {
+                return (
+                  <li key={index} className="disabled valign-bottom"><a href="#!">...</a></li>
+                );
+              }
+              return (
+                <li key={index} className={classNames({'waves-effect': page !== currentPage, active: page === currentPage})}><a href="#" data-page={page} onClick={(e) => this.switchPage(e)} >{page}</a></li>
               );
             }
-            return (
-              <li key={index} className={classNames({'waves-effect': page !== currentPage, active: page === currentPage})}><a href="#" data-page={page} onClick={(e) => this.switchPage(e)} >{page}</a></li>
-            );
-          }
-          )}
-          <li className={classNames({'waves-effect': currentPage !== numberOfPages, disabled: currentPage === numberOfPages})}><a href="#" onClick={(e) => this.switchNextPage(e)}><i className="material-icons">chevron_right</i></a></li>
-        </ul>
+            )}
+            <li className={classNames({'waves-effect': currentPage !== numberOfPages, disabled: currentPage === numberOfPages})}><a href="#" onClick={(e) => this.switchNextPage(e)}><i className="material-icons">chevron_right</i></a></li>
+          </ul>
+        ) : null}
       </div>
     );
   }
@@ -209,14 +230,16 @@ export class SearchDialog extends React.Component {
 
     return (
       <div className="col s6">
-        <RecordPanel record={selectedRecord}>
-          {selectedRecord ? (
-            <div className="card-action">
-              <a href="#" className="valign" id="move-to-source" onClick={(e) => this.handleRecordTransfer(e)}>Siirrä lähde tietueeksi</a>
-              <a href="#" className="valign" id="move-to-target" onClick={(e) => this.handleRecordTransfer(e)}>Siirrä kohde tietueeksi</a>
-            </div> 
-          ) : null}
-        </RecordPanel>
+        <div className="card darken-1">
+          <RecordPanel record={selectedRecord}>
+            {selectedRecord ? (
+              <div className="card-action">
+                <a href="#" className="valign" id="move-to-source" onClick={(e) => this.handleRecordTransfer(e)}>Siirrä lähde tietueeksi</a>
+                <a href="#" className="valign" id="move-to-target" onClick={(e) => this.handleRecordTransfer(e)}>Siirrä kohde tietueeksi</a>
+              </div> 
+            ) : null}
+          </RecordPanel>
+        </div>
       </div>
     );
   }
@@ -257,7 +280,7 @@ export class SearchDialog extends React.Component {
 
             <div className="divider" />
 
-            {this.props.loading ? <Preloader /> : this.props.results.numberOfRecords > 0 ? this.renderResultsRow(): null}
+            {this.renderResultsRow()}
           </div>
           <div className="card-action right-align">
             <a href="#" onClick={(e) => this.close(e)}>Valmis</a>

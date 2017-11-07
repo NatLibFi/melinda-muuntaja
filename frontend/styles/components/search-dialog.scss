@@ -28,11 +28,35 @@
       overflow: auto;
     }
 
+    .modal-search-dialog-record-selector.loading {
+      padding: 20px;
+    }
+    .modal-search-dialog-record-selector {
+      min-height: 650px;
+
+      .collection-item {
+        cursor: pointer;
+
+        .marc-record-panel {
+          pointer-events: none;
+        }
+      }
+
+      .collection-item:hover {
+        background-color: #ddd;
+      }
+
+      .collection-item.active {
+        background-color: #b2dfdb;
+        color: inherit;
+      }
+    }
+
     .pagination {
 
       li {
         a {
-          // width: 50px;
+          width: 50px;
         }
       }
     }

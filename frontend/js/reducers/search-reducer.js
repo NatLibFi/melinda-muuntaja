@@ -32,8 +32,8 @@ import {OPEN_SEARCH_DIALOG, CLOSE_SEARCH_DIALOG, SET_SEARCH_QUERY, EXECUTE_SEARC
 const INITIAL_STATE = Map({
   query: '',
   visible: false,
-  loading: false,
   currentPage: 1,
+  loading: false,
   results: Map({
     numberOfRecords: 0,
     numberOfPages: 0,
@@ -53,8 +53,7 @@ export default function location(state = INITIAL_STATE, action) {
         .set('results', INITIAL_STATE.get('results'));
     case SET_SEARCH_PAGE:
       return state
-        .set('currentPage', action.page)
-        .set('results', INITIAL_STATE.get('results'));
+        .set('currentPage', action.page);
     case EXECUTE_SEARCH:
       return state.set('loading', true);
     case SET_SEARCH_RESULTS: 
