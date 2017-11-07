@@ -33,6 +33,7 @@ import {connect} from 'react-redux';
 import _ from 'lodash';
 import {hashHistory} from 'react-router';
 import { hostRecordActionsEnabled } from '../selectors/merge-status-selector';
+import classNames from 'classnames';
 
 const RECORD_LOADING_DELAY = 500;
 
@@ -144,6 +145,12 @@ export class RecordSelectionControls extends React.Component {
 
     const { controlsEnabled, mergeConfigurations } = this.props;
 
+      const swapButtonClasses = classNames('btn-floating', 'blue', {
+        'waves-effect': controlsEnabled,
+        'waves-light': controlsEnabled,
+        'disabled': !controlsEnabled
+      });
+
     return (
       <div className="row row-margin-swap record-selection-controls">
       
@@ -152,7 +159,15 @@ export class RecordSelectionControls extends React.Component {
           <label htmlFor="source_record">Lähdetietue</label>
         </div>
 
-        <div className="col s2 offset-s2 input-field">
+        <div className="col s2 control-swap-horizontal input-field">
+          <div>
+            <a className={swapButtonClasses} onClick={(e) => this.handleSwap(e)}>
+              <i className="material-icons tooltip small" title="Vaihda keskenään">swap_horiz</i>
+            </a>
+          </div>
+        </div>
+
+        <div className="col s2 input-field">
           <input id="target_record" type="tel" value={this.props.targetRecordId} onChange={this.handleChange.bind(this)} disabled={!controlsEnabled}/>
           <label htmlFor="target_record">Kohdetietue</label>
         </div>
