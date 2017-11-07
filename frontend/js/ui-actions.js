@@ -318,8 +318,13 @@ export function swapRecords() {
   return function(dispatch, getState) {
     const sourceRecordId = getState().getIn(['sourceRecord', 'id']);
     const targetRecordId = getState().getIn(['targetRecord', 'id']);
-    dispatch(fetchRecord(sourceRecordId, 'TARGET'));
-    dispatch(fetchRecord(targetRecordId, 'SOURCE'));
+    dispatch(setSourceRecordId(targetRecordId));
+    dispatch(setTargetRecordId(sourceRecordId));
+
+    if (targetRecordId) dispatch(fetchRecord(targetRecordId, 'SOURCE'));
+    else dispatch(resetSourceRecord());
+    if (sourceRecordId) dispatch(fetchRecord(sourceRecordId, 'TARGET'));
+    else dispatch(resetTargetRecord());
   };
 
 }
