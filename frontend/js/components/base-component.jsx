@@ -44,6 +44,7 @@ export class BaseComponent extends React.Component {
 
   static propTypes = {
     sessionState: React.PropTypes.string,
+    searchDialogVisible: React.PropTypes.bool.isRequired,
     shouldRenderSubrecordComponent: React.PropTypes.bool.isRequired,
     mergeDialog: React.PropTypes.object.isRequired,
     closeMergeDialog: React.PropTypes.func.isRequired,

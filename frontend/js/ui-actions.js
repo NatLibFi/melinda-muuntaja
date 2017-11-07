@@ -244,13 +244,14 @@ export function handleSearch(query, page = 1) {
           decorateFieldsWithUuid(marcRecord);
 
           return marcRecord;
-        })
+        });
+
         dispatch(setSearchResults(json));
       });
-  }
+  };
 }
 
-export const EXECUTE_SEARCH = "EXECUTE_SEARCH";
+export const EXECUTE_SEARCH = 'EXECUTE_SEARCH';
 
 export function executeSearch(query) {
   return {
@@ -259,7 +260,7 @@ export function executeSearch(query) {
   };
 }
 
-export const SET_SEARCH_RESULTS = "SET_SEARCH_RESULTS";
+export const SET_SEARCH_RESULTS = 'SET_SEARCH_RESULTS';
 
 export function setSearchResults(results) {
   return {
@@ -269,7 +270,7 @@ export function setSearchResults(results) {
 }
 
 
-export const SET_SEARCH_QUERY = "SET_SEARCH_QUERY";
+export const SET_SEARCH_QUERY = 'SET_SEARCH_QUERY';
 
 export function setSearchQuery(query) {
   return {
@@ -278,7 +279,7 @@ export function setSearchQuery(query) {
   };
 }
 
-export const SET_SEARCH_PAGE = "SET_SEARCH_PAGE";
+export const SET_SEARCH_PAGE = 'SET_SEARCH_PAGE';
 
 export function setSearchPage(page) {
   return {

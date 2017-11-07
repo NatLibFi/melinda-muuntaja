@@ -30,14 +30,6 @@ import express from 'express';
 import cors from 'cors';
 import { readEnvironmentVariable, corsOptions } from 'server/utils';
 import { logger } from 'server/logger';
-import bodyParser from 'body-parser';
-import MarcRecord from 'marc-record-js';
-import cookieParser from 'cookie-parser';
-import HttpStatus from 'http-status-codes';
-import { commitMerge } from './melinda-merge-update';
-import { readSessionMiddleware } from 'server/session-controller';
-import _ from 'lodash';
-import { createArchive } from './archive-service';
 import marc_record_converters from '@natlibfi/marc-record-converters';
 
 const RECORDS_PER_PAGE = 15;

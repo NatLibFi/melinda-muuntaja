@@ -40,6 +40,20 @@ const SEARCH_DELAY = 500;
 
 export class SearchDialog extends React.Component {
 
+  static propTypes = {
+    handleSearch: React.PropTypes.func.isRequired,
+    setSearchQuery: React.PropTypes.func.isRequired,
+    setSearchPage: React.PropTypes.func.isRequired,
+    closeSearchDialog: React.PropTypes.func.isRequired,
+    setSourceRecordId: React.PropTypes.func.isRequired,
+    setTargetRecordId: React.PropTypes.func.isRequired,
+    fetchRecord: React.PropTypes.func.isRequired,
+    results: React.PropTypes.object.isRequired,
+    currentPage: React.PropTypes.number.isRequired,
+    query: React.PropTypes.string.isRequired,
+    loading: React.PropTypes.bool.isRequired,
+  }
+
   constructor() {
     super();
 
@@ -52,15 +66,15 @@ export class SearchDialog extends React.Component {
     };
   }
 
+  componentDidUpdate() {
+    // update text fields if they are prefilled.
+    window.Materialize && window.Materialize.updateTextFields();
+  }
+
   close(event) {
     event.preventDefault();
 
     this.props.closeSearchDialog();
-  }
-
-  componentDidUpdate() {
-    // update text fields if they are prefilled.
-    window.Materialize && window.Materialize.updateTextFields();
   }
 
   handleChange(event) {
@@ -102,7 +116,7 @@ export class SearchDialog extends React.Component {
   switchNextPage(event) {
     event.preventDefault();
 
-    if (this.props.currentPage === this.props.numberOfPages) return
+    if (this.props.currentPage === this.props.results.numberOfPages) return;
 
     const page = this.props.currentPage + 1;
 
@@ -113,7 +127,7 @@ export class SearchDialog extends React.Component {
   switchPrevPage(event) {
     event.preventDefault();
 
-    if (this.props.currentPage === 1) return
+    if (this.props.currentPage === 1) return;
 
     const page = this.props.currentPage + 0;
 
@@ -152,9 +166,9 @@ export class SearchDialog extends React.Component {
   }
 
   renderRecordSelector() {
-    const { loading, currentPage } = this.props;
+    const { currentPage } = this.props;
 
-    const { numberOfRecords, numberOfPages, records } = this.props.results;
+    const { numberOfPages, records } = this.props.results;
    
     const paginationArray = this.getPaginationArray(currentPage, numberOfPages);
 
@@ -165,29 +179,29 @@ export class SearchDialog extends React.Component {
             const recordId = selectRecordId(record);
 
             return (
-              <a href="#" key={recordId} data-index={index} className={classNames("collection-item", {'active': this.state.selectedRecord === index})} onClick={(e) => this.handleRecordChange(e)}>{recordId}</a>
-            )
+              <a href="#" key={recordId} data-index={index} className={classNames('collection-item', {'active': this.state.selectedRecord === index})} onClick={(e) => this.handleRecordChange(e)}>{recordId}</a>
+            );
           })}
         </div>
 
         <ul className="pagination">
-          <li className={classNames({"waves-effect": currentPage !== 1, disabled: currentPage === 1})}><a href="#!"><i className="material-icons" onClick={(e) => this.switchPrevPage(e)}>chevron_left</i></a></li>
+          <li className={classNames({'waves-effect': currentPage !== 1, disabled: currentPage === 1})}><a href="#!"><i className="material-icons" onClick={(e) => this.switchPrevPage(e)}>chevron_left</i></a></li>
 
-          {paginationArray.map(page => {
+          {paginationArray.map((page,index) => {
             if (page === '...') {
               return (
-                <li className="disabled valign-bottom"><a href="#!">...</a></li>
+                <li key={index} className="disabled valign-bottom"><a href="#!">...</a></li>
               );
             }
             return (
-              <li className={classNames({"waves-effect": page !== currentPage, "active": page === currentPage})}><a href="#" data-page={page} onClick={(e) => this.switchPage(e)} >{page}</a></li>
-            )
+              <li key={index} className={classNames({'waves-effect': page !== currentPage, active: page === currentPage})}><a href="#" data-page={page} onClick={(e) => this.switchPage(e)} >{page}</a></li>
+            );
           }
           )}
-          <li className={classNames({"waves-effect": currentPage !== numberOfPages, disabled: currentPage === numberOfPages})}><a href="#" onClick={(e) => this.switchNextPage(e)}><i className="material-icons">chevron_right</i></a></li>
+          <li className={classNames({'waves-effect': currentPage !== numberOfPages, disabled: currentPage === numberOfPages})}><a href="#" onClick={(e) => this.switchNextPage(e)}><i className="material-icons">chevron_right</i></a></li>
         </ul>
       </div>
-    )
+    );
   }
 
   renderRecordPanel() {
@@ -231,7 +245,6 @@ export class SearchDialog extends React.Component {
   }
 
   render() {
-
     return (
       <div className="row modal-search-dialog">
         <div className="modal-search-dialog-outer card">
@@ -242,7 +255,7 @@ export class SearchDialog extends React.Component {
           <div className="modal-search-dialog-content card-content">
             {this.renderQueryInput()}
 
-            <div className="divider"></div>
+            <div className="divider" />
 
             {this.props.loading ? <Preloader /> : this.props.results.numberOfRecords > 0 ? this.renderResultsRow(): null}
           </div>
