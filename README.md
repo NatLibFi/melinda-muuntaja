@@ -1,4 +1,4 @@
-# UI for merging MARC records [![NPM Version](https://img.shields.io/npm/v/@natlibfi/melinda-eresouce-tool.svg)](https://npmjs.org/package/@natlibfi/melinda-eresouce-tool) [![Build Status](https://travis-ci.org/NatLibFi/melinda-eresouce-tool.svg?branch=master)](https://travis-ci.org/NatLibFi/melinda-eresouce-tool)
+# UI for transforming MARC records [![NPM Version](https://img.shields.io/npm/v/@natlibfi/melinda-eresource-tool.svg)](https://npmjs.org/package/@natlibfi/melinda-eresource-tool) [![Build Status](https://travis-ci.org/NatLibFi/melinda-eresource-tool.svg?branch=master)](https://travis-ci.org/NatLibFi/melinda-eresource-tool)
 ## Building the application
 
 Initialize submodules
