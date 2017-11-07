@@ -32,7 +32,7 @@ import { readEnvironmentVariable, corsOptions } from 'server/utils';
 import { logger } from 'server/logger';
 import marc_record_converters from '@natlibfi/marc-record-converters';
 
-const RECORDS_PER_PAGE = 15;
+const RECORDS_PER_PAGE = 10;
 
 const sruClient = require('@natlibfi/sru-client')({
   url: readEnvironmentVariable('SRU_URL'),
