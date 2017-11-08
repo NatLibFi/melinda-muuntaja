@@ -37,13 +37,38 @@
       min-height: 100px;
 
       li {
+        position: relative;
+
         cursor: pointer;
+
         padding: 10px 20px;
         margin: 0;
+
         border-bottom: 1px solid #e0e0e0;
 
         .marc-record-panel {
           pointer-events: none;
+          z-index: 1100;
+        }
+
+        .selected-record-container {
+          position:absolute;
+
+          bottom: 0px;
+          right: 0px;
+
+          margin-right: 5px;
+          margin-bottom: 5px;
+
+          font-size: 70%;
+          text-transform: uppercase;
+          color: #666;
+
+          display: flex;
+
+          div + div {
+            margin-left: 5px;
+          }
         }
       }
 
@@ -57,10 +82,20 @@
     }
 
     .pagination {
-
       li {
         a {
           width: 50px;
+        }
+      }
+    }
+
+    .marc-record-container {
+      a {
+        font-size: 1.2em;
+        margin-right: 2em;
+        &.disabled {
+          color: #CCC !important;
+          cursor: default;
         }
       }
     }

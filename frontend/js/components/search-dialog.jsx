@@ -45,6 +45,7 @@ export class SearchDialog extends React.Component {
     handleSearch: React.PropTypes.func.isRequired,
     setSearchQuery: React.PropTypes.func.isRequired,
     setSearchPage: React.PropTypes.func.isRequired,
+    clearSearchResults: React.PropTypes.func.isRequired,
     closeSearchDialog: React.PropTypes.func.isRequired,
     setSourceRecordId: React.PropTypes.func.isRequired,
     setTargetRecordId: React.PropTypes.func.isRequired,
@@ -53,6 +54,8 @@ export class SearchDialog extends React.Component {
     currentPage: React.PropTypes.number.isRequired,
     query: React.PropTypes.string.isRequired,
     loading: React.PropTypes.bool.isRequired,
+    targetRecordId: React.PropTypes.string,
+    sourceRecordId: React.PropTypes.string,
   }
 
   constructor() {
@@ -179,7 +182,7 @@ export class SearchDialog extends React.Component {
   }
 
   renderRecordSelector() {
-    const { currentPage, loading } = this.props;
+    const { currentPage, loading, targetRecordId, sourceRecordId } = this.props;
 
     const { numberOfPages, records } = this.props.results;
    
@@ -209,6 +212,16 @@ export class SearchDialog extends React.Component {
               return (
                 <li key={recordId} data-index={index} className={classNames({'active': this.state.selectedRecord === index})} onClick={(e) => this.handleRecordChange(e)}>
                   <MarcRecordPanel record={trimmedRecord} />
+
+                  <div className="selected-record-container">
+                    {targetRecordId === recordId ? (
+                      <div>Kohdetietue</div>
+                    ): null}
+
+                    {sourceRecordId === recordId ? (
+                      <div>Lähdetietue</div>
+                    ): null}
+                  </div>
                 </li>
               );
             })}
@@ -240,16 +253,22 @@ export class SearchDialog extends React.Component {
   renderRecordPanel() {
     const selectedRecord = this.props.results.records[this.state.selectedRecord];
 
+    if (!selectedRecord) {
+      return (
+        <div className="col s6">
+          <div className="card darken-1"/>
+        </div>
+      );
+    }
+
     return (
       <div className="col s6">
         <div className="card darken-1">
           <RecordPanel record={selectedRecord}>
-            {selectedRecord ? (
-              <div className="card-action">
-                <a href="#" className="valign" id="move-to-source" onClick={(e) => this.handleRecordTransfer(e)}>Siirrä lähdetietueeksi</a>
-                <a href="#" className="valign" id="move-to-target" onClick={(e) => this.handleRecordTransfer(e)}>Siirrä kohdetietueeksi</a>
-              </div> 
-            ) : null}
+            <div className="card-action">
+              <a href="#" className="valign" id="move-to-source" onClick={(e) => this.handleRecordTransfer(e)}>Siirrä lähdetietueeksi</a>
+              <a href="#" className="valign" id="move-to-target" onClick={(e) => this.handleRecordTransfer(e)}>Siirrä kohdetietueeksi</a>
+            </div> 
           </RecordPanel>
         </div>
       </div>
@@ -269,7 +288,6 @@ export class SearchDialog extends React.Component {
   renderQueryInput() {
     const { query } = this.props;
 
-
     return (
       <div className="row">
         <div className="input-field col s2">
@@ -283,9 +301,7 @@ export class SearchDialog extends React.Component {
   render() {
     const { loading, results: { numberOfRecords } } = this.props;
 
-
     const shouldRenderResultRow = loading || numberOfRecords > 0;
-    console.log(loading, numberOfRecords, shouldRenderResultRow);
 
     return (
       <div className="row modal-search-dialog">
@@ -312,6 +328,8 @@ export class SearchDialog extends React.Component {
 
 function mapStateToProps(state) {
   return {
+    targetRecordId: state.getIn(['targetRecord', 'id']),
+    sourceRecordId: state.getIn(['sourceRecord', 'id']),
     query: state.getIn(['search', 'query']),
     results: state.getIn(['search', 'results']).toJS(),
     loading: state.getIn(['search', 'loading']),

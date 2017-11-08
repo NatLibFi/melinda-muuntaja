@@ -49,7 +49,7 @@ export default function location(state = INITIAL_STATE, action) {
       return state.set('visible', true);
     case SET_SEARCH_QUERY:
       return state
-        .set('query', action.query)
+        .set('query', action.query);
     case CLEAR_SEARCH_RESULTS: 
       return state.set('results', INITIAL_STATE.get('results'));
     case SET_SEARCH_PAGE:
