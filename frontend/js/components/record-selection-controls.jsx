@@ -145,11 +145,11 @@ export class RecordSelectionControls extends React.Component {
 
     const { controlsEnabled, mergeConfigurations } = this.props;
 
-      const swapButtonClasses = classNames('btn-floating', 'blue', {
-        'waves-effect': controlsEnabled,
-        'waves-light': controlsEnabled,
-        'disabled': !controlsEnabled
-      });
+    const swapButtonClasses = classNames('btn-floating', 'blue', {
+      'waves-effect': controlsEnabled,
+      'waves-light': controlsEnabled,
+      'disabled': !controlsEnabled
+    });
 
     return (
       <div className="row row-margin-swap record-selection-controls">
