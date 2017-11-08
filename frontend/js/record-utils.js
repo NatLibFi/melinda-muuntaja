@@ -168,3 +168,13 @@ export function isLinkedFieldOf(queryField) {
     return fieldMatchesQueryLinkTag && linkNumberMatchesQueryLinkNumber && linkTagLinksBackToQueryField;
   };
 }
+
+export function toOnlySubfields(tag, subfieldCodes) {
+  return function(field) {
+    if (field.tag === tag) { 
+      const subfields = field.subfields.filter(s => _.includes(subfieldCodes, s.code));
+      return _.assign({}, field, {subfields});
+    }
+    return field;
+  };
+}

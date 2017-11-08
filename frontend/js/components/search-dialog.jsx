@@ -36,6 +36,7 @@ import '../../styles/components/search-dialog.scss';
 import { RecordPanel } from 'commons/components/record-panel';
 import { Preloader } from 'commons/components/preloader';
 import { MarcRecordPanel } from 'commons/components/marc-record-panel';
+import { toOnlySubfields } from '../record-utils';
 
 const SEARCH_DELAY = 500;
 
@@ -199,10 +200,11 @@ export class SearchDialog extends React.Component {
             {records.map((record, index) => {
               const recordId = selectRecordId(record);
               
-              const visibleFields = ['245', '336'];
+              const visibleFields = ['245', '338'];
 
               const selectedFields = record.fields
                 .filter(f => _.includes(visibleFields, f.tag))
+                .map(toOnlySubfields('338', ['a']))
                 .filter(f => f.subfields.length !== 0);
 
               const trimmedRecord = {

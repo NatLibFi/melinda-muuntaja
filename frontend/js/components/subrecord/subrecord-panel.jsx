@@ -33,7 +33,7 @@ import '../../../styles/components/subrecord-panel';
 import { MarcRecordPanel } from 'commons/components/marc-record-panel';
 import { RecordPanel } from 'commons/components/record-panel';
 import { SaveButtonPanel } from '../save-button-panel';
-
+import { toOnlySubfields } from '../../record-utils';
 export class SubRecordPanel extends React.Component {
 
   static propTypes = {
@@ -138,14 +138,4 @@ export class SubRecordPanel extends React.Component {
 
     }
   }
-}
-
-function toOnlySubfields(tag, subfieldCodes) {
-  return function(field) {
-    if (field.tag === tag) { 
-      const subfields = field.subfields.filter(s => _.includes(subfieldCodes, s.code));
-      return _.assign({}, field, {subfields});
-    }
-    return field;
-  };
 }
