@@ -247,7 +247,7 @@ export function handleSearch() {
 
     dispatch(executeSearch());
 
-    const indexPrefix = index ? index + "=" : '';
+    const indexPrefix = index ? index + '=' : '';
 
     return fetch(`${APIBasePath}/?q=${indexPrefix}${query}&page=${page}`)
       .then(validateResponseStatus)
@@ -261,6 +261,9 @@ export function handleSearch() {
         });
 
         dispatch(setSearchResults(json));
+      })
+      .catch(() => {
+        dispatch(setSearchError());
       });
   };
 }
@@ -279,6 +282,15 @@ export function setSearchResults(results) {
   return {
     type: SET_SEARCH_RESULTS,
     results
+  };
+}
+
+export const SET_SEARCH_ERROR = 'SET_SEARCH_ERROR';
+
+export function setSearchError(error) {
+  return {
+    type: SET_SEARCH_ERROR,
+    error
   };
 }
 

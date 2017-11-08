@@ -46,6 +46,7 @@ export class SearchDialog extends React.Component {
     handleSearch: React.PropTypes.func.isRequired,
     setSearchQuery: React.PropTypes.func.isRequired,
     setSearchPage: React.PropTypes.func.isRequired,
+    setSearchIndex: React.PropTypes.func.isRequired,
     clearSearchResults: React.PropTypes.func.isRequired,
     closeSearchDialog: React.PropTypes.func.isRequired,
     setSourceRecordId: React.PropTypes.func.isRequired,
@@ -55,6 +56,8 @@ export class SearchDialog extends React.Component {
     currentPage: React.PropTypes.number.isRequired,
     query: React.PropTypes.string.isRequired,
     loading: React.PropTypes.bool.isRequired,
+    error: React.PropTypes.bool.isRequired,
+    showResults: React.PropTypes.bool.isRequired,
     targetRecordId: React.PropTypes.string,
     sourceRecordId: React.PropTypes.string,
   }
@@ -62,7 +65,7 @@ export class SearchDialog extends React.Component {
   constructor() {
     super();
 
-    this.handleChangeDebounced = _.debounce((value) => {
+    this.handleChangeDebounced = _.debounce(() => {
       this.props.handleSearch();
     }, SEARCH_DELAY);
 
@@ -71,13 +74,13 @@ export class SearchDialog extends React.Component {
     };
   }
 
+  componentDidMount() {
+    window.$(this.searchIndexSelect).on('change', (event) => this.handleSearchIndexChange(event)).material_select();
+  }
+
   componentDidUpdate() {
     // update text fields if they are prefilled.
     window.Materialize && window.Materialize.updateTextFields();
-  }
-
-  componentDidMount() {
-    window.$(this.searchIndexSelect).on('change', (event) => this.handleSearchIndexChange(event)).material_select();
   }
 
   close(event) {
@@ -193,53 +196,73 @@ export class SearchDialog extends React.Component {
     return result;
   }
 
-  renderRecordSelector() {
-    const { currentPage, loading, targetRecordId, sourceRecordId } = this.props;
+  renderRecordCollection() {
+    const { loading, error, targetRecordId, sourceRecordId, results: { records, numberOfRecords} } = this.props;
 
-    const { numberOfPages, records } = this.props.results;
+    if (loading) {
+      return (
+        <div className="card darken-1 collection modal-search-dialog-record-selector loading">
+          <Preloader />
+        </div>
+      );
+    } else if(error) {
+      return (
+        <div className="card darken-1 collection modal-search-dialog-record-selector loading">
+          Haussa tapahtui virhe.
+        </div>
+      );
+    } else if(numberOfRecords === 0) {
+      return (
+        <div className="card darken-1 collection modal-search-dialog-record-selector loading">
+          Hakutuloksia ei löytynyt.
+        </div>
+      );
+    }
+
+    return (
+      <ul className="card darken-1 modal-search-dialog-record-selector">
+        {records.map((record, index) => {
+          const recordId = selectRecordId(record);
+          
+          const visibleFields = ['245', '338'];
+
+          const selectedFields = record.fields
+            .filter(f => _.includes(visibleFields, f.tag))
+            .map(toOnlySubfields('338', ['a']))
+            .filter(f => f.subfields.length !== 0);
+
+          const trimmedRecord = {
+            fields: selectedFields
+          };
+
+          return (
+            <li key={recordId} data-index={index} className={classNames({'active': this.state.selectedRecord === index})} onClick={(e) => this.handleRecordChange(e)}>
+              <MarcRecordPanel record={trimmedRecord} />
+
+              <div className="selected-record-container">
+                {targetRecordId === recordId ? (
+                  <div>Kohdetietue</div>
+                ): null}
+
+                {sourceRecordId === recordId ? (
+                  <div>Lähdetietue</div>
+                ): null}
+              </div>
+            </li>
+          );
+        })}
+      </ul>
+    );
+  }
+
+  renderRecordSelector() {
+    const { currentPage, results: { numberOfPages } } = this.props;
    
     const paginationArray = this.getPaginationArray(currentPage, numberOfPages);
 
     return (
       <div className="col s6">
-        {loading ? (
-          <div className="card darken-1 collection modal-search-dialog-record-selector loading">
-            <Preloader />
-          </div>
-          ) : (
-          <ul className="card darken-1 modal-search-dialog-record-selector">
-            {records.map((record, index) => {
-              const recordId = selectRecordId(record);
-              
-              const visibleFields = ['245', '338'];
-
-              const selectedFields = record.fields
-                .filter(f => _.includes(visibleFields, f.tag))
-                .map(toOnlySubfields('338', ['a']))
-                .filter(f => f.subfields.length !== 0);
-
-              const trimmedRecord = {
-                fields: selectedFields
-              };
-
-              return (
-                <li key={recordId} data-index={index} className={classNames({'active': this.state.selectedRecord === index})} onClick={(e) => this.handleRecordChange(e)}>
-                  <MarcRecordPanel record={trimmedRecord} />
-
-                  <div className="selected-record-container">
-                    {targetRecordId === recordId ? (
-                      <div>Kohdetietue</div>
-                    ): null}
-
-                    {sourceRecordId === recordId ? (
-                      <div>Lähdetietue</div>
-                    ): null}
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
-        )}
+        {this.renderRecordCollection()}
         
         {numberOfPages > 1 ? (
           <ul className="pagination">
@@ -321,9 +344,7 @@ export class SearchDialog extends React.Component {
   }
 
   render() {
-    const { loading, results: { numberOfRecords } } = this.props;
-
-    const shouldRenderResultRow = loading || numberOfRecords > 0;
+    const { showResults } = this.props;
 
     return (
       <div className="row modal-search-dialog">
@@ -337,7 +358,7 @@ export class SearchDialog extends React.Component {
 
             <div className="divider" />
 
-            {shouldRenderResultRow && this.renderResultsRow()}
+            {showResults && this.renderResultsRow()}
           </div>
           <div className="card-action right-align">
             <a href="#" onClick={(e) => this.close(e)}>Valmis</a>
@@ -355,6 +376,8 @@ function mapStateToProps(state) {
     query: state.getIn(['search', 'query']),
     results: state.getIn(['search', 'results']).toJS(),
     loading: state.getIn(['search', 'loading']),
+    showResults: state.getIn(['search', 'showResults']),
+    error: state.getIn(['search', 'error']),
     currentPage: state.getIn(['search', 'currentPage'])
   };
 }

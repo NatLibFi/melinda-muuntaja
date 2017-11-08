@@ -27,7 +27,7 @@
 */
 
 import { Map, List } from 'immutable'; 
-import {OPEN_SEARCH_DIALOG, CLOSE_SEARCH_DIALOG, SET_SEARCH_QUERY, EXECUTE_SEARCH, SET_SEARCH_RESULTS,SET_SEARCH_PAGE, CLEAR_SEARCH_RESULTS, SET_SEARCH_INDEX} from '../ui-actions';
+import {OPEN_SEARCH_DIALOG, CLOSE_SEARCH_DIALOG, SET_SEARCH_QUERY, SET_SEARCH_ERROR, EXECUTE_SEARCH, SET_SEARCH_RESULTS,SET_SEARCH_PAGE, CLEAR_SEARCH_RESULTS, SET_SEARCH_INDEX} from '../ui-actions';
 
 const INITIAL_STATE = Map({
   query: '',
@@ -35,6 +35,8 @@ const INITIAL_STATE = Map({
   visible: false,
   currentPage: 1,
   loading: false,
+  error: false,
+  showResults: false,
   results: Map({
     numberOfRecords: 0,
     numberOfPages: 0,
@@ -48,6 +50,10 @@ export default function location(state = INITIAL_STATE, action) {
       return INITIAL_STATE;
     case OPEN_SEARCH_DIALOG:
       return state.set('visible', true);
+    case SET_SEARCH_ERROR:
+      return state
+        .set('loading', false) 
+        .set('error', true); 
     case SET_SEARCH_INDEX:
       return state
         .set('index', action.index === 'default' ? null : action.index);
@@ -55,17 +61,23 @@ export default function location(state = INITIAL_STATE, action) {
       return state
         .set('query', action.query);
     case CLEAR_SEARCH_RESULTS: 
-      return state.set('results', INITIAL_STATE.get('results'));
+      return state
+        .set('results', INITIAL_STATE.get('results'))
+        .set('showResults', false)
+        .set('error', false);
     case SET_SEARCH_PAGE:
       return state
         .set('currentPage', action.page);
     case EXECUTE_SEARCH:
-      return state.set('loading', true);
+      return state
+        .set('loading', true)
+        .set('showResults', true)
+        .set('error', false);
     case SET_SEARCH_RESULTS: 
       return state
         .set('results', Map({
-          numberOfRecords: action.results.numberOfRecords,
-          numberOfPages: action.results.numberOfPages,
+          numberOfRecords: parseInt(action.results.numberOfRecords, 10),
+          numberOfPages: parseInt(action.results.numberOfPages, 10),
           records: List(action.results.records)
         }))
         .set('loading', false);
