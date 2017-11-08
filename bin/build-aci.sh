@@ -19,6 +19,7 @@ mkdir aci-build
 cp -rp build aci-build/app
 cp package.json aci-build/app/
 cp -r aci-build/app/{commons,melinda-ui-commons}
+cp melinda-ui-commons/package.json aci-build/app/melinda-ui-commons/
 
 cat <<EOF > aci-build/nodesource.list
 deb https://deb.nodesource.com/node_7.x xenial main
