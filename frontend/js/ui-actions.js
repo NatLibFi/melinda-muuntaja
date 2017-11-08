@@ -237,13 +237,19 @@ export function clearSearchResults() {
   };
 }
 
-export function handleSearch(query, page = 1) {
+export function handleSearch() {
   const APIBasePath = __DEV__ ? 'http://localhost:3001/sru': '/sru';
 
-  return function(dispatch) {
-    dispatch(executeSearch(query));
+  return function(dispatch, getState) {
+    const query = getState().getIn(['search', 'query']);
+    const page = getState().getIn(['search', 'currentPage']);
+    const index = getState().getIn(['search', 'index']);
 
-    return fetch(`${APIBasePath}/?q=${query}&page=${page}`)
+    dispatch(executeSearch());
+
+    const indexPrefix = index ? index + "=" : '';
+
+    return fetch(`${APIBasePath}/?q=${indexPrefix}${query}&page=${page}`)
       .then(validateResponseStatus)
       .then(response => response.json())
       .then(json => {
@@ -261,10 +267,9 @@ export function handleSearch(query, page = 1) {
 
 export const EXECUTE_SEARCH = 'EXECUTE_SEARCH';
 
-export function executeSearch(query) {
+export function executeSearch() {
   return {
-    type: EXECUTE_SEARCH,
-    query
+    type: EXECUTE_SEARCH
   };
 }
 
@@ -293,6 +298,16 @@ export function setSearchPage(page) {
   return {
     type: SET_SEARCH_PAGE,
     page
+  };
+}
+
+
+export const SET_SEARCH_INDEX = 'SET_SEARCH_INDEX';
+
+export function setSearchIndex(index) {
+  return {
+    type: SET_SEARCH_INDEX,
+    index
   };
 }
 

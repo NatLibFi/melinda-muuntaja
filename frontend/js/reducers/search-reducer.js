@@ -27,10 +27,11 @@
 */
 
 import { Map, List } from 'immutable'; 
-import {OPEN_SEARCH_DIALOG, CLOSE_SEARCH_DIALOG, SET_SEARCH_QUERY, EXECUTE_SEARCH, SET_SEARCH_RESULTS,SET_SEARCH_PAGE, CLEAR_SEARCH_RESULTS} from '../ui-actions';
+import {OPEN_SEARCH_DIALOG, CLOSE_SEARCH_DIALOG, SET_SEARCH_QUERY, EXECUTE_SEARCH, SET_SEARCH_RESULTS,SET_SEARCH_PAGE, CLEAR_SEARCH_RESULTS, SET_SEARCH_INDEX} from '../ui-actions';
 
 const INITIAL_STATE = Map({
   query: '',
+  index: null,
   visible: false,
   currentPage: 1,
   loading: false,
@@ -47,6 +48,9 @@ export default function location(state = INITIAL_STATE, action) {
       return INITIAL_STATE;
     case OPEN_SEARCH_DIALOG:
       return state.set('visible', true);
+    case SET_SEARCH_INDEX:
+      return state
+        .set('index', action.index === 'default' ? null : action.index);
     case SET_SEARCH_QUERY:
       return state
         .set('query', action.query);

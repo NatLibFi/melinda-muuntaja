@@ -63,7 +63,7 @@ export class SearchDialog extends React.Component {
     super();
 
     this.handleChangeDebounced = _.debounce((value) => {
-      this.props.handleSearch(value);
+      this.props.handleSearch();
     }, SEARCH_DELAY);
 
     this.state = {
@@ -74,6 +74,10 @@ export class SearchDialog extends React.Component {
   componentDidUpdate() {
     // update text fields if they are prefilled.
     window.Materialize && window.Materialize.updateTextFields();
+  }
+
+  componentDidMount() {
+    window.$(this.searchIndexSelect).on('change', (event) => this.handleSearchIndexChange(event)).material_select();
   }
 
   close(event) {
@@ -92,6 +96,13 @@ export class SearchDialog extends React.Component {
     }
     else {
       this.props.clearSearchResults();
+    }
+  }
+
+  handleSearchIndexChange(event) {
+    this.props.setSearchIndex(event.target.value);
+    if (this.props.query.length >= 3) {
+      this.props.handleSearch();
     }
   }
 
@@ -129,7 +140,7 @@ export class SearchDialog extends React.Component {
     const page = this.props.currentPage + 1;
 
     this.props.setSearchPage(page);
-    this.props.handleSearch(this.props.query, page);
+    this.props.handleSearch();
     this.setState(() => ({
       selectedRecord: 0
     }));
@@ -143,7 +154,7 @@ export class SearchDialog extends React.Component {
     const page = this.props.currentPage + 0;
 
     this.props.setSearchPage(page);
-    this.props.handleSearch(this.props.query, page);
+    this.props.handleSearch();
     this.setState(() => ({
       selectedRecord: 0
     }));
@@ -155,7 +166,7 @@ export class SearchDialog extends React.Component {
     const page = parseInt(event.target.dataset.page, 10); 
 
     this.props.setSearchPage(page);
-    this.props.handleSearch(this.props.query, page);
+    this.props.handleSearch();
     this.setState(() => ({
       selectedRecord: 0
     }));
@@ -292,6 +303,15 @@ export class SearchDialog extends React.Component {
 
     return (
       <div className="row">
+        <div className="col s2 input-field">
+          <select ref={(ref) => this.searchIndexSelect = ref}>
+            <option value="default">Kaikki sanat</option>
+            <option value="dc.title">Nimeke</option>
+            <option value="dc.author">Tekijä</option>
+            <option value="bath.isbn">ISBN</option>
+          </select>
+          <label>Hakutyyppi</label>
+        </div>
         <div className="input-field col s2">
           <input id="search_query" type="text" value={query} onChange={(e) => this.handleChange(e)} />
           <label htmlFor="search_query">Hakusana:</label>

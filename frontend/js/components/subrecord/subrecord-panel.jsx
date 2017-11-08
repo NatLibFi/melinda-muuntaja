@@ -34,6 +34,7 @@ import { MarcRecordPanel } from 'commons/components/marc-record-panel';
 import { RecordPanel } from 'commons/components/record-panel';
 import { SaveButtonPanel } from '../save-button-panel';
 import { toOnlySubfields } from '../../record-utils';
+
 export class SubRecordPanel extends React.Component {
 
   static propTypes = {
