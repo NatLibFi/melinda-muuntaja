@@ -81,7 +81,7 @@ export class RecordMergePanel extends React.Component {
     return (       
       <RecordPanel
         showHeader
-        title="Lähde tietue"
+        title="Lähdetietue"
         record={record}
         onFieldClick={(field) => this.toggleSourceRecordField(field)}>
         
@@ -99,7 +99,7 @@ export class RecordMergePanel extends React.Component {
     return (     
       <RecordPanel
         showHeader
-        title="Pohja tietue"
+        title="Kohdetietue"
         record={record}>
 
         { recordState === 'LOADING' ? <div className="card-content"><Preloader /></div> : null }
@@ -192,7 +192,7 @@ function mapStateToProps(state) {
     sourceRecord: (state.getIn(['sourceRecord', 'record'])),
     sourceRecordError: state.getIn(['sourceRecord', 'errorMessage']),
     sourceRecordState: state.getIn(['sourceRecord', 'state']),
-    targetRecord: state.getIn(['targetRecord', 'state']) === 'EMPTY' ? state.getIn(['config', 'targetRecord']) : state.getIn(['targetRecord', 'record']),
+    targetRecord: state.getIn(['targetRecord', 'state']) === 'EMPTY' ? state.getIn(['config', 'mergeProfiles', state.getIn(['config', 'selectedMergeProfile']), 'record', 'targetRecord']) : state.getIn(['targetRecord', 'record']),
     targetRecordError: state.getIn(['targetRecord', 'state']) === 'EMPTY' ? null : state.getIn(['targetRecord', 'errorMessage']),
     targetRecordState: state.getIn(['targetRecord', 'state']) === 'EMPTY' ? 'LOADED' : state.getIn(['targetRecord', 'state']),
     saveButtonVisible: recordSaveActionAvailable(state)

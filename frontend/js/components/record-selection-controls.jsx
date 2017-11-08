@@ -33,13 +33,14 @@ import {connect} from 'react-redux';
 import _ from 'lodash';
 import {hashHistory} from 'react-router';
 import { hostRecordActionsEnabled } from '../selectors/merge-status-selector';
+import classNames from 'classnames';
 
 const RECORD_LOADING_DELAY = 500;
 
 export class RecordSelectionControls extends React.Component {
 
   static propTypes = {
-    selectedMergeConfig: React.PropTypes.string.isRequired,
+    selectedMergeProfile: React.PropTypes.string.isRequired,
     sourceRecordId: React.PropTypes.string.isRequired,
     targetRecordId: React.PropTypes.string.isRequired,
     switchMergeConfig: React.PropTypes.func.isRequired,
@@ -51,7 +52,7 @@ export class RecordSelectionControls extends React.Component {
     setTargetRecordId: React.PropTypes.func.isRequired,
     locationDidChange: React.PropTypes.func.isRequired,
     controlsEnabled: React.PropTypes.bool.isRequired,
-    mergeConfigurations: React.PropTypes.array
+    mergeProfiles: React.PropTypes.array
   }
 
   constructor() {
@@ -88,7 +89,7 @@ export class RecordSelectionControls extends React.Component {
     // update text fields if they are prefilled.
     window.Materialize && window.Materialize.updateTextFields();
 
-    window.$(this.mergeConfigurationSelect).on('change', (event) => this.handleMergeConfigurationChange(event.target.value)).material_select();
+    window.$(this.mergeProfileSelect).on('change', (event) => this.handleMergeProfileChange(event.target.value)).material_select();
   }
 
   componentWillUnmount() {
@@ -97,9 +98,8 @@ export class RecordSelectionControls extends React.Component {
     }
   }
 
-
-  handleMergeConfigurationChange(value) {
-    if (this.props.selectedMergeConfig !== value) this.props.switchMergeConfig(value);
+  handleMergeProfileChange(value) {
+    if (this.props.selectedMergeProfile !== value) this.props.switchMergeConfig(value);
   }
 
   handleChange(event) {
@@ -142,25 +142,39 @@ export class RecordSelectionControls extends React.Component {
 
   render() {
 
-    const { controlsEnabled, mergeConfigurations } = this.props;
+    const { controlsEnabled, mergeProfiles } = this.props;
+
+    const swapButtonClasses = classNames('btn-floating', 'blue', {
+      'waves-effect': controlsEnabled,
+      'waves-light': controlsEnabled,
+      'disabled': !controlsEnabled
+    });
 
     return (
       <div className="row row-margin-swap record-selection-controls">
       
         <div className="col s2 offset-s1 input-field">
           <input id="source_record" type="tel" value={this.props.sourceRecordId} onChange={this.handleChange.bind(this)} disabled={!controlsEnabled} />
-          <label htmlFor="source_record">Lähde tietue</label>
+          <label htmlFor="source_record">Lähdetietue</label>
         </div>
 
-        <div className="col s2 offset-s2 input-field">
+        <div className="col s2 control-swap-horizontal input-field">
+          <div>
+            <a className={swapButtonClasses} onClick={(e) => this.handleSwap(e)}>
+              <i className="material-icons tooltip small" title="Vaihda keskenään">swap_horiz</i>
+            </a>
+          </div>
+        </div>
+
+        <div className="col s2 input-field">
           <input id="target_record" type="tel" value={this.props.targetRecordId} onChange={this.handleChange.bind(this)} disabled={!controlsEnabled}/>
-          <label htmlFor="target_record">Pohja tietue</label>
+          <label htmlFor="target_record">Kohdetietue</label>
         </div>
       
-        {mergeConfigurations.length > 1 && (
+        {mergeProfiles.length > 1 && (
           <div className="col s2 offset-s2 input-field">
-            <select ref={(ref) => this.mergeConfigurationSelect = ref}>
-              {mergeConfigurations.map(({key, name}) => (
+            <select ref={(ref) => this.mergeProfileSelect = ref}>
+              {mergeProfiles.map(({key, name}) => (
                 <option key={key} value={key}>{name}</option>
               ))}
             </select>
@@ -177,8 +191,8 @@ function mapStateToProps(state) {
   return {
     sourceRecordId: state.getIn(['sourceRecord', 'id']) || '',
     targetRecordId: state.getIn(['targetRecord', 'id']) || '',
-    selectedMergeConfig: state.getIn(['config', 'selectedMergeConfig']),
-    mergeConfigurations: state.getIn(['config', 'mergeConfigurations']).map((value, key) => ({ key, name: value.name })).toList().toJS(),
+    selectedMergeProfile: state.getIn(['config', 'selectedMergeProfile']),
+    mergeProfiles: state.getIn(['config', 'mergeProfiles']).map((value, key) => ({ key, name: value.get('name') })).toList().toJS(),
     controlsEnabled: hostRecordActionsEnabled(state)
   };
 }

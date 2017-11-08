@@ -32,13 +32,14 @@ import { CREATE_SESSION_SUCCESS } from 'commons/constants/action-type-constants'
 import { preset } from '../config/config-presets';
 
 const INITIAL_STATE = Map({
-  selectedMergeConfig: 'default'
+  selectedMergeProfile: 'default',
+  mergeProfiles: Map()
 });
 
 export default function ui(state = INITIAL_STATE, action) {
   switch (action.type) {
     case SWITCH_MERGE_CONFIG:
-      return state.set('selectedMergeConfig', action.config);
+      return state.set('selectedMergeProfile', action.config);
 
     case CREATE_SESSION_SUCCESS:
       return setConfiguration(state, action.userinfo.department.toLowerCase());
@@ -52,9 +53,21 @@ function setConfiguration(state, department) {
   if (preset.hasOwnProperty(department)) configPreset = preset[department];
   else configPreset = preset.defaults;
 
-  return state
-    .set('targetRecord', configPreset.targetRecord)
-    .set('mergeConfigurations', Map(configPreset.mergeConfigurations))
-    .set('validationRules', configPreset.validationRules)
-    .set('postMergeFixes', configPreset.postMergeFixes);
+  return state.set('mergeProfiles', Object.keys(configPreset).reduce((mergeProfiles, key) => mergeProfiles.set(key, Map({
+    name: configPreset[key].name,
+    record: Map({
+      'targetRecord': configPreset[key].record.targetRecord,
+      'validationRules': configPreset[key].record.validationRules,
+      'postMergeFixes': configPreset[key].record.postMergeFixes,
+      'mergeConfiguration': configPreset[key].record.mergeConfiguration
+    }),
+    subrecords: Map({
+      'mergeType': configPreset[key].subrecords.mergeType,
+      'targetRecord': configPreset[key].subrecords.targetRecord,
+      'validationRules': configPreset[key].subrecords.validationRules,
+      'postMergeFixes': configPreset[key].subrecords.postMergeFixes,
+      'mergeTargetRecordWithHost': configPreset[key].subrecords.mergeTargetRecordWithHost,
+      'mergeConfiguration': configPreset[key].subrecords.mergeConfiguration,
+    })
+  })), Map()));
 }

@@ -36,10 +36,11 @@ import {hashHistory} from 'react-router';
 import { RESET_WORKSPACE, TOGGLE_COMPACT_SUBRECORD_VIEW, SWITCH_MERGE_CONFIG } from './constants/action-type-constants';
 import { FetchNotOkError } from './errors';
 import { subrecordRows, sourceSubrecords, targetSubrecords, rowsWithResultRecord } from './selectors/subrecord-selectors';
-import { updateSubrecordArrangement, saveSubrecordSuccess } from './action-creators/subrecord-actions';
+import { updateSubrecordArrangement, updateMergedSubrecords, saveSubrecordSuccess } from './action-creators/subrecord-actions';
 import { match } from './component-record-match-service';
-import { decorateFieldsWithUuid } from './record-utils';
+import { decorateFieldsWithUuid, setRecordId, selectRecordId } from './record-utils';
 import uuid from 'uuid';
+import * as subrecordMergeTypes from './config/subrecord-merge-types';
 
 import * as MergeValidation from './marc-record-merge-validate-service';
 import * as PostMerge from './marc-record-merge-postmerge-service';
@@ -60,27 +61,41 @@ export function commitMerge() {
 
   return function(dispatch, getState) {
     dispatch(commitMergeStart());
+    const operationType = getState().getIn(['targetRecord', 'state']) !== 'EMPTY' ? 'UPDATE' : 'CREATE';
+    const subrecordMergeType = getState().getIn(['config', 'mergeProfiles', getState().getIn(['config', 'selectedMergeProfile']), 'subrecords', 'mergeType']);
 
     const sourceRecord = getState().getIn(['sourceRecord', 'record']);
     const targetRecord = getState().getIn(['targetRecord', 'record']);
     const mergedRecord = getState().getIn(['mergedRecord', 'record']);
     const unmodifiedRecord = getState().getIn(['mergedRecord', 'unmodifiedRecord']);
 
+    if (targetRecord) {
+      setRecordId(mergedRecord, selectRecordId(targetRecord));
+    }
+
     const subrecords = subrecordRows(getState());
-    const sourceSubrecordList = _(subrecords).map('sourceRecord').compact().value();
-    const targetSubrecordList = _(subrecords).map('targetRecord').compact().value();
-    const mergedSubrecordList = _(subrecords).map('mergedRecord').compact().value();
-    const unmodifiedMergedSubrecordList = _(subrecords).map('unmodifiedMergedRecord').compact().value();
+
+    const { sourceSubrecordList, targetSubrecordList, mergedSubrecordList, unmodifiedMergedSubrecordList } = subrecords.reduce((result, row) => {
+      if (row.targetRecord) {
+        row.mergedRecord = new MarcRecord(row.mergedRecord);
+
+        setRecordId(row.mergedRecord, selectRecordId(row.targetRecord));
+      }
+
+      if (row.targetRecord) result.targetSubrecordList.push(row.targetRecord);
+      if (row.sourceRecord) result.sourceSubrecordList.push(row.sourceRecord);
+      if (row.mergedRecord) result.mergedSubrecordList.push(row.mergedRecord);
+      if (row.unmodifiedMergedRecord) result.unmodifiedMergedSubrecordList.push(row.unmodifiedMergedRecord);
+      
+      return result;
+    }, { sourceSubrecordList: [], targetSubrecordList: [], mergedSubrecordList: [], unmodifiedMergedSubrecordList: [] });
 
     const body = { 
-      operationType: getState().getIn(['targetRecord', 'state']) !== 'EMPTY' ? 'UPDATE' : 'CREATE',
+      operationType,
+      subrecordMergeType,
       otherRecord: {
         record: sourceRecord,
         subrecords: sourceSubrecordList,
-      },
-      preferredRecord: {
-        record: targetRecord,
-        subrecords: targetSubrecordList
       },
       mergedRecord: {
         record: mergedRecord,
@@ -91,6 +106,14 @@ export function commitMerge() {
         subrecords: unmodifiedMergedSubrecordList
       }
     };
+
+
+    if (getState().getIn(['targetRecord', 'state']) !== 'EMPTY') {
+      body.preferredRecord = {
+        record: targetRecord,
+        subrecords: targetSubrecordList
+      };
+    }
 
     const fetchOptions = {
       method: 'POST',
@@ -318,8 +341,13 @@ export function swapRecords() {
   return function(dispatch, getState) {
     const sourceRecordId = getState().getIn(['sourceRecord', 'id']);
     const targetRecordId = getState().getIn(['targetRecord', 'id']);
-    dispatch(fetchRecord(sourceRecordId, 'TARGET'));
-    dispatch(fetchRecord(targetRecordId, 'SOURCE'));
+    dispatch(setSourceRecordId(targetRecordId));
+    dispatch(setTargetRecordId(sourceRecordId));
+
+    if (targetRecordId) dispatch(fetchRecord(targetRecordId, 'SOURCE'));
+    else dispatch(resetSourceRecord());
+    if (sourceRecordId) dispatch(fetchRecord(sourceRecordId, 'TARGET'));
+    else dispatch(resetTargetRecord());
   };
 
 }
@@ -340,31 +368,39 @@ export function updateMergedRecord() {
 
   return function(dispatch, getState) {
 
+    const mergeProfile = getState().getIn(['config', 'mergeProfiles', getState().getIn(['config', 'selectedMergeProfile']), 'record']);
+    const subrecordMergeType = getState().getIn(['config', 'mergeProfiles', getState().getIn(['config', 'selectedMergeProfile']), 'subrecords', 'mergeType']);
+    const mergeConfiguration = mergeProfile.get('mergeConfiguration');
+    const validationRules = mergeProfile.get('validationRules');
+    const postMergeFixes = mergeProfile.get('postMergeFixes');
+
     const preferredState = getState().getIn(['targetRecord', 'state']);
-    const preferredRecord = preferredState === 'EMPTY' ? getState().getIn(['config', 'targetRecord']) : getState().getIn(['targetRecord', 'record']);
+    const preferredRecord = preferredState === 'EMPTY' ? mergeProfile.get('targetRecord') : getState().getIn(['targetRecord', 'record']);
     const preferredHasSubrecords = preferredState ? false : getState().getIn(['targetRecord', 'hasSubrecords']);
     const otherRecord = getState().getIn(['sourceRecord', 'record']);
     const otherRecordHasSubrecords = getState().getIn(['sourceRecord', 'hasSubrecords']);
     
     if (preferredRecord && otherRecord) {
-      const mergeConfiguration = getState().getIn(['config', 'mergeConfigurations', getState().getIn(['config', 'selectedMergeConfig'])]);
-      const validationRules = getState().getIn(['config', 'validationRules']);
-      const postMergeFixes = getState().getIn(['config', 'postMergeFixes']);
+      const merge = createRecordMerger(mergeConfiguration);
+    
+      const validationRulesClone = _.clone(validationRules);
 
-      const merge = createRecordMerger({ fields: mergeConfiguration.fields });
+      if (subrecordMergeType === subrecordMergeTypes.DISALLOW_SUBRECORDS) {
+        validationRulesClone.push(MergeValidation.otherRecordDoesNotHaveSubrecords);
+        validationRulesClone.push(MergeValidation.preferredRecordDoesNotHaveSubrecords);
+      }
 
-      MergeValidation.validateMergeCandidates(validationRules, preferredRecord, otherRecord, preferredHasSubrecords, otherRecordHasSubrecords)
+      MergeValidation.validateMergeCandidates(validationRulesClone, preferredRecord, otherRecord, preferredHasSubrecords, otherRecordHasSubrecords)
         .then(() => merge(preferredRecord, otherRecord))
         .then((originalMergedRecord) => {
-          if (!mergeConfiguration.newFields) return originalMergedRecord;
+          if (!mergeProfile.has('newFields')) return originalMergedRecord;
 
           var mergedRecord = new MarcRecord(originalMergedRecord);
 
-          mergeConfiguration.newFields.forEach(field => {
+          mergeProfile.get('newFields').forEach(field => {
             const fields = mergedRecord.fields.filter(fieldInMerged => {
               return field.tag === fieldInMerged.tag && _.isEqual(field.subfields, fieldInMerged.subfields);
             });
-
 
             if (fields.length === 0) mergedRecord.appendField({ ...field, uuid: uuid.v4()});
           });
@@ -379,13 +415,17 @@ export function updateMergedRecord() {
           dispatch(setMergedRecordError(error));
         }));
 
-
       // find pairs for subrecods
       const sourceSubrecordList = sourceSubrecords(getState());
       const targetSubrecordList = targetSubrecords(getState());
 
       const matchedSubrecordPairs = match(sourceSubrecordList, targetSubrecordList);
+
       dispatch(updateSubrecordArrangement(matchedSubrecordPairs));
+      
+      if (subrecordMergeType === subrecordMergeTypes.MERGE || subrecordMergeType === subrecordMergeTypes.SHARED) {
+        dispatch(updateMergedSubrecords(matchedSubrecordPairs));
+      }
     }
   };
 }
@@ -541,3 +581,4 @@ export function setCompactSubrecordView(enabled) {
     dispatch({ 'type': TOGGLE_COMPACT_SUBRECORD_VIEW, enabled, rowsToCompact});
   };
 }
+

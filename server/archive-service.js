@@ -38,12 +38,12 @@ const defaultArchivePath = path.resolve(__dirname, '..', 'merge-action-archive')
 const archivePath = readEnvironmentVariable('ARCHIVE_PATH', defaultArchivePath);
 mkdirp.sync(archivePath);
 
-export function createArchive(user, removedRecord, preferredRecord, mergedRecord, unmodifiedRecord, mergedRecordId) {
+export function createArchive(user, otherRecord, preferredRecord, mergedRecord, unmodifiedRecord, mergedRecordId) {
 
   return new Promise(function(resolve, reject) {
 
     const timeStamp = new Date().getTime();
-    const removedRecordId = getRecordId(removedRecord.record);
+    const otherRecordId = getRecordId(otherRecord.record);
     const preferredRecordId = getRecordId(preferredRecord.record);
     const username = user;
     const date = moment().format();
@@ -51,12 +51,12 @@ export function createArchive(user, removedRecord, preferredRecord, mergedRecord
     const metadata = {
       date,
       username,
-      removedRecordId,
+      otherRecordId,
       preferredRecordId,
       mergedRecordId
     };
 
-    const filename = `merge-${removedRecordId}-${preferredRecordId}-${mergedRecordId}-${username}-${timeStamp}`;
+    const filename = `merge-${otherRecordId}-${preferredRecordId}-${mergedRecordId}-${username}-${timeStamp}`;
 
     const output = fs.createWriteStream(path.resolve(archivePath, `${filename}.zip`));
     const archive = archiver('zip');
@@ -75,15 +75,15 @@ export function createArchive(user, removedRecord, preferredRecord, mergedRecord
     archive.pipe(output);
 
     archive
-      .append(removedRecord.record.toString(), {name: 'removed.txt'})
+      .append(otherRecord.record.toString(), {name: 'other.txt'})
       .append(preferredRecord.record.toString(), {name: 'preferred.txt'})
       .append(mergedRecord.record.toString(), {name: 'merged.txt'})
       .append(unmodifiedRecord.record.toString(), {name: 'merged-unmodified.txt'})
       .append(JSON.stringify(metadata), {name: 'meta.json'});
 
 
-    if (removedRecord.subrecords && removedRecord.subrecords.length) {
-      archive.append(removedRecord.subrecords.map(asString).join('\n'), {name: 'removed-subrecords.txt'});
+    if (otherRecord.subrecords && otherRecord.subrecords.length) {
+      archive.append(otherRecord.subrecords.map(asString).join('\n'), {name: 'other-subrecords.txt'});
     }
     if (preferredRecord.subrecords && preferredRecord.subrecords.length) {
       archive.append(preferredRecord.subrecords.map(asString).join('\n'), {name: 'preferred-subrecords.txt'});

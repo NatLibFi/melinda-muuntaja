@@ -88,6 +88,20 @@ export function decorateFieldsWithUuid(record) {
   });
 }
 
+export function setRecordId(record, newId) {
+
+  record.fields = record.fields.filter(function(field) {
+    return field.tag !== '001';
+  });
+
+  record.fields.unshift({
+    uuid: uuid.v4(),
+    tag: '001',
+    value: newId
+  });
+}
+
+
 export function resetRecordId(record) {
 
   record.fields = record.fields.filter(function(field) {

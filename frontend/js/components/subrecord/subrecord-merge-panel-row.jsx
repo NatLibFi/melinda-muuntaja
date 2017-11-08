@@ -106,7 +106,6 @@ export class SubrecordMergePanelRow extends React.Component {
   }
 
   renderMergedSubrecordPanel(mergedSubrecord, rowId, isExpanded, mergeError, opts) {
-    
     const { isCompacted } = this.props;
 
     if (mergeError) {
@@ -182,8 +181,8 @@ export class SubrecordMergePanelRow extends React.Component {
     const {rowId, sourceRecord, targetRecord, mergedRecord, selectedAction, connectDragSource, connectDropTarget, isOver, isExpanded, mergeError, actionsEnabled, isCompacted} = this.props;
     
     const isEmptyRow = sourceRecord === undefined && targetRecord === undefined;
-    const isMergeActionAvailable = sourceRecord !== undefined && targetRecord !== undefined;
-    const isCopyActionAvailable = !isMergeActionAvailable && !isEmptyRow;
+    const isMergeActionAvailable = sourceRecord !== undefined;
+    const isCopyActionAvailable = targetRecord !== undefined;
 
     const rowClasses = classNames({
       'to-merge': selectedAction === SubrecordActionTypes.MERGE,
@@ -204,7 +203,7 @@ export class SubrecordMergePanelRow extends React.Component {
           {this.renderSubrecordPanel(targetRecord, ItemTypes.TARGET_SUBRECORD, rowId, isExpanded, actionsEnabled)}
         </td>
         <td>
-         { isEmptyRow ? this.renderRemoveRowButton(rowId) : this.renderMergedSubrecordPanel(mergedRecord, rowId, isExpanded, mergeError, {isMergeActionAvailable, isCopyActionAvailable, selectedAction, actionsEnabled}) }
+         { isEmptyRow ? this.renderRemoveRowButton(rowId) : this.renderMergedSubrecordPanel(mergedRecord, rowId, isExpanded, mergeError, {isMergeActionAvailable, selectedAction, actionsEnabled, isCopyActionAvailable }) }
          { isCompacted ? null : this.renderExpandToggleButton(rowId, isEmptyRow, isExpanded) }
         </td>
       </tr>
