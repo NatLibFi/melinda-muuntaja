@@ -131,19 +131,7 @@ module.exports = {
     ]
   },
   "subrecords": {
-    "mergeType": subrecordMergeTypes.MERGE,
-    "targetRecord": TargetSubrecord,
-    "validationRules": MergeValidationPreset.melinda_component,
-    "postMergeFixes": PostMergePreset.defaults,
-    "mergeConfiguration": {
-      "fields": {
-        "1..": { "action": "copy", "options": { "dropOriginal": true } },
-        "245": { "action": "copy", "options": { "dropOriginal": true } },
-        "336": { "action": "copy", "options": { "dropOriginal": true } },
-        "337": { "action": "copy", "options": { "dropOriginal": true } },
-        "77.": { "action": "copy", "options": { "compareWithout": ["9"] } }
-      }
-    }
+    "mergeType": subrecordMergeTypes.DISALLOW_SUBRECORDS
   }
 };
 
