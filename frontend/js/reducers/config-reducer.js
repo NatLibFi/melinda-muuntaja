@@ -59,7 +59,8 @@ function setConfiguration(state, department) {
       'targetRecord': configPreset[key].record.targetRecord,
       'validationRules': configPreset[key].record.validationRules,
       'postMergeFixes': configPreset[key].record.postMergeFixes,
-      'mergeConfiguration': configPreset[key].record.mergeConfiguration
+      'mergeConfiguration': configPreset[key].record.mergeConfiguration,
+      'newFields': configPreset[key].record.newFields
     }),
     subrecords: Map({
       'mergeType': configPreset[key].subrecords.mergeType,
@@ -68,6 +69,7 @@ function setConfiguration(state, department) {
       'postMergeFixes': configPreset[key].subrecords.postMergeFixes,
       'mergeTargetRecordWithHost': configPreset[key].subrecords.mergeTargetRecordWithHost,
       'mergeConfiguration': configPreset[key].subrecords.mergeConfiguration,
+      'newFields': configPreset[key].subrecords.newFields
     })
   })), Map()));
 }

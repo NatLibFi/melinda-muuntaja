@@ -31,6 +31,7 @@ import MarcRecord from 'marc-record-js';
 import fetch from 'isomorphic-fetch';
 import { exceptCoreErrors } from '../utils';
 import { FetchNotOkError } from '../errors';
+import uuid from 'uuid';
 
 import { 
   INSERT_SUBRECORD_ROW, REMOVE_SUBRECORD_ROW, CHANGE_SOURCE_SUBRECORD_ROW, CHANGE_TARGET_SUBRECORD_ROW, 
@@ -265,6 +266,7 @@ function mergeTargetRecordWithHost({targetRecord, otherHostRecord, preferredHost
 function mergeSubrecord ({preferredRecord, otherRecord, preferredHostRecord, otherHostRecord, mergeProfile}) {
   const mergeConfiguration = mergeProfile.get('mergeConfiguration');
   const validationRules = mergeProfile.get('validationRules');
+  const newFields = mergeProfile.get('newFields');
   const postMergeFixes = _.clone(mergeProfile.get('postMergeFixes'));
 
   let preferredHostRecordId, otherHostRecordId;
@@ -292,6 +294,22 @@ function mergeSubrecord ({preferredRecord, otherRecord, preferredHostRecord, oth
 
     return MergeValidation.validateMergeCandidates(validationRules, preferredRecord, otherRecord)
       .then(() => merge(preferredRecord, otherRecord))
+      .then((originalMergedRecord) => {
+        if (!newFields) return originalMergedRecord;
+        var mergedRecord = new MarcRecord(originalMergedRecord);
+
+        newFields.forEach(field => {
+          const fields = mergedRecord.fields.filter(fieldInMerged => {
+            return field.tag === fieldInMerged.tag && _.isEqual(field.subfields, fieldInMerged.subfields);
+          });
+
+          if (fields.length === 0) mergedRecord.appendField({ ...field, uuid: uuid.v4()});
+        });
+
+        console.log(mergedRecord);
+
+        return mergedRecord;
+      })
       .then(mergedRecord => PostMerge.applyPostMergeModifications(postMergeFixes, preferredRecord, otherRecord, mergedRecord))
       .then(result => {
         return result.record;

@@ -373,6 +373,7 @@ export function updateMergedRecord() {
     const mergeConfiguration = mergeProfile.get('mergeConfiguration');
     const validationRules = mergeProfile.get('validationRules');
     const postMergeFixes = mergeProfile.get('postMergeFixes');
+    const newFields = mergeProfile.get('newFields');
 
     const preferredState = getState().getIn(['targetRecord', 'state']);
     const preferredRecord = preferredState === 'EMPTY' ? mergeProfile.get('targetRecord') : getState().getIn(['targetRecord', 'record']);
@@ -393,11 +394,11 @@ export function updateMergedRecord() {
       MergeValidation.validateMergeCandidates(validationRulesClone, preferredRecord, otherRecord, preferredHasSubrecords, otherRecordHasSubrecords)
         .then(() => merge(preferredRecord, otherRecord))
         .then((originalMergedRecord) => {
-          if (!mergeProfile.has('newFields')) return originalMergedRecord;
+          if (!newFields) return originalMergedRecord;
 
           var mergedRecord = new MarcRecord(originalMergedRecord);
 
-          mergeProfile.get('newFields').forEach(field => {
+          newFields.forEach(field => {
             const fields = mergedRecord.fields.filter(fieldInMerged => {
               return field.tag === fieldInMerged.tag && _.isEqual(field.subfields, fieldInMerged.subfields);
             });
