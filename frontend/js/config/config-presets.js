@@ -34,6 +34,5 @@ const defaultPreset = {
 
 export const preset = {
   defaults: defaultPreset,
-  fenni: { default: mergeProfiles.fenni },
   aleph: mergeProfiles
 };

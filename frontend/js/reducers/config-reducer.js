@@ -27,6 +27,7 @@
 */
 
 import { Map } from 'immutable'; 
+import _ from 'lodash';
 import { SWITCH_MERGE_CONFIG } from '../constants/action-type-constants';
 import { CREATE_SESSION_SUCCESS } from 'commons/constants/action-type-constants';
 import { preset } from '../config/config-presets';
@@ -42,34 +43,68 @@ export default function ui(state = INITIAL_STATE, action) {
       return state.set('selectedMergeProfile', action.config);
 
     case CREATE_SESSION_SUCCESS:
-      return setConfiguration(state, action.userinfo.department.toLowerCase());
+      return setConfiguration(state, action.userinfo);
   }
   return state;
 }
 
-function setConfiguration(state, department) {
+function setConfiguration(state, userinfo) {
   let configPreset;
+
+  const department = userinfo.department.toLowerCase();
 
   if (preset.hasOwnProperty(department)) configPreset = preset[department];
   else configPreset = preset.defaults;
 
-  return state.set('mergeProfiles', Object.keys(configPreset).reduce((mergeProfiles, key) => mergeProfiles.set(key, Map({
-    name: configPreset[key].name,
-    record: Map({
-      'targetRecord': configPreset[key].record.targetRecord,
-      'validationRules': configPreset[key].record.validationRules,
-      'postMergeFixes': configPreset[key].record.postMergeFixes,
-      'mergeConfiguration': configPreset[key].record.mergeConfiguration,
-      'newFields': configPreset[key].record.newFields
-    }),
-    subrecords: Map({
-      'mergeType': configPreset[key].subrecords.mergeType,
-      'targetRecord': configPreset[key].subrecords.targetRecord,
-      'validationRules': configPreset[key].subrecords.validationRules,
-      'postMergeFixes': configPreset[key].subrecords.postMergeFixes,
-      'mergeTargetRecordWithHost': configPreset[key].subrecords.mergeTargetRecordWithHost,
-      'mergeConfiguration': configPreset[key].subrecords.mergeConfiguration,
-      'newFields': configPreset[key].subrecords.newFields
-    })
-  })), Map()));
+  return state.set('mergeProfiles', Object.keys(configPreset).reduce((mergeProfiles, key) => {
+      const mergeProfile = replaceConfigVariables(configPreset[key], userinfo, configPreset[key].lowTag);
+
+      return mergeProfiles.set(key, Map({
+        name: mergeProfile.name,
+        record: Map({
+          'targetRecord': mergeProfile.record.targetRecord,
+          'validationRules': mergeProfile.record.validationRules,
+          'postMergeFixes': mergeProfile.record.postMergeFixes,
+          'mergeConfiguration': mergeProfile.record.mergeConfiguration,
+          'newFields': mergeProfile.record.newFields
+        }),
+        subrecords: Map({
+          'mergeType': mergeProfile.subrecords.mergeType,
+          'targetRecord': mergeProfile.subrecords.targetRecord,
+          'validationRules': mergeProfile.subrecords.validationRules,
+          'postMergeFixes': mergeProfile.subrecords.postMergeFixes,
+          'mergeTargetRecordWithHost': mergeProfile.subrecords.mergeTargetRecordWithHost,
+          'mergeConfiguration': mergeProfile.subrecords.mergeConfiguration,
+          'newFields': mergeProfile.subrecords.newFields,
+        })
+    }));
+  }, Map()));
+}
+
+function replaceConfigVariables(orig_config, userinfo, forcedLowTag = null) {
+  let config = _.clone(orig_config);
+
+  config = replacePropertyValue('[LOWTAG]', forcedLowTag || userinfo.department, config);
+
+  return config;
+}
+
+function replacePropertyValue(regexp, newSubstr, object) {
+  const newObject = _.clone(object);
+
+  _.each(object, (val, key) => {
+    if (typeof val === 'string') {
+      newObject[key] = val.replace(regexp, newSubstr);
+    } else if(typeof(val) === 'object' && val instanceof RegExp) {
+      const { source, flags } = val;
+
+      newObject[key] = new RegExp(source.replace(regexp, newSubstr), flags)
+    } else if (typeof(val) === 'object' || typeof(val) === 'array') {
+      newObject[key] = replacePropertyValue(regexp, newSubstr, val);
+    } else {
+      newObject[key] = val;
+    }
+  });
+
+  return newObject;
 }
