@@ -241,7 +241,7 @@ export class SearchDialog extends React.Component {
 
               <div className="selected-record-container">
                 {targetRecordId === recordId ? (
-                  <div>Kohdetietue</div>
+                  <div>Pohjatietue</div>
                 ): null}
 
                 {sourceRecordId === recordId ? (
@@ -303,7 +303,7 @@ export class SearchDialog extends React.Component {
           <RecordPanel record={selectedRecord}>
             <div className="card-action">
               <a href="#" className="valign" id="move-to-source" onClick={(e) => this.handleRecordTransfer(e)}>Siirrä lähdetietueeksi</a>
-              <a href="#" className="valign" id="move-to-target" onClick={(e) => this.handleRecordTransfer(e)}>Siirrä kohdetietueeksi</a>
+              <a href="#" className="valign" id="move-to-target" onClick={(e) => this.handleRecordTransfer(e)}>Siirrä pohjatietueeksi</a>
             </div> 
           </RecordPanel>
         </div>
