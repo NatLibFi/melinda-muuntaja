@@ -168,7 +168,7 @@ export class RecordSelectionControls extends React.Component {
 
         <div className="col s2 input-field">
           <input id="target_record" type="tel" value={this.props.targetRecordId} onChange={this.handleChange.bind(this)} disabled={!controlsEnabled}/>
-          <label htmlFor="target_record">Kohdetietue</label>
+          <label htmlFor="target_record">Pohjatietue</label>
         </div>
       
         {mergeProfiles.length > 1 && (
