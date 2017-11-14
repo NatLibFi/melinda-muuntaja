@@ -76,11 +76,17 @@ export class SearchDialog extends React.Component {
 
   componentDidMount() {
     window.$(this.searchIndexSelect).on('change', (event) => this.handleSearchIndexChange(event)).material_select();
+
+    document.getElementsByTagName('html')[0].classList.add('modal-open');
   }
 
   componentDidUpdate() {
     // update text fields if they are prefilled.
     window.Materialize && window.Materialize.updateTextFields();
+  }
+
+  componentWillUnmount() {
+    document.getElementsByTagName('html')[0].classList.remove('modal-open');
   }
 
   close(event) {
