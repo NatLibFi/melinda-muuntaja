@@ -306,8 +306,6 @@ function mergeSubrecord ({preferredRecord, otherRecord, preferredHostRecord, oth
           if (fields.length === 0) mergedRecord.appendField({ ...field, uuid: uuid.v4()});
         });
 
-        console.log(mergedRecord);
-
         return mergedRecord;
       })
       .then(mergedRecord => PostMerge.applyPostMergeModifications(postMergeFixes, preferredRecord, otherRecord, mergedRecord))

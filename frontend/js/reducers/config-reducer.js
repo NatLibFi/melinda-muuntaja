@@ -57,26 +57,26 @@ function setConfiguration(state, userinfo) {
   else configPreset = preset.defaults;
 
   return state.set('mergeProfiles', Object.keys(configPreset).reduce((mergeProfiles, key) => {
-      const mergeProfile = replaceConfigVariables(configPreset[key], userinfo, configPreset[key].lowTag);
+    const mergeProfile = replaceConfigVariables(configPreset[key], userinfo, configPreset[key].lowTag);
 
-      return mergeProfiles.set(key, Map({
-        name: mergeProfile.name,
-        record: Map({
-          'targetRecord': mergeProfile.record.targetRecord,
-          'validationRules': mergeProfile.record.validationRules,
-          'postMergeFixes': mergeProfile.record.postMergeFixes,
-          'mergeConfiguration': mergeProfile.record.mergeConfiguration,
-          'newFields': mergeProfile.record.newFields
-        }),
-        subrecords: Map({
-          'mergeType': mergeProfile.subrecords.mergeType,
-          'targetRecord': mergeProfile.subrecords.targetRecord,
-          'validationRules': mergeProfile.subrecords.validationRules,
-          'postMergeFixes': mergeProfile.subrecords.postMergeFixes,
-          'mergeTargetRecordWithHost': mergeProfile.subrecords.mergeTargetRecordWithHost,
-          'mergeConfiguration': mergeProfile.subrecords.mergeConfiguration,
-          'newFields': mergeProfile.subrecords.newFields,
-        })
+    return mergeProfiles.set(key, Map({
+      name: mergeProfile.name,
+      record: Map({
+        'targetRecord': mergeProfile.record.targetRecord,
+        'validationRules': mergeProfile.record.validationRules,
+        'postMergeFixes': mergeProfile.record.postMergeFixes,
+        'mergeConfiguration': mergeProfile.record.mergeConfiguration,
+        'newFields': mergeProfile.record.newFields
+      }),
+      subrecords: Map({
+        'mergeType': mergeProfile.subrecords.mergeType,
+        'targetRecord': mergeProfile.subrecords.targetRecord,
+        'validationRules': mergeProfile.subrecords.validationRules,
+        'postMergeFixes': mergeProfile.subrecords.postMergeFixes,
+        'mergeTargetRecordWithHost': mergeProfile.subrecords.mergeTargetRecordWithHost,
+        'mergeConfiguration': mergeProfile.subrecords.mergeConfiguration,
+        'newFields': mergeProfile.subrecords.newFields,
+      })
     }));
   }, Map()));
 }
@@ -98,8 +98,8 @@ function replacePropertyValue(regexp, newSubstr, object) {
     } else if(typeof(val) === 'object' && val instanceof RegExp) {
       const { source, flags } = val;
 
-      newObject[key] = new RegExp(source.replace(regexp, newSubstr), flags)
-    } else if (typeof(val) === 'object' || typeof(val) === 'array') {
+      newObject[key] = new RegExp(source.replace(regexp, newSubstr), flags);
+    } else if (typeof(val) === 'object') {
       newObject[key] = replacePropertyValue(regexp, newSubstr, val);
     } else {
       newObject[key] = val;

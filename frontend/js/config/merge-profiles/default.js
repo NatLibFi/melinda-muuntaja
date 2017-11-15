@@ -89,7 +89,6 @@ mustBeIdentical (true|false)
 import { preset as MergeValidationPreset } from '../../marc-record-merge-validate-service';
 import { preset as PostMergePreset } from '../../marc-record-merge-postmerge-service';
 import TargetRecord from '../target-record';
-import TargetSubrecord from '../target-subrecord';
 import * as subrecordMergeTypes from '../subrecord-merge-types';
 
 module.exports = {
