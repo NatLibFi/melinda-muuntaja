@@ -56,7 +56,7 @@ export class BaseComponent extends React.Component {
   }
 
   renderSignin() {   
-    return this.props.sessionState === 'VALIDATION_ONGOING' ? this.renderValidationIndicator() : <SigninFormPanelContainer title='Merge' />;
+    return this.props.sessionState === 'VALIDATION_ONGOING' ? this.renderValidationIndicator() : <SigninFormPanelContainer title='Muuntaja' />;
   }
 
   renderSubrecordComponent() {
