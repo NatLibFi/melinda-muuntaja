@@ -60,17 +60,6 @@ const record = new MarcRecord({
           value: 'rdacontent'
         }
       ]
-    },
-    {
-      tag: 'LOW',
-      ind1: ' ',
-      ind2: ' ',
-      subfields: [
-        {
-          code: 'a',
-          value: 'FENNI'
-        }
-      ]
     }
   ]
 });
