@@ -34,7 +34,7 @@ import TargetRecord from '../target-record';
 import * as subrecordMergeTypes from '../subrecord-merge-types';
 
 module.exports = {
-  "name": "Ei alitietueita",
+  "name": "Ei osakohteita",
   "record": {
     "targetRecord": TargetRecord,
     "validationRules": MergeValidationPreset.melinda_host,
