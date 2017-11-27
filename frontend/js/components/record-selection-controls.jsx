@@ -40,7 +40,7 @@ const RECORD_LOADING_DELAY = 500;
 export class RecordSelectionControls extends React.Component {
 
   static propTypes = {
-    selectedMergeProfile: React.PropTypes.string.isRequired,
+    selectedMergeProfile: React.PropTypes.object.isRequired,
     sourceRecordId: React.PropTypes.string.isRequired,
     targetRecordId: React.PropTypes.string.isRequired,
     switchMergeConfig: React.PropTypes.func.isRequired,
@@ -64,6 +64,10 @@ export class RecordSelectionControls extends React.Component {
     this.handleTargetChangeDebounced = _.debounce((event) => {
       if (event.target.value.length > 0) this.props.fetchRecord(event.target.value, 'TARGET');
     }, RECORD_LOADING_DELAY);
+
+    this.state = {
+      displayProfileInfo: false
+    };
   }
 
   componentWillMount() {
@@ -93,6 +97,8 @@ export class RecordSelectionControls extends React.Component {
   }
 
   componentWillUnmount() {
+    document.removeEventListener('click', this.closeProfileInfo, false);
+
     if (typeof this.state.unlisten == 'function') {
       this.state.unlisten();
     }
@@ -140,9 +146,29 @@ export class RecordSelectionControls extends React.Component {
 
   }
 
+  closeProfileInfo = (e) => {
+    if (e.target !== this.profileInfoDialog && !this.profileInfoDialog.contains(e.target)) {
+      this.setState({
+        displayProfileInfo: false
+      });
+
+      document.removeEventListener('click', this.closeProfileInfo, false);
+    }
+  }
+
+  displayProfileInfo(e) {
+    e.preventDefault();
+
+    this.setState({
+      displayProfileInfo: true
+    });
+
+    document.addEventListener('click', this.closeProfileInfo);
+  }
+
   render() {
 
-    const { controlsEnabled, mergeProfiles } = this.props;
+    const { controlsEnabled, mergeProfiles, selectedMergeProfile } = this.props;
 
     const swapButtonClasses = classNames('btn-floating', 'blue', {
       'waves-effect': controlsEnabled,
@@ -170,17 +196,31 @@ export class RecordSelectionControls extends React.Component {
           <input id="target_record" type="tel" value={this.props.targetRecordId} onChange={this.handleChange.bind(this)} disabled={!controlsEnabled}/>
           <label htmlFor="target_record">Pohjatietue</label>
         </div>
-      
-        {mergeProfiles.length > 1 && (
-          <div className="col s2 offset-s2 input-field">
-            <select ref={(ref) => this.mergeProfileSelect = ref}>
-              {mergeProfiles.map(({key, name}) => (
-                <option key={key} value={key}>{name}</option>
-              ))}
-            </select>
-            <label>Muunnosprofiili</label>
-          </div>
-        )}
+        
+        <div className="col s2 offset-s2 profile-selector">
+          {mergeProfiles.length > 1 && (
+            <div className="input-field">
+              <select ref={(ref) => this.mergeProfileSelect = ref}>
+                {mergeProfiles.map(({key, name}) => (
+                  <option key={key} value={key}>{name}</option>
+                ))}
+              </select>
+              <label>Muunnosprofiili</label>
+            </div>
+          )}
+          {selectedMergeProfile.description && (
+            <a href="#" data-activates="profile-selector-info" onClick={(e) => this.displayProfileInfo(e)}>
+              <i className="material-icons" title="Kuvaus">info</i>
+            </a>
+          )}
+        
+          {selectedMergeProfile.description && this.state.displayProfileInfo && (
+            <div id="profile-selector-info" className="card" ref={(ref) => this.profileInfoDialog = ref}>
+              <div className="card-content">{selectedMergeProfile.description}</div>
+            </div>
+          )}
+    
+        </div>
       </div>
     );
   }
@@ -191,7 +231,7 @@ function mapStateToProps(state) {
   return {
     sourceRecordId: state.getIn(['sourceRecord', 'id']) || '',
     targetRecordId: state.getIn(['targetRecord', 'id']) || '',
-    selectedMergeProfile: state.getIn(['config', 'selectedMergeProfile']),
+    selectedMergeProfile: state.getIn(['config', 'mergeProfiles', state.getIn(['config', 'selectedMergeProfile'])]).toJS(),
     mergeProfiles: state.getIn(['config', 'mergeProfiles']).map((value, key) => ({ key, name: value.get('name') })).toList().toJS(),
     controlsEnabled: hostRecordActionsEnabled(state)
   };
