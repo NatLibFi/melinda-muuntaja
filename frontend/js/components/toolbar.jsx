@@ -35,11 +35,17 @@ export class ToolBar extends React.Component {
 
   static propTypes = {
     resetWorkspace: React.PropTypes.func.isRequired,
+    openSearchDialog: React.PropTypes.func.isRequired,
   }
 
   startNewPair(event) {
     event.preventDefault();
     this.props.resetWorkspace();
+  }
+
+  openSearchDialog(event) {
+    event.preventDefault();
+    this.props.openSearchDialog();
   }
 
   renderNewPairButton() {
@@ -53,11 +59,27 @@ export class ToolBar extends React.Component {
     );
   }
 
+  renderSearchRecordButton() {
+    return (
+      <div className="group">
+        <ul id="nav">
+          <li><a href="#" onClick={(e) => this.openSearchDialog(e)}><i className="material-icons tooltip" title="Hae tietuetta">search</i></a></li>
+        </ul>
+        <span className="group-label">Hae</span>
+      </div>
+    );
+  }
+
   render() {
     return (
       <nav className="toolbar">
         <div className="nav-wrapper">
           {this.renderNewPairButton()}
+
+          <ul><li className="separator"><span /></li></ul>
+
+          {this.renderSearchRecordButton()}
+
         </div>
       </nav>
     );

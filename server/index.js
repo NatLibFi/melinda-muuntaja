@@ -34,6 +34,7 @@ import { readEnvironmentVariable } from 'server/utils';
 import { sessionController } from 'server/session-controller';
 import { marcIOController } from 'server/marc-io-controller';
 import { mergeController } from './merge-controller';
+import { sruController } from './sru-controller';
 import cookieParser from 'cookie-parser';
 
 //const NODE_ENV = readEnvironmentVariable('NODE_ENV', 'dev');
@@ -45,6 +46,7 @@ app.use(expressWinston);
 app.use(cookieParser());
 
 app.use('/api', marcIOController);
+app.use('/sru', sruController);
 app.use('/session', sessionController);
 app.use('/merge', mergeController);
 

@@ -213,6 +213,115 @@ export function resetWorkspace() {
   };
 }
 
+export const OPEN_SEARCH_DIALOG = 'OPEN_SEARCH_DIALOG';
+
+export function openSearchDialog() {
+  return {
+    type: OPEN_SEARCH_DIALOG
+  };
+}
+
+export const CLOSE_SEARCH_DIALOG = 'CLOSE_SEARCH_DIALOG';
+
+export function closeSearchDialog() {
+  return {
+    type: CLOSE_SEARCH_DIALOG
+  };
+}
+
+export const CLEAR_SEARCH_RESULTS = 'CLEAR_SEARCH_RESULTS';
+
+export function clearSearchResults() {
+  return {
+    type: CLEAR_SEARCH_RESULTS
+  };
+}
+
+export function handleSearch() {
+  const APIBasePath = __DEV__ ? 'http://localhost:3001/sru': '/sru';
+
+  return function(dispatch, getState) {
+    const query = getState().getIn(['search', 'query']);
+    const page = getState().getIn(['search', 'currentPage']);
+    const index = getState().getIn(['search', 'index']);
+
+    dispatch(executeSearch());
+
+    const indexPrefix = index ? index + '=' : '';
+
+    return fetch(`${APIBasePath}/?q=${indexPrefix}${query}&page=${page}`)
+      .then(validateResponseStatus)
+      .then(response => response.json())
+      .then(json => {
+        json.records = json.records.map(record => {
+          const marcRecord = new MarcRecord(record);
+          decorateFieldsWithUuid(marcRecord);
+
+          return marcRecord;
+        });
+
+        dispatch(setSearchResults(json));
+      })
+      .catch(() => {
+        dispatch(setSearchError());
+      });
+  };
+}
+
+export const EXECUTE_SEARCH = 'EXECUTE_SEARCH';
+
+export function executeSearch() {
+  return {
+    type: EXECUTE_SEARCH
+  };
+}
+
+export const SET_SEARCH_RESULTS = 'SET_SEARCH_RESULTS';
+
+export function setSearchResults(results) {
+  return {
+    type: SET_SEARCH_RESULTS,
+    results
+  };
+}
+
+export const SET_SEARCH_ERROR = 'SET_SEARCH_ERROR';
+
+export function setSearchError(error) {
+  return {
+    type: SET_SEARCH_ERROR,
+    error
+  };
+}
+
+
+export const SET_SEARCH_QUERY = 'SET_SEARCH_QUERY';
+
+export function setSearchQuery(query) {
+  return {
+    type: SET_SEARCH_QUERY,
+    query
+  };
+}
+
+export const SET_SEARCH_PAGE = 'SET_SEARCH_PAGE';
+
+export function setSearchPage(page) {
+  return {
+    type: SET_SEARCH_PAGE,
+    page
+  };
+}
+
+
+export const SET_SEARCH_INDEX = 'SET_SEARCH_INDEX';
+
+export function setSearchIndex(index) {
+  return {
+    type: SET_SEARCH_INDEX,
+    index
+  };
+}
 
 export function locationDidChange(location) {
   return function(dispatch, getState) {

@@ -37,12 +37,14 @@ import { SigninFormPanelContainer } from 'commons/components/signin-form-panel';
 import {connect} from 'react-redux';
 import * as uiActionCreators from '../ui-actions';
 import { MergeDialog } from './merge-dialog';
+import { SearchDialogContainer } from './search-dialog';
 import { eitherHasSubrecords } from '../selectors/subrecord-selectors';
 
 export class BaseComponent extends React.Component {
 
   static propTypes = {
     sessionState: React.PropTypes.string,
+    searchDialogVisible: React.PropTypes.bool.isRequired,
     shouldRenderSubrecordComponent: React.PropTypes.bool.isRequired,
     mergeDialog: React.PropTypes.object.isRequired,
     closeMergeDialog: React.PropTypes.func.isRequired,
@@ -68,9 +70,10 @@ export class BaseComponent extends React.Component {
     );
   }
 
-  closeDialog() {
+  closeMergeDialog() {
     this.props.closeMergeDialog();
   }
+
 
   renderMergeDialog() {
     return (
@@ -79,7 +82,7 @@ export class BaseComponent extends React.Component {
         message={this.props.mergeResponseMessage} 
         closable={this.props.mergeDialog.closable}
         response={this.props.mergeResponse}
-        onClose={this.closeDialog.bind(this)}
+        onClose={this.closeMergeDialog.bind(this)}
       />
     );
   }
@@ -90,6 +93,7 @@ export class BaseComponent extends React.Component {
       <div>
         <NavBarContainer />
         { this.props.mergeDialog.visible ? this.renderMergeDialog() : null }
+        { this.props.searchDialogVisible ? <SearchDialogContainer /> : ''}
         <ToolBarContainer />
         <RecordSelectionControlsContainer />
         <RecordMergePanelContainer />
@@ -119,7 +123,8 @@ function mapStateToProps(state) {
     mergeResponseMessage: state.getIn(['mergeStatus', 'message']),
     mergeResponse: state.getIn(['mergeStatus', 'response']),
     mergeDialog: state.getIn(['mergeStatus', 'dialog']).toJS(),
-    shouldRenderSubrecordComponent: eitherHasSubrecords(state)
+    shouldRenderSubrecordComponent: eitherHasSubrecords(state),
+    searchDialogVisible: state.getIn(['search', 'visible'])
   };
 }
 
