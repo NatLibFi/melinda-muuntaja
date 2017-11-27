@@ -33,7 +33,7 @@ import _ from 'lodash';
 import createRecordMerger from '@natlibfi/marc-record-merge';
 import { exceptCoreErrors } from './utils';
 import {hashHistory} from 'react-router';
-import { RESET_WORKSPACE, TOGGLE_COMPACT_SUBRECORD_VIEW, SWITCH_MERGE_CONFIG } from './constants/action-type-constants';
+import { RESET_WORKSPACE, TOGGLE_COMPACT_SUBRECORD_VIEW } from './constants/action-type-constants';
 import { FetchNotOkError } from './errors';
 import { subrecordRows, sourceSubrecords, targetSubrecords, rowsWithResultRecord } from './selectors/subrecord-selectors';
 import { updateSubrecordArrangement, updateMergedSubrecords, saveSubrecordSuccess } from './action-creators/subrecord-actions';
@@ -44,6 +44,8 @@ import * as subrecordMergeTypes from './config/subrecord-merge-types';
 
 import * as MergeValidation from './marc-record-merge-validate-service';
 import * as PostMerge from './marc-record-merge-postmerge-service';
+
+export const SWITCH_MERGE_CONFIG = 'SWITCH_MERGE_CONFIG';
 
 export function switchMergeConfig(config) {
   return function(dispatch) {
