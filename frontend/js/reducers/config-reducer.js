@@ -28,7 +28,7 @@
 
 import { Map } from 'immutable'; 
 import _ from 'lodash';
-import { SWITCH_MERGE_CONFIG } from '../constants/action-type-constants';
+import { SWITCH_MERGE_CONFIG } from '../ui-actions';
 import { CREATE_SESSION_SUCCESS } from 'commons/constants/action-type-constants';
 import { preset } from '../config/config-presets';
 
@@ -61,6 +61,7 @@ function setConfiguration(state, userinfo) {
 
     return mergeProfiles.set(key, Map({
       name: mergeProfile.name,
+      description: mergeProfile.description,
       record: Map({
         'targetRecord': mergeProfile.record.targetRecord,
         'validationRules': mergeProfile.record.validationRules,
