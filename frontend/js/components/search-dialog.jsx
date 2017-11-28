@@ -66,6 +66,7 @@ export class SearchDialog extends React.Component {
     super();
 
     this.handleChangeDebounced = _.debounce(() => {
+      this.props.clearSearchResults();
       this.props.handleSearch();
     }, SEARCH_DELAY);
 
@@ -73,6 +74,7 @@ export class SearchDialog extends React.Component {
       selectedRecord: 0,
     };
   }
+
 
   componentDidMount() {
     window.$(this.searchIndexSelect).on('change', (event) => this.handleSearchIndexChange(event)).material_select();
@@ -111,6 +113,7 @@ export class SearchDialog extends React.Component {
   handleSearchIndexChange(event) {
     this.props.setSearchIndex(event.target.value);
     if (this.props.query.length >= 3) {
+      this.props.clearSearchResults();
       this.props.handleSearch();
     }
   }

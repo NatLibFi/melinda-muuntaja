@@ -62,6 +62,7 @@ export default function location(state = INITIAL_STATE, action) {
         .set('query', action.query);
     case CLEAR_SEARCH_RESULTS: 
       return state
+        .set('currentPage', 1)
         .set('results', INITIAL_STATE.get('results'))
         .set('showResults', false)
         .set('error', false);
