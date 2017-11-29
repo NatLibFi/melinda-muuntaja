@@ -10,6 +10,16 @@
   box-sizing: border-box;
   background-color: rgba(1,1,1,0.2);
 
+  .move-to-container {
+    margin-bottom: -1em;
+    
+    .btn {
+      margin-right: 1em;
+      margin-bottom: 1em;
+      width: 265px;
+    }
+  }
+
   // overflow: auto;
   .modal-search-dialog-outer {
     width: 100%;

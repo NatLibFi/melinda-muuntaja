@@ -309,12 +309,11 @@ export class SearchDialog extends React.Component {
     return (
       <div className="col s6">
         <div className="card darken-1">
-          <RecordPanel record={selectedRecord}>
-            <div className="card-action">
-              <a href="#" className="valign" id="move-to-source" onClick={(e) => this.handleRecordTransfer(e)}>Siirrä lähdetietueeksi</a>
-              <a href="#" className="valign" id="move-to-target" onClick={(e) => this.handleRecordTransfer(e)}>Siirrä pohjatietueeksi</a>
-            </div> 
-          </RecordPanel>
+          <div className="card-action move-to-container">
+            <a href="#" className="btn waves-effect waves-light" id="move-to-source" onClick={(e) => this.handleRecordTransfer(e)}>Siirrä lähdetietueeksi</a>
+            <a href="#" className="btn waves-effect waves-light" id="move-to-target" onClick={(e) => this.handleRecordTransfer(e)}>Siirrä pohjatietueeksi</a>
+          </div> 
+          <RecordPanel record={selectedRecord} />
         </div>
       </div>
     );
