@@ -199,7 +199,7 @@ export class RecordSelectionControls extends React.Component {
           <label htmlFor="target_record">Pohjatietue</label>
         </div>
         
-        <div className="col s2 offset-s2 profile-selector">
+        <div className="col s2 offset-s2 profile-selector input-field">
           {mergeProfiles.length > 1 && (
             <div className="input-field">
               <select ref={(ref) => this.mergeProfileSelect = ref}>
