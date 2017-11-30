@@ -60,7 +60,9 @@ export function commitMerge(client, operationType, subrecordMergeType, otherReco
   else return Promise.reject(new Error(`Unknown operationType ${operationType}.`));
 
   function saveSubrecords(res) {
-    if (mergedRecord.subrecords.length === 0) return [res];
+    if (mergedRecord.subrecords.length === 0 || subrecordMergeType === 'KEEP_BOTH') return [res];
+
+    console.log('moi')
 
     const newParentRecordId = res.recordId;
 

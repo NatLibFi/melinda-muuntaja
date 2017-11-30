@@ -47,13 +47,14 @@ const allSubrecordActionsAreDefined = createSelector([subrecordRows], (subrecord
 });
 
 export const mergeButtonEnabled = createSelector(
-  [mergedRecordState, commitMergeStatus, allSubrecordActionsAreDefined], 
-  (mergedRecordState, commitMergeStatus, allSubrecordActionsAreDefined) => {
+  [mergedRecordState, commitMergeStatus, subrecordMergeType, allSubrecordActionsAreDefined], 
+  (mergedRecordState, commitMergeStatus, subrecordMergeType, allSubrecordActionsAreDefined) => {
 
     const disablingCommitMergeStates = [CommitMergeStates.COMMIT_MERGE_ONGOING, CommitMergeStates.COMMIT_MERGE_COMPLETE];
 
     const mergeAvailable = !_.includes(disablingCommitMergeStates, commitMergeStatus);
-    return (mergedRecordState === 'LOADED' && mergeAvailable && allSubrecordActionsAreDefined);
+    const subrecordsReady = subrecordMergeType === subrecordMergeTypes.KEEP_BOTH || allSubrecordActionsAreDefined;
+    return (mergedRecordState === 'LOADED' && mergeAvailable && subrecordsReady);
   }
 );
 
@@ -63,7 +64,7 @@ export const recordSaveActionAvailable = createSelector([mergedRecordState], (me
 });
 
 export const subrecordActionsEnabled = createSelector([commitMergeStatus, subrecordMergeType], (commitMergeStatus, subrecordMergeType) => {
-  return commitMergeStatus !== CommitMergeStates.COMMIT_MERGE_COMPLETE && (subrecordMergeType === subrecordMergeTypes.MERGE || subrecordMergeType === subrecordMergeTypes.SHARED);;
+  return commitMergeStatus !== CommitMergeStates.COMMIT_MERGE_COMPLETE && (subrecordMergeType === subrecordMergeTypes.MERGE || subrecordMergeType === subrecordMergeTypes.SHARED);
 });
 
 export const hostRecordActionsEnabled = createSelector([commitMergeStatus], (commitMergeStatus) => {
