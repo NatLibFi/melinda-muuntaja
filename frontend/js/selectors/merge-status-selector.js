@@ -36,8 +36,8 @@ const commitMergeStatus = state => state.getIn(['mergeStatus', 'status']) || Com
 
 const allSubrecordActionsAreDefined = createSelector([subrecordRows], (subrecordRows) => {
 
-  const firstUndefinedActionIndex = _.findIndex(subrecordRows, ({sourceRecord, targetRecord, selectedAction}) => {
-    return selectedAction === undefined && (sourceRecord !== undefined || targetRecord !== undefined);
+  const firstUndefinedActionIndex = _.findIndex(subrecordRows, ({sourceRecord, targetRecord, selectedAction, mergeError}) => {
+    return mergeError !== undefined || selectedAction === undefined && (sourceRecord !== undefined || targetRecord !== undefined);
   });
 
   return (firstUndefinedActionIndex === -1);

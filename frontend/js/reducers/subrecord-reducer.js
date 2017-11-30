@@ -65,7 +65,11 @@ export default function subrecords(state = INITIAL_STATE, action) {
       return action.rows.reduce((state, row) => {
         state = setUnmodifiedMergedRecord(state, row.rowId, row.record);
         state = setSubrecordAction(state, row.rowId, action.actionType);
-        return setMergedSubrecord(state, row.rowId, row.record);
+        
+        if (row.error) 
+          return setMergedSubrecordError(state, row.rowId, row.error);
+        else 
+          return setMergedSubrecord(state, row.rowId, row.record);
       }, state);
 
     case SET_MERGED_SUBRECORD:

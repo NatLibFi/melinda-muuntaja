@@ -152,7 +152,7 @@ export function updateMergedSubrecords() {
 
       return mergeSubrecord({preferredRecord: preferredRecord || targetRecord, otherRecord, preferredHostRecord, otherHostRecord, mergeProfile})
         .then(record => ({ rowId, record }))
-        .catch(error => ({ rowId, error }));
+        .catch(error => ({ rowId, error }))
     })).then((rows) => dispatch(setMergedSubrecords(rows, SubrecordActionTypes.MERGE)));
   };
 }
@@ -265,8 +265,8 @@ function mergeTargetRecordWithHost({targetRecord, otherHostRecord, preferredHost
 
 function mergeSubrecord ({preferredRecord, otherRecord, preferredHostRecord, otherHostRecord, mergeProfile}) {
   const mergeConfiguration = mergeProfile.get('mergeConfiguration');
-  const validationRules = mergeProfile.get('validationRules');
   const newFields = mergeProfile.get('newFields');
+  const validationRules = _.clone(mergeProfile.get('validationRules'));
   const postMergeFixes = _.clone(mergeProfile.get('postMergeFixes'));
 
   let preferredHostRecordId, otherHostRecordId;
@@ -276,6 +276,10 @@ function mergeSubrecord ({preferredRecord, otherRecord, preferredHostRecord, oth
 
   if (otherRecord) {
     if (mergeProfile.get('mergeType') === subrecordMergeTypes.SHARED) {
+      if (selectRecordId(preferredRecord) === selectRecordId(otherRecord)) {
+        return Promise.resolve(preferredRecord);
+      }
+
       postMergeFixes.unshift(PostMerge.add035zFromOther);
       postMergeFixes.unshift(PostMerge.addLOWSIDFieldsFromOther);
     }
@@ -290,7 +294,11 @@ function mergeSubrecord ({preferredRecord, otherRecord, preferredHostRecord, oth
       }
     }
 
-    const merge = createRecordMerger(mergeConfiguration);
+    if (mergeProfile.get('mergeType') === subrecordMergeTypes.MERGE) {
+      validationRules.push(MergeValidation.recordsHaveDifferentIds);
+    }
+
+    const merge = createRecordMerger(mergeConfiguration);    
 
     return MergeValidation.validateMergeCandidates(validationRules, preferredRecord, otherRecord)
       .then(() => merge(preferredRecord, otherRecord))
