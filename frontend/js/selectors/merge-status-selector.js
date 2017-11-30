@@ -29,7 +29,9 @@
 import _ from 'lodash';
 import { createSelector } from 'reselect';
 import { subrecordRows } from './subrecord-selectors';
+import { subrecordMergeType } from './config-selectors';
 import { CommitMergeStates } from '../constants';
+import * as subrecordMergeTypes from '../config/subrecord-merge-types';
 
 const mergedRecordState = state => state.getIn(['mergedRecord', 'state']);
 const commitMergeStatus = state => state.getIn(['mergeStatus', 'status']) || CommitMergeStates.COMMIT_MERGE_NOT_STARTED;
@@ -60,8 +62,8 @@ export const recordSaveActionAvailable = createSelector([mergedRecordState], (me
   return _.includes(enableSaveActionStates, mergedRecordState);
 });
 
-export const subrecordActionsEnabled = createSelector([commitMergeStatus], (commitMergeStatus) => {
-  return commitMergeStatus !== CommitMergeStates.COMMIT_MERGE_COMPLETE;
+export const subrecordActionsEnabled = createSelector([commitMergeStatus, subrecordMergeType], (commitMergeStatus, subrecordMergeType) => {
+  return commitMergeStatus !== CommitMergeStates.COMMIT_MERGE_COMPLETE && (subrecordMergeType === subrecordMergeTypes.MERGE || subrecordMergeType === subrecordMergeTypes.SHARED);;
 });
 
 export const hostRecordActionsEnabled = createSelector([commitMergeStatus], (commitMergeStatus) => {

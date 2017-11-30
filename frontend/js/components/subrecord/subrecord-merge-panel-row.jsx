@@ -112,7 +112,7 @@ export class SubrecordMergePanelRow extends React.Component {
     if (mergeError) {
       return (
         <div className="fill-height">
-          <SubrecordActionButtonContainer rowId={rowId} {...opts} />
+          {opts.actionsEnabled ? <SubrecordActionButtonContainer rowId={rowId} {...opts} /> : null}
           <MergeValidationErrorMessagePanel error={mergeError} />
         </div>
       );
@@ -121,7 +121,7 @@ export class SubrecordMergePanelRow extends React.Component {
 
       return (
         <div className="fill-height">
-          { isCompacted ? null  : <SubrecordActionButtonContainer rowId={rowId} {...opts} /> }
+          { opts.actionsEnabled && !isCompacted ? <SubrecordActionButtonContainer rowId={rowId} {...opts} /> : null }
           <SubRecordPanel 
             isExpanded={isExpanded} 
             isCompacted={isCompacted} 
@@ -140,9 +140,13 @@ export class SubrecordMergePanelRow extends React.Component {
              />
         </div>
       );
-    } else {
+    } 
+
+    if (opts.actionsEnabled) {
       return (<SubrecordActionButtonContainer rowId={rowId} {...opts} />);
     }
+    
+    return null;
   }
 
   renderRemoveRowButton(rowId) {
@@ -204,7 +208,7 @@ export class SubrecordMergePanelRow extends React.Component {
           {this.renderSubrecordPanel(targetRecord, ItemTypes.TARGET_SUBRECORD, rowId, isExpanded, actionsEnabled)}
         </td>
         <td>
-         { isEmptyRow ? this.renderRemoveRowButton(rowId) : this.renderMergedSubrecordPanel(mergedRecord, rowId, isExpanded, mergeError, {isMergeActionAvailable, selectedAction, actionsEnabled, isCopyActionAvailable }) }
+         { isEmptyRow ? this.renderRemoveRowButton(rowId) : this.renderMergedSubrecordPanel(mergedRecord, rowId, isExpanded, mergeError, {isMergeActionAvailable, isCopyActionAvailable, selectedAction, actionsEnabled}) }
          { isCompacted ? null : this.renderExpandToggleButton(rowId, isEmptyRow, isExpanded) }
         </td>
       </tr>
