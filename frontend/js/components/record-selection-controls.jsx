@@ -40,7 +40,7 @@ const RECORD_LOADING_DELAY = 500;
 export class RecordSelectionControls extends React.Component {
 
   static propTypes = {
-    selectedMergeProfile: React.PropTypes.object.isRequired,
+    selectedMergeProfile: React.PropTypes.string.isRequired,
     sourceRecordId: React.PropTypes.string.isRequired,
     targetRecordId: React.PropTypes.string.isRequired,
     switchMergeConfig: React.PropTypes.func.isRequired,
@@ -168,13 +168,15 @@ export class RecordSelectionControls extends React.Component {
 
   render() {
 
-    const { controlsEnabled, mergeProfiles, selectedMergeProfile } = this.props;
+    const { controlsEnabled, mergeProfiles } = this.props;
 
     const swapButtonClasses = classNames('btn-floating', 'blue', {
       'waves-effect': controlsEnabled,
       'waves-light': controlsEnabled,
       'disabled': !controlsEnabled
     });
+
+    const selectedMergeProfile = mergeProfiles.find(({key}) => key === this.props.selectedMergeProfile);
 
     return (
       <div className="row row-margin-swap record-selection-controls">
@@ -208,7 +210,7 @@ export class RecordSelectionControls extends React.Component {
               <label>Muunnosprofiili</label>
             </div>
           )}
-          {selectedMergeProfile.description && (
+         {selectedMergeProfile.description && (
             <a href="#" data-activates="profile-selector-info" onClick={(e) => this.displayProfileInfo(e)}>
               <i className="material-icons" title="Kuvaus">info</i>
             </a>
@@ -231,8 +233,8 @@ function mapStateToProps(state) {
   return {
     sourceRecordId: state.getIn(['sourceRecord', 'id']) || '',
     targetRecordId: state.getIn(['targetRecord', 'id']) || '',
-    selectedMergeProfile: state.getIn(['config', 'mergeProfiles', state.getIn(['config', 'selectedMergeProfile'])]).toJS(),
-    mergeProfiles: state.getIn(['config', 'mergeProfiles']).map((value, key) => ({ key, name: value.get('name') })).toList().toJS(),
+    selectedMergeProfile: state.getIn(['config', 'selectedMergeProfile']),
+    mergeProfiles: state.getIn(['config', 'mergeProfiles']).map((value, key) => ({ key, name: value.get('name'), description: value.get('description') })).toList().toJS(),
     controlsEnabled: hostRecordActionsEnabled(state)
   };
 }
