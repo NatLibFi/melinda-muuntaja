@@ -152,7 +152,7 @@ export function updateMergedSubrecords() {
 
       return mergeSubrecord({preferredRecord: preferredRecord || targetRecord, otherRecord, preferredHostRecord, otherHostRecord, mergeProfile})
         .then(record => ({ rowId, record }))
-        .catch(error => ({ rowId, error }))
+        .catch(error => ({ rowId, error }));
     })).then((rows) => dispatch(setMergedSubrecords(rows, SubrecordActionTypes.MERGE)));
   };
 }

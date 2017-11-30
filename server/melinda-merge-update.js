@@ -62,8 +62,6 @@ export function commitMerge(client, operationType, subrecordMergeType, otherReco
   function saveSubrecords(res) {
     if (mergedRecord.subrecords.length === 0 || subrecordMergeType === 'KEEP_BOTH') return [res];
 
-    console.log('moi')
-
     const newParentRecordId = res.recordId;
 
     const mergedRecordRollbackAction = preferredRecord ? () => updateRecord(preferredRecord) : () => deleteRecordById(newParentRecordId);

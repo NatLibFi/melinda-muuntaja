@@ -26,10 +26,9 @@
 *
 */
 
-import _ from 'lodash';
 import { createSelector } from 'reselect';
 
-const mergeProfiles = state => state.getIn(['config', 'mergeProfiles'])
+const mergeProfiles = state => state.getIn(['config', 'mergeProfiles']);
 const selectedMergeProfileId = state => state.getIn(['config', 'selectedMergeProfile']);
 
 export const selectedMergeProfile = createSelector([selectedMergeProfileId, mergeProfiles], (selectedMergeProfileId, mergeProfiles) => mergeProfiles.get(selectedMergeProfileId));
