@@ -488,7 +488,7 @@ export function updateMergedRecord() {
 
     const preferredState = getState().getIn(['targetRecord', 'state']);
     const preferredRecord = preferredState === 'EMPTY' ? mergeProfile.get('targetRecord') : getState().getIn(['targetRecord', 'record']);
-    const preferredHasSubrecords = preferredState ? false : getState().getIn(['targetRecord', 'hasSubrecords']);
+    const preferredHasSubrecords = preferredState === 'EMPTY' ? false : getState().getIn(['targetRecord', 'hasSubrecords']);
     const otherRecord = getState().getIn(['sourceRecord', 'record']);
     const otherRecordHasSubrecords = getState().getIn(['sourceRecord', 'hasSubrecords']);
     
