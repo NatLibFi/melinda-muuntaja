@@ -27,12 +27,13 @@
 */
 
 import React from 'react';
+import PropTypes from 'proptypes';
 import '../../styles/main.scss';
 
 export class App extends React.Component {
 
   static propTypes = {
-    children: React.PropTypes.element.isRequired
+    children: PropTypes.element.isRequired
   }
 
   render() {

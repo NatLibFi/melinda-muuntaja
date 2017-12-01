@@ -27,6 +27,7 @@
 */
 
 import React from 'react';
+import PropTypes from 'proptypes';
 import '../../styles/components/record-selection-controls';
 import * as uiActionCreators from '../ui-actions';
 import {connect} from 'react-redux';
@@ -40,19 +41,19 @@ const RECORD_LOADING_DELAY = 500;
 export class RecordSelectionControls extends React.Component {
 
   static propTypes = {
-    selectedMergeProfile: React.PropTypes.string.isRequired,
-    sourceRecordId: React.PropTypes.string.isRequired,
-    targetRecordId: React.PropTypes.string.isRequired,
-    switchMergeConfig: React.PropTypes.func.isRequired,
-    resetSourceRecord: React.PropTypes.func.isRequired,
-    resetTargetRecord: React.PropTypes.func.isRequired,
-    fetchRecord: React.PropTypes.func.isRequired,
-    swapRecords: React.PropTypes.func.isRequired,
-    setSourceRecordId: React.PropTypes.func.isRequired,
-    setTargetRecordId: React.PropTypes.func.isRequired,
-    locationDidChange: React.PropTypes.func.isRequired,
-    controlsEnabled: React.PropTypes.bool.isRequired,
-    mergeProfiles: React.PropTypes.array
+    selectedMergeProfile: PropTypes.string.isRequired,
+    sourceRecordId: PropTypes.string.isRequired,
+    targetRecordId: PropTypes.string.isRequired,
+    switchMergeConfig: PropTypes.func.isRequired,
+    resetSourceRecord: PropTypes.func.isRequired,
+    resetTargetRecord: PropTypes.func.isRequired,
+    fetchRecord: PropTypes.func.isRequired,
+    swapRecords: PropTypes.func.isRequired,
+    setSourceRecordId: PropTypes.func.isRequired,
+    setTargetRecordId: PropTypes.func.isRequired,
+    locationDidChange: PropTypes.func.isRequired,
+    controlsEnabled: PropTypes.bool.isRequired,
+    mergeProfiles: PropTypes.array
   }
 
   constructor() {

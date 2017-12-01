@@ -27,6 +27,7 @@
 */
 
 import React from 'react';
+import PropTypes from 'proptypes';
 import '../../styles/components/toolbar.scss';
 import {connect} from 'react-redux';
 import * as uiActionCreators from '../ui-actions';
@@ -34,8 +35,8 @@ import * as uiActionCreators from '../ui-actions';
 export class ToolBar extends React.Component {
 
   static propTypes = {
-    resetWorkspace: React.PropTypes.func.isRequired,
-    openSearchDialog: React.PropTypes.func.isRequired,
+    resetWorkspace: PropTypes.func.isRequired,
+    openSearchDialog: PropTypes.func.isRequired,
   }
 
   startNewPair(event) {
