@@ -32,7 +32,7 @@ import '../../styles/components/record-selection-controls';
 import * as uiActionCreators from '../ui-actions';
 import {connect} from 'react-redux';
 import _ from 'lodash';
-import {hashHistory} from 'react-router';
+import { withRouter } from 'react-router';
 import { hostRecordActionsEnabled } from '../selectors/merge-status-selector';
 import classNames from 'classnames';
 
@@ -53,7 +53,8 @@ export class RecordSelectionControls extends React.Component {
     setTargetRecordId: PropTypes.func.isRequired,
     locationDidChange: PropTypes.func.isRequired,
     controlsEnabled: PropTypes.bool.isRequired,
-    mergeProfiles: PropTypes.array
+    mergeProfiles: PropTypes.array,
+    history: PropTypes.object.isRequired
   }
 
   constructor() {
@@ -72,21 +73,22 @@ export class RecordSelectionControls extends React.Component {
   }
 
   componentWillMount() {
-    const unlisten = hashHistory.listen(location => this.props.locationDidChange(location));
-    this.setState({ unlisten });
+    this.unlisten = this.props.history.listen(location => this.props.locationDidChange(location));
+
+    this.props.locationDidChange(this.props.history.location);
   }
 
   componentWillReceiveProps(next) {
     if (next.targetRecordId === this.props.targetRecordId && next.sourceRecordId === this.props.sourceRecordId) return;
 
     if (_.identity(next.targetRecordId) && _.identity(next.sourceRecordId)) {
-      hashHistory.push(`/record/${next.sourceRecordId}/to/${next.targetRecordId}`);
+      this.props.history.push(`/record/${next.sourceRecordId}/to/${next.targetRecordId}`);
     }
     else if (_.identity(next.sourceRecordId)) {
-      hashHistory.push(`/record/${next.sourceRecordId}`);
+      this.props.history.push(`/record/${next.sourceRecordId}`);
     }
     else {
-      hashHistory.push('/');
+      this.props.history.push('/');
     }
   }
 
@@ -100,8 +102,8 @@ export class RecordSelectionControls extends React.Component {
   componentWillUnmount() {
     document.removeEventListener('click', this.closeProfileInfo, false);
 
-    if (typeof this.state.unlisten == 'function') {
-      this.state.unlisten();
+    if (typeof this.unlisten == 'function') {
+      this.unlisten();
     }
   }
 
@@ -240,7 +242,7 @@ function mapStateToProps(state) {
   };
 }
 
-export const RecordSelectionControlsContainer = connect(
+export const RecordSelectionControlsContainer = withRouter(connect(
   mapStateToProps,
   uiActionCreators
-)(RecordSelectionControls);
+)(RecordSelectionControls));
