@@ -92,8 +92,8 @@ import TargetRecord from '../target-record';
 import * as subrecordMergeTypes from '../subrecord-merge-types';
 
 module.exports = {
-  "name": "Fennica",
-  "description": "Fennica-kuvailuun tarkoitettu muunnos. Muunnos lisää kansallisbibliografiatunnukset ja käyttöoikeushuomautukset.",
+  "name": "Vapaakappalekirjastot",
+  "description": "E-vapaakappaleille räätälöity muunnos, joka tuottaa käyttöoikeushuomautukset kenttiin 506 ja 540.",
   "record": {
     "targetRecord": TargetRecord,
     "validationRules": MergeValidationPreset.melinda_host,
@@ -124,13 +124,12 @@ module.exports = {
       }
     },
     "newFields": [
-      { tag: '040', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'FI-NL' }, { code: 'b', value: 'fin' }, { code: 'e', value: 'rda' }] },
-      { tag: '042', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'finb' } ] },
+      { tag: '040', ind1: ' ', ind2: ' ', subfields: [ { code: 'b', value: 'fin' }, { code: 'e', value: 'rda' }] },
       { tag: '337', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'tietokonekäyttöinen' }, { code: 'b', value: 'c' }, { code: '2', value: 'rdamedia' } ] },
       { tag: '338', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'verkkoaineisto' }, { code: 'b', value: 'cr' }, { code: '2', value: 'rdacarrier' } ] },
-      { tag: '506', ind1: '1', ind2: ' ', subfields: [ { code: 'a', value: 'Aineisto on käytettävissä vapaakappalekirjastoissa.'}, { code: 'f', value: 'Online access with authorization.' }, { code: '2', value: 'star' }, { code: '5', value: 'FI-NL' }, { code: '9', value: 'FENNI<KEEP>' }] },
-      { tag: '538', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'Internet-yhteys.' }, { code: '9', value: '[LOWTAG]<KEEP>' } ] },
-      { tag: '540', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'Aineisto on käytettävissä tutkimus- ja muihin tarkoituksiin;'  }, { code: 'b', value: 'Kansalliskirjasto;' }, { code: 'c', value: 'Laki kulttuuriaineistojen tallettamisesta ja säilyttämisestä' }, { code: 'u', value: 'http://www.finlex.fi/fi/laki/ajantasa/2007/20071433' }, { code: '5', value: 'FI-NL' }, { code: '9', value: 'FENNI<KEEP>' } ] },
+      { tag: '506', ind1: '1', ind2: ' ', subfields: [ { code: 'a', value: 'Aineisto on käytettävissä vapaakappalekirjastoissa.'}, { code: 'f', value: 'Online access with authorization.' }] },
+      { tag: '538', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'Internet-yhteys.' } ] },
+      { tag: '540', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'Aineisto on käytettävissä tutkimus- ja muihin tarkoituksiin;'  }, { code: 'b', value: 'Kansalliskirjasto;' }, { code: 'c', value: 'Laki kulttuuriaineistojen tallettamisesta ja säilyttämisestä' }, { code: 'u', value: 'http://www.finlex.fi/fi/laki/ajantasa/2007/20071433' } ] },
       { tag: 'LOW', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: '[LOWTAG]' } ] }
     ]
   },
