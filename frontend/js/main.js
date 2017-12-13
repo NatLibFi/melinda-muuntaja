@@ -31,12 +31,12 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BaseComponentContainer } from './components/base-component';
 import thunkMiddleware from 'redux-thunk';
-import createLogger from 'redux-logger';
+import { createLogger } from 'redux-logger';
 import { createStore, applyMiddleware, compose } from 'redux';
 import rootReducer from './root-reducer';
 import {Provider} from 'react-redux';
-import {Router, Route, hashHistory} from 'react-router';
-import App from './components/app';
+import {HashRouter,Route} from 'react-router-dom';
+import {App} from './components/app';
 import * as Cookies from 'js-cookie';
 import { validateSession } from 'commons/action-creators/session-actions';
 import { initKeyboardListener } from './keyboard-commands';
@@ -55,19 +55,17 @@ const store = createStore(
   )
 );
 
-const routes = (
-  <Route component={App}>
-    <Route path='/' component={BaseComponentContainer} />
-    <Route path='/record/:sourceId' component={BaseComponentContainer} />
-    <Route path='/record/:sourceId/to/:targetId' component={BaseComponentContainer} />
-  </Route>
-);
-
 const rootElement = document.getElementById('app');
 
 ReactDOM.render(
   <Provider store={store}>
-    <Router history={hashHistory}>{routes}</Router>
+    <HashRouter>
+      <App>
+        <Route exact path='/' component={BaseComponentContainer} />
+        <Route exact path='/record/:sourceId' component={BaseComponentContainer} />
+        <Route exact path='/record/:sourceId/to/:targetId' component={BaseComponentContainer} />
+      </App>
+    </HashRouter>
   </Provider>, 
   rootElement
 );

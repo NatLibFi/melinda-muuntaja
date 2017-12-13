@@ -27,6 +27,7 @@
 */
 
 import React from 'react';
+import PropTypes from 'proptypes';
 import {connect} from 'react-redux';
 import {selectRecordId} from '../record-utils';
 import _ from 'lodash';
@@ -43,23 +44,23 @@ const SEARCH_DELAY = 500;
 export class SearchDialog extends React.Component {
 
   static propTypes = {
-    handleSearch: React.PropTypes.func.isRequired,
-    setSearchQuery: React.PropTypes.func.isRequired,
-    setSearchPage: React.PropTypes.func.isRequired,
-    setSearchIndex: React.PropTypes.func.isRequired,
-    clearSearchResults: React.PropTypes.func.isRequired,
-    closeSearchDialog: React.PropTypes.func.isRequired,
-    setSourceRecordId: React.PropTypes.func.isRequired,
-    setTargetRecordId: React.PropTypes.func.isRequired,
-    fetchRecord: React.PropTypes.func.isRequired,
-    results: React.PropTypes.object.isRequired,
-    currentPage: React.PropTypes.number.isRequired,
-    query: React.PropTypes.string.isRequired,
-    loading: React.PropTypes.bool.isRequired,
-    error: React.PropTypes.bool.isRequired,
-    showResults: React.PropTypes.bool.isRequired,
-    targetRecordId: React.PropTypes.string,
-    sourceRecordId: React.PropTypes.string,
+    handleSearch: PropTypes.func.isRequired,
+    setSearchQuery: PropTypes.func.isRequired,
+    setSearchPage: PropTypes.func.isRequired,
+    setSearchIndex: PropTypes.func.isRequired,
+    clearSearchResults: PropTypes.func.isRequired,
+    closeSearchDialog: PropTypes.func.isRequired,
+    setSourceRecordId: PropTypes.func.isRequired,
+    setTargetRecordId: PropTypes.func.isRequired,
+    fetchRecord: PropTypes.func.isRequired,
+    results: PropTypes.object.isRequired,
+    currentPage: PropTypes.number.isRequired,
+    query: PropTypes.string.isRequired,
+    loading: PropTypes.bool.isRequired,
+    error: PropTypes.bool.isRequired,
+    showResults: PropTypes.bool.isRequired,
+    targetRecordId: PropTypes.string,
+    sourceRecordId: PropTypes.string,
   }
 
   constructor() {

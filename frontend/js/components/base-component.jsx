@@ -27,6 +27,7 @@
 */
 
 import React from 'react';
+import PropTypes from 'proptypes';
 import '../../styles/main.scss';
 import { NavBarContainer } from './navbar';
 import { ToolBarContainer } from './toolbar';
@@ -43,14 +44,14 @@ import { eitherHasSubrecords } from '../selectors/subrecord-selectors';
 export class BaseComponent extends React.Component {
 
   static propTypes = {
-    sessionState: React.PropTypes.string,
-    searchDialogVisible: React.PropTypes.bool.isRequired,
-    shouldRenderSubrecordComponent: React.PropTypes.bool.isRequired,
-    mergeDialog: React.PropTypes.object.isRequired,
-    closeMergeDialog: React.PropTypes.func.isRequired,
-    mergeResponseMessage: React.PropTypes.string,
-    mergeStatus: React.PropTypes.string.isRequired,
-    mergeResponse: React.PropTypes.object,
+    sessionState: PropTypes.string,
+    searchDialogVisible: PropTypes.bool.isRequired,
+    shouldRenderSubrecordComponent: PropTypes.bool.isRequired,
+    mergeDialog: PropTypes.object.isRequired,
+    closeMergeDialog: PropTypes.func.isRequired,
+    mergeResponseMessage: PropTypes.string,
+    mergeStatus: PropTypes.string.isRequired,
+    mergeResponse: PropTypes.object,
   }
 
   renderValidationIndicator() {

@@ -27,6 +27,8 @@
 */
 
 import React from 'react';
+import PropTypes from 'proptypes';
+
 import '../../styles/components/save-button-panel.scss';
 import classNames from 'classnames';
 import { Preloader } from 'commons/components/preloader';
@@ -34,10 +36,10 @@ import { Preloader } from 'commons/components/preloader';
 export class SaveButtonPanel extends React.Component {
 
   static propTypes = {
-    enabled: React.PropTypes.bool.isRequired,
-    error: React.PropTypes.object,
-    status: React.PropTypes.string.isRequired,
-    onSubmit: React.PropTypes.func.isRequired
+    enabled: PropTypes.bool.isRequired,
+    error: PropTypes.object,
+    status: PropTypes.string.isRequired,
+    onSubmit: PropTypes.func.isRequired
   }
 
   handleClick(event) {

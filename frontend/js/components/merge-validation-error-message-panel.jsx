@@ -27,12 +27,13 @@
 */
 
 import React from 'react';
+import PropTypes from 'proptypes';
 import { ErrorMessagePanel } from './error-message-panel';
 
 export class MergeValidationErrorMessagePanel extends React.Component {
 
   static propTypes = {
-    error: React.PropTypes.instanceOf(Error)
+    error: PropTypes.instanceOf(Error)
   }
 
   render() {

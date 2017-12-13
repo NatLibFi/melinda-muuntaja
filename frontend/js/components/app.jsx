@@ -27,15 +27,20 @@
 */
 
 import React from 'react';
+import PropTypes from 'proptypes';
 import '../../styles/main.scss';
 
 export class App extends React.Component {
 
   static propTypes = {
-    children: React.PropTypes.element.isRequired
+    children: PropTypes.arrayOf(PropTypes.element),
   }
 
   render() {
-    return this.props.children;
+    return (
+      <div>
+        {this.props.children}
+      </div>
+    );
   }
 }

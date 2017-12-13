@@ -27,6 +27,7 @@
 */
 
 import React from 'react';
+import PropTypes from 'proptypes';
 import * as subrecordActions from '../../action-creators/subrecord-actions';
 import {connect} from 'react-redux';
 import { SubrecordActionTypes } from '../../constants';
@@ -35,12 +36,12 @@ import classNames from 'classnames';
 export class SubrecordActionButton extends React.Component {
 
   static propTypes = {
-    rowId: React.PropTypes.string.isRequired,
-    changeSubrecordAction: React.PropTypes.func.isRequired,
-    selectedAction: React.PropTypes.string,
-    isMergeActionAvailable: React.PropTypes.bool,
-    isCopyActionAvailable: React.PropTypes.bool,
-    actionsEnabled: React.PropTypes.bool
+    rowId: PropTypes.string.isRequired,
+    changeSubrecordAction: PropTypes.func.isRequired,
+    selectedAction: PropTypes.string,
+    isMergeActionAvailable: PropTypes.bool,
+    isCopyActionAvailable: PropTypes.bool,
+    actionsEnabled: PropTypes.bool
   } 
 
   componentDidUpdate() {
