@@ -42,7 +42,7 @@
   },
   "license": "AGPL-3.0+",
   "dependencies": {
-    "@natlibfi/marc-record-merge": "^3.6.0",
+    "@natlibfi/marc-record-merge": "^4.0.0",
     "@natlibfi/melinda-api-client": "^1.1.6",
     "@natlibfi/melinda-ui-commons": "file:melinda-ui-commons",
     "@natlibfi/sru-client": "git+https://github.com/NatLibFi/sru-client.git#9670a2c040e0231033a086b82b9a2f95125d71ab",
