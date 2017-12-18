@@ -33,7 +33,7 @@ const defaultPreset = {
 };
 
 export const preset = {
-  defaults: defaultPreset,
+  defaults: mergeProfiles,
   aleph: mergeProfiles,
   kvp: mergeProfiles
 };
