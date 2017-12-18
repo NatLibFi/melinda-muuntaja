@@ -33,7 +33,9 @@ const defaultPreset = {
 };
 
 export const preset = {
-  defaults: mergeProfiles,
+  defaults: defaultPreset,
   aleph: mergeProfiles,
-  kvp: mergeProfiles
+  kvp: mergeProfiles,
+  fenni: mergeProfiles,
+  selma: mergeProfiles
 };
