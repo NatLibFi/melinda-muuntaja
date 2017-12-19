@@ -37,5 +37,6 @@ export const preset = {
   aleph: mergeProfiles,
   kvp: mergeProfiles,
   fenni: mergeProfiles,
-  selma: mergeProfiles
+  selma: mergeProfiles,
+  halti: mergeProfiles
 };
