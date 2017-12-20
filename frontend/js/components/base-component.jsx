@@ -28,18 +28,22 @@
 
 import React from 'react';
 import PropTypes from 'proptypes';
+import _ from 'lodash';
 import '../../styles/main.scss';
 import { NavBarContainer } from './navbar';
 import { ToolBarContainer } from './toolbar';
 import { RecordSelectionControlsContainer } from './record-selection-controls';
 import { RecordMergePanelContainer } from './record-merge-panel';
-import { SubrecordComponent } from './subrecord/subrecord-component';
+import { SubrecordComponent } from 'commons/components/subrecord/subrecord-component';
 import { SigninFormPanelContainer } from 'commons/components/signin-form-panel';
 import {connect} from 'react-redux';
 import * as uiActionCreators from '../ui-actions';
 import { MergeDialog } from './merge-dialog';
 import { SearchDialogContainer } from './search-dialog';
-import { eitherHasSubrecords } from '../selectors/subrecord-selectors';
+import { eitherHasSubrecords, sourceSubrecords, targetSubrecords, subrecordRowsDisplay } from '../selectors/subrecord-selectors';
+import { recordSaveActionAvailable, subrecordActionsEnabled } from '../selectors/merge-status-selector';
+import { compactRowsMap } from '../selectors/ui-selectors';
+import * as subrecordActions from '../action-creators/subrecord-actions';
 
 export class BaseComponent extends React.Component {
 
@@ -52,6 +56,23 @@ export class BaseComponent extends React.Component {
     mergeResponseMessage: PropTypes.string,
     mergeStatus: PropTypes.string.isRequired,
     mergeResponse: PropTypes.object,
+    setCompactSubrecordView: PropTypes.func.isRequired,
+    compactSubrecordView: PropTypes.bool.isRequired,
+    subrecords: PropTypes.array.isRequired,
+    saveButtonVisible: PropTypes.bool.isRequired,
+    subrecordActionsEnabled: PropTypes.bool.isRequired,
+    insertSubrecordRow: PropTypes.func.isRequired,
+    removeSubrecordRow: PropTypes.func.isRequired,
+    changeSubrecordAction: PropTypes.func.isRequired,
+    changeSubrecordRow: PropTypes.func.isRequired,
+    changeSourceSubrecordRow: PropTypes.func.isRequired,
+    changeTargetSubrecordRow: PropTypes.func.isRequired,
+    expandSubrecordRow: PropTypes.func.isRequired,
+    compressSubrecordRow: PropTypes.func.isRequired,
+    toggleSourceSubrecordFieldSelection: PropTypes.func.isRequired,
+    editMergedSubrecord: PropTypes.func.isRequired,
+    saveSubrecord: PropTypes.func.isRequired,
+    notifications: PropTypes.array
   }
 
   renderValidationIndicator() {
@@ -66,7 +87,24 @@ export class BaseComponent extends React.Component {
     return (
       <div>
         <div className='divider' />
-        <SubrecordComponent />
+        <SubrecordComponent 
+          setCompactSubrecordView={this.props.setCompactSubrecordView} 
+          compactSubrecordView={this.props.compactSubrecordView}
+          subrecords={this.props.subrecords}
+          saveButtonVisible={this.props.saveButtonVisible}
+          actionsEnabled={this.props.subrecordActionsEnabled}
+          onInsertSubrecordRow={this.props.insertSubrecordRow}
+          onRemoveSubrecordRow={this.props.removeSubrecordRow}
+          onChangeSubrecordAction={this.props.changeSubrecordAction}
+          onChangeSubrecordRow={this.props.changeSubrecordRow}
+          onChangeSourceSubrecordRow={this.props.changeSourceSubrecordRow}
+          onChangeTargetSubrecordRow={this.props.changeTargetSubrecordRow}
+          onExpandSubrecordRow={this.props.expandSubrecordRow}
+          onCompressSubrecordRow={this.props.compressSubrecordRow}
+          onToggleSourceSubrecordFieldSelection={this.props.toggleSourceSubrecordFieldSelection}
+          onEditMergedSubrecord={this.props.editMergedSubrecord}
+          onSaveSubrecord={this.props.saveSubrecord}
+        />
       </div>
     );
   }
@@ -117,20 +155,30 @@ export class BaseComponent extends React.Component {
 }
 
 function mapStateToProps(state) {
-
+  const sessionState = state.getIn(['session', 'state']);
+  
   return {
-    sessionState: state.getIn(['session', 'state']),
+    sessionState,
     mergeStatus: state.getIn(['mergeStatus', 'status']),
     mergeResponseMessage: state.getIn(['mergeStatus', 'message']),
     mergeResponse: state.getIn(['mergeStatus', 'response']),
     mergeDialog: state.getIn(['mergeStatus', 'dialog']).toJS(),
     shouldRenderSubrecordComponent: eitherHasSubrecords(state),
-    searchDialogVisible: state.getIn(['search', 'visible'])
+    searchDialogVisible: state.getIn(['search', 'visible']),
+
+    // Subrecords
+    compactSubrecordView: state.getIn(['ui', 'compactSubrecordView']),
+    subrecords: subrecordRowsDisplay(state),
+    saveButtonVisible: recordSaveActionAvailable(state),
+    subrecordActionsEnabled: subrecordActionsEnabled(state),
+    compactRowIdMap: compactRowsMap(state),
+    preferredSubrecordCount: targetSubrecords(state).length,
+    otherSubrecordCount: sourceSubrecords(state).length,
   };
 }
 
 export const BaseComponentContainer = connect(
   mapStateToProps,
-  uiActionCreators
+  _.assign({}, uiActionCreators, subrecordActions)
 )(BaseComponent);
 
