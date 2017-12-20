@@ -28,6 +28,7 @@
 
 import _ from 'lodash';
 import { createSelector } from 'reselect';
+import { compactRowsMap } from './ui-selectors';
 
 export const subrecordOrder = state => state.getIn(['subrecords', 'index']).toJS();
 export const subrecords = state => state.get('subrecords').delete('index').toJS();
@@ -39,6 +40,27 @@ export const subrecordRows = createSelector(
       return subrecords[key];
     });
 
+  }
+);
+
+export const subrecordRowsDisplay = createSelector(
+  [subrecordOrder, subrecords, compactRowsMap], (index, subrecords, compactRowsMap) => {
+
+    return index.map(key => {
+      if (!subrecords[key]) {
+        return {
+          key
+        };
+      }
+
+      return {
+        key,
+        ...subrecords[key],
+        isCompacted: compactRowsMap[key] === true,
+        isMergeActionAvailable: subrecords[key].sourceRecord !== undefined,
+        isCopyActionAvailable: subrecords[key].targetRecord !== undefined
+      };
+    });
   }
 );
 
