@@ -33,4 +33,4 @@ const selectedMergeProfileId = state => state.getIn(['config', 'selectedMergePro
 
 export const selectedMergeProfile = createSelector([selectedMergeProfileId, mergeProfiles], (selectedMergeProfileId, mergeProfiles) => mergeProfiles.get(selectedMergeProfileId));
 
-export const subrecordMergeType = createSelector([selectedMergeProfile], (selectedMergeProfile) => selectedMergeProfile.getIn(['subrecords', 'mergeType']));
+export const subrecordMergeType = createSelector([selectedMergeProfile], (selectedMergeProfile) => selectedMergeProfile ? selectedMergeProfile.getIn(['subrecords', 'mergeType']) : undefined);
