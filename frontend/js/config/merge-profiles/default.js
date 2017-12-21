@@ -90,6 +90,7 @@ import { preset as MergeValidationPreset } from '../../marc-record-merge-validat
 import { preset as PostMergePreset } from '../../marc-record-merge-postmerge-service';
 import TargetRecord from '../target-record';
 import * as subrecordMergeTypes from '../subrecord-merge-types';
+import { hyphenate } from 'isbn-utils';
 
 module.exports = {
   "name": "Oletus",
@@ -119,7 +120,7 @@ module.exports = {
         "710": { "action": "copy", "options": { "copyUnless": { "9": { "value": "[LOWTAG]<DROP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "711": { "action": "copy", "options": { "copyUnless": { "9": { "value": "[LOWTAG]<DROP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "490": { "action": "copy", "options": { "dropOriginal": true, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
-        "776": { "action": "createFrom", "options": { "convertTag": "020", "ind1": " ", "ind2": " ", "subfields": { "z": { "convertCode": "a" } } } }
+        "776": { "action": "createFrom", "options": { "convertTag": "020", "ind1": " ", "ind2": " ", "subfields": { "z": { "convertCode": "a", modifications: [ hyphenate ] } } } }
       }
     },
     "newFields": [
