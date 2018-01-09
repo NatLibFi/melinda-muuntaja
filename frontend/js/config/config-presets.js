@@ -29,14 +29,18 @@
 import mergeProfiles from './merge-profiles';
 
 const defaultPreset = {
-  default: mergeProfiles.default
+  default: mergeProfiles['default']
 };
 
 export const preset = {
-  defaults: defaultPreset,
-  aleph: mergeProfiles,
-  kvp: mergeProfiles,
-  fenni: mergeProfiles,
-  selma: mergeProfiles,
-  halti: mergeProfiles
+  'defaults': defaultPreset,
+  'aleph': mergeProfiles,
+  'kvp': mergeProfiles,
+  'fenni': {
+    'default': mergeProfiles['default'],
+    'fennica': mergeProfiles['fennica'],
+    'legal-deposits': mergeProfiles['legal-deposits']
+  },
+  'selma': defaultPreset,
+  'halti': defaultPreset
 };
