@@ -27,7 +27,7 @@
 */
 
 import React from 'react';
-import PropTypes from 'proptypes';
+import PropTypes from 'prop-types';
 import '../../styles/main.scss';
 
 export class App extends React.Component {

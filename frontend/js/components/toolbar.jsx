@@ -27,7 +27,7 @@
 */
 
 import React from 'react';
-import PropTypes from 'proptypes';
+import PropTypes from 'prop-types';
 import '../../styles/components/toolbar.scss';
 import {connect} from 'react-redux';
 import * as uiActionCreators from '../ui-actions';

@@ -27,7 +27,7 @@
 */
 
 import React from 'react';
-import PropTypes from 'proptypes';
+import PropTypes from 'prop-types';
 import { commitMerge} from '../ui-actions';
 import {connect} from 'react-redux';
 import { mergeButtonEnabled } from '../selectors/merge-status-selector';

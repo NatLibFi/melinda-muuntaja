@@ -27,7 +27,7 @@
 */
 
 import React from 'react';
-import PropTypes from 'proptypes';
+import PropTypes from 'prop-types';
 import _ from 'lodash';
 import '../../styles/main.scss';
 import { NavBarContainer } from './navbar';

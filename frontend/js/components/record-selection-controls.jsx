@@ -27,7 +27,7 @@
 */
 
 import React from 'react';
-import PropTypes from 'proptypes';
+import PropTypes from 'prop-types';
 import '../../styles/components/record-selection-controls';
 import * as uiActionCreators from '../ui-actions';
 import {connect} from 'react-redux';
