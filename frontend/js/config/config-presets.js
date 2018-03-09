@@ -39,7 +39,7 @@ export const preset = {
   'fenni': {
     'default': mergeProfiles['default'],
     'fennica': mergeProfiles['fennica'],
-    'legal-deposits': mergeProfiles['legal-deposits']
+    'legal_deposit': mergeProfiles['legal_deposit']
   },
   'selma': defaultPreset,
   'halti': defaultPreset

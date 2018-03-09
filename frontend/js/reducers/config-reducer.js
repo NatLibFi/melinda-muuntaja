@@ -26,7 +26,7 @@
 *
 */
 
-import { Map } from 'immutable'; 
+import { Map } from 'immutable';
 import _ from 'lodash';
 import { SWITCH_MERGE_CONFIG } from '../ui-actions';
 import { CREATE_SESSION_SUCCESS } from 'commons/constants/action-type-constants';
@@ -57,6 +57,8 @@ function setConfiguration(state, userinfo) {
   else configPreset = preset.defaults;
 
   return state.set('mergeProfiles', Object.keys(configPreset).reduce((mergeProfiles, key) => {
+    if (configPreset[key] === undefined) return mergeProfiles;
+
     const mergeProfile = replaceConfigVariables(configPreset[key], userinfo, configPreset[key].lowTag);
 
     return mergeProfiles.set(key, Map({
