@@ -35,11 +35,12 @@ import { createLogger } from 'redux-logger';
 import { createStore, applyMiddleware, compose } from 'redux';
 import rootReducer from './root-reducer';
 import {Provider} from 'react-redux';
-import {HashRouter,Route} from 'react-router-dom';
+import {Router,Route} from 'react-router-dom';
 import {App} from './components/app';
 import * as Cookies from 'js-cookie';
 import { validateSession } from 'commons/action-creators/session-actions';
 import { initKeyboardListener } from './keyboard-commands';
+import history from './history';
 
 const loggerMiddleware = createLogger();
 
@@ -59,14 +60,14 @@ const rootElement = document.getElementById('app');
 
 ReactDOM.render(
   <Provider store={store}>
-    <HashRouter>
+    <Router history={history}>
       <App>
         <Route exact path='/' component={BaseComponentContainer} />
         <Route exact path='/record/:sourceId' component={BaseComponentContainer} />
         <Route exact path='/record/:sourceId/to/:targetId' component={BaseComponentContainer} />
       </App>
-    </HashRouter>
-  </Provider>, 
+    </Router>
+  </Provider>,
   rootElement
 );
 
