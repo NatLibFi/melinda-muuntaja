@@ -32,7 +32,6 @@ import HttpStatus from 'http-status-codes';
 import _ from 'lodash';
 import createRecordMerger from '@natlibfi/marc-record-merge';
 import { exceptCoreErrors } from './utils';
-import {hashHistory} from 'react-router';
 import { RESET_WORKSPACE, TOGGLE_COMPACT_SUBRECORD_VIEW } from './constants/action-type-constants';
 import { FetchNotOkError } from './errors';
 import { subrecordRows, sourceSubrecords, targetSubrecords, rowsWithResultRecord } from './selectors/subrecord-selectors';
@@ -44,6 +43,7 @@ import * as subrecordMergeTypes from './config/subrecord-merge-types';
 
 import * as MergeValidation from './marc-record-merge-validate-service';
 import * as PostMerge from './marc-record-merge-postmerge-service';
+import history from './history';
 
 export const SWITCH_MERGE_CONFIG = 'SWITCH_MERGE_CONFIG';
 
@@ -88,11 +88,11 @@ export function commitMerge() {
       if (row.sourceRecord) result.sourceSubrecordList.push(row.sourceRecord);
       if (row.mergedRecord) result.mergedSubrecordList.push(row.mergedRecord);
       if (row.unmodifiedMergedRecord) result.unmodifiedMergedSubrecordList.push(row.unmodifiedMergedRecord);
-      
+
       return result;
     }, { sourceSubrecordList: [], targetSubrecordList: [], mergedSubrecordList: [], unmodifiedMergedSubrecordList: [] });
 
-    const body = { 
+    const body = {
       operationType,
       subrecordMergeType,
       otherRecord: {
@@ -135,16 +135,16 @@ export function commitMerge() {
             const newMergedRecordId = res.recordId;
 
             const { record, subrecords } = marcRecordsFrom(res.record, res.subrecords);
-          
+
             dispatch(commitMergeSuccess(newMergedRecordId, res));
             dispatch(saveRecordSuccess(record));
 
-            // subrecords            
+            // subrecords
             const rowIds = rowsWithResultRecord(getState()).map(row => row.rowId);
             _.zip(rowIds, subrecords).forEach(([rowId, subrecord]) => {
               dispatch(saveSubrecordSuccess(rowId, subrecord));
             });
-         
+
           } else {
             switch (response.status) {
               case HttpStatus.UNAUTHORIZED: return dispatch(commitMergeError('Käyttäjätunnus ja salasana eivät täsmää.'));
@@ -207,8 +207,8 @@ export function resetState() {
 
 
 export function resetWorkspace() {
-  
-  hashHistory.push('/');
+
+  history.push('/');
 
   return {
     type: RESET_WORKSPACE,
@@ -382,7 +382,7 @@ export function resetSourceRecord() {
       'type': RESET_SOURCE_RECORD,
     });
     dispatch(updateMergedRecord());
-  }; 
+  };
 }
 
 export const SET_SOURCE_RECORD = 'SET_SOURCE_RECORD';
@@ -491,10 +491,10 @@ export function updateMergedRecord() {
     const preferredHasSubrecords = preferredState === 'EMPTY' ? false : getState().getIn(['targetRecord', 'hasSubrecords']);
     const otherRecord = getState().getIn(['sourceRecord', 'record']);
     const otherRecordHasSubrecords = getState().getIn(['sourceRecord', 'hasSubrecords']);
-    
+
     if (preferredRecord && otherRecord) {
       const merge = createRecordMerger(mergeConfiguration);
-    
+
       const validationRulesClone = _.clone(validationRules);
 
       if (subrecordMergeType === subrecordMergeTypes.DISALLOW_SUBRECORDS) {
@@ -534,7 +534,7 @@ export function updateMergedRecord() {
       const matchedSubrecordPairs = match(sourceSubrecordList, targetSubrecordList);
 
       dispatch(updateSubrecordArrangement(matchedSubrecordPairs));
-      
+
       if (subrecordMergeType === subrecordMergeTypes.MERGE || subrecordMergeType === subrecordMergeTypes.SHARED) {
         dispatch(updateMergedSubrecords(matchedSubrecordPairs));
       }
@@ -603,14 +603,14 @@ export const fetchRecord = (function() {
     };
 
   };
- 
+
 })();
 
 function recordFetch(APIBasePath, loadRecordAction, setRecordAction, setRecordErrorAction) {
   let currentRecordId;
   return function(recordId, dispatch) {
     currentRecordId = recordId;
-    
+
     dispatch(loadRecordAction(recordId));
 
     return fetch(`${APIBasePath}/${recordId}`)
@@ -626,7 +626,7 @@ function recordFetch(APIBasePath, loadRecordAction, setRecordAction, setRecordEr
           dispatch(setRecordAction(record, subrecords, recordId));
           dispatch(updateMergedRecord());
         }
- 
+
       }).catch(exceptCoreErrors((error) => {
 
         if (error instanceof FetchNotOkError) {
@@ -635,7 +635,7 @@ function recordFetch(APIBasePath, loadRecordAction, setRecordAction, setRecordEr
             case HttpStatus.INTERNAL_SERVER_ERROR: return dispatch(setRecordErrorAction('Tietueen lataamisessa tapahtui virhe.'));
           }
         }
-                
+
         dispatch(setRecordErrorAction('There has been a problem with fetch operation: ' + error.message));
       }));
   };
@@ -644,7 +644,7 @@ function recordFetch(APIBasePath, loadRecordAction, setRecordAction, setRecordEr
 function marcRecordsFrom(record, subrecords) {
   const marcRecord = new MarcRecord(record);
   const marcSubrecords = subrecords.map(record => new MarcRecord(record));
-         
+
   decorateFieldsWithUuid(marcRecord);
   marcSubrecords.forEach(decorateFieldsWithUuid);
 
