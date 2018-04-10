@@ -30,7 +30,7 @@ node index.js
 ## Start the application in development
 `npm run dev`
 
-This will start webpack-dev-server for frontend codebase and nodemon for the backend.
+This will start webpack-dev-server for frontend codebase and nodemon for the backend. The application will be available at http://localhost:3000.
 
 ## License and copyright
 
