@@ -42,6 +42,10 @@ const PORT = readEnvironmentVariable('HTTP_PORT', 3001);
 
 const app = express();
 
+process.on('SIGINT', () => {
+  process.exit(-1);
+});
+
 app.use(expressWinston);
 app.use(cookieParser());
 
@@ -56,4 +60,3 @@ app.use(express.static(path.resolve(__dirname, 'public')));
 const server = app.listen(PORT, () => logger.log('info', `Application started on port ${PORT}`));
 
 server.timeout = 1800000; // Half an hour
-
