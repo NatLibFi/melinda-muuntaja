@@ -107,8 +107,10 @@ module.exports = {
         "084": { "action": "copy", "options": { "copyIf": { "9": { "value": "[LOWTAG]<KEEP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "245": { "action": "copy", "options": { "dropOriginal": true, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "246": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
+        "250": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "260": { "action": "createFrom", "options": { "convertTag": "264", "ind1": ' ', "ind2": "1", "subfields": { "a": {}, "b": {}, "c": {}, "3": {}, "6": {}, "8": {} } } },
         "263": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
+        "264": { "action": "createFrom", "options": { "convertTag": "264", "ind1": ' ', "ind2": "1", "subfields": { "a": {}, "b": {}, "c": {}, "3": {}, "6": {}, "8": {} } } },
         "1..": { "action": "copy", "options": { "dropOriginal": true } },
         "300": { "action": "createFrom", "options": { "subfields": { "a": { modifications: [ { type: "replace", args: [/ [;:]$/, ""] }, { type: "replace", args: [/ s\./, " sivua"] }, { type: "wrap", args: ["1 verkkoaineisto (", ")"] } ] } } } },
         "490": { "action": "createFrom", "options": { "subfields": { "a": {},  "x": { "modifications": [ { "type": "replace", "args": [/[0-9-]+/, ""] } ] }, "v": {} } } },
@@ -117,6 +119,7 @@ module.exports = {
         "502": { "action": "copy", "options": { "copyIf": { "9": { "value": "[LOWTAG]<KEEP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "520": { "action": "copy", "options": { "copyIf": { "9": { "value": "[LOWTAG]<KEEP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "567": { "action": "copy", "options": { "copyIf": { "9": { "value": "[LOWTAG]<KEEP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
+        "588": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "700": { "action": "copy", "options": { "copyUnless": { "9": { "value": "[LOWTAG]<DROP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "710": { "action": "copy", "options": { "copyUnless": { "9": { "value": "[LOWTAG]<DROP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "711": { "action": "copy", "options": { "copyUnless": { "9": { "value": "[LOWTAG]<DROP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
@@ -129,8 +132,8 @@ module.exports = {
       { tag: '337', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'tietokonekäyttöinen' }, { code: 'b', value: 'c' }, { code: '2', value: 'rdamedia' } ] },
       { tag: '338', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'verkkoaineisto' }, { code: 'b', value: 'cr' }, { code: '2', value: 'rdacarrier' } ] },
       { tag: '506', ind1: '1', ind2: ' ', subfields: [ { code: 'a', value: 'Aineisto on käytettävissä vapaakappalekirjastoissa.'}, { code: 'f', value: 'Online access with authorization.' }] },
-      { tag: '538', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'Internet-yhteys.' } ] },
       { tag: '540', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'Aineisto on käytettävissä tutkimus- ja muihin tarkoituksiin;'  }, { code: 'b', value: 'Kansalliskirjasto;' }, { code: 'c', value: 'Laki kulttuuriaineistojen tallettamisesta ja säilyttämisestä' }, { code: 'u', value: 'http://www.finlex.fi/fi/laki/ajantasa/2007/20071433' } ] },
+      { tag: '856', ind1: ' ', ind2: ' ', subfields: [ { code: 'u', value: '' }, {code: 'z', value: 'Käytettävissä vapaakappalekirjastoissa'}, { code: '5', value: 'FENNI' }, { code: '5', value: 'VOLTE' }, { code: '5', value: 'JYKDO' }, { code: '5', value: 'ALMA' }, { code: '5', value: 'OULA' }, { code: '5', value: 'JOSKU' } ] },
       { tag: 'LOW', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: '[LOWTAG]' } ] }
     ]
   },

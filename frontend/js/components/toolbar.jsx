@@ -71,6 +71,17 @@ export class ToolBar extends React.Component {
     );
   }
 
+  renderHelpButton() {
+    return (
+      <div className="group">
+        <ul id="nav">
+          <li><a href="https://www.kiwi.fi/x/iBcvBQ" target="_blank" rel="noopener noreferrer"><i className="material-icons tooltip" title="Käyttöohje">help</i></a></li>
+        </ul>
+        <span className="group-label">Ohje</span>
+      </div>
+    );
+  }
+
   render() {
     return (
       <nav className="toolbar">
@@ -80,6 +91,10 @@ export class ToolBar extends React.Component {
           <ul><li className="separator"><span /></li></ul>
 
           {this.renderSearchRecordButton()}
+
+          <ul><li className="separator"><span /></li></ul>
+
+          {this.renderHelpButton()}
 
         </div>
       </nav>
