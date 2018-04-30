@@ -2,18 +2,18 @@
 *
 * @licstart  The following is the entire license notice for the JavaScript code in this file.
 *
-* UI for merging MARC records
+* UI for transforming MARC records
 *
 * Copyright (C) 2015-2017 University Of Helsinki (The National Library Of Finland)
 *
-* This file is part of marc-merge-ui
+* This file is part of melinda-eresource-tool
 *
-* marc-merge-ui program is free software: you can redistribute it and/or modify
+* melinda-eresource-tool program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU Affero General Public License as
 * published by the Free Software Foundation, either version 3 of the
 * License, or (at your option) any later version.
 *
-* oai-pmh-server-backend-module-melinda is distributed in the hope that it will be useful,
+* melinda-eresource-tool is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU Affero General Public License for more details.
@@ -40,12 +40,10 @@ import _ from 'lodash';
 import { createArchive } from './archive-service';
 
 const MelindaClient = require('@natlibfi/melinda-api-client');
-const alephUrl = readEnvironmentVariable('ALEPH_URL');
-const apiVersion = readEnvironmentVariable('MELINDA_API_VERSION', null);
-const apiPath = apiVersion !== null ? `/${apiVersion}` : '';
+const apiUrl = readEnvironmentVariable('MELINDA_API');
 
 const defaultConfig = {
-  endpoint: `${alephUrl}/API${apiPath}`,
+  endpoint: apiUrl,
   user: '',
   password: ''
 };
@@ -62,17 +60,17 @@ mergeController.set('etag', false);
 mergeController.options('/commit-merge', cors(corsOptions)); // enable pre-flight
 
 mergeController.post('/commit-merge', cors(corsOptions), requireSession, requireBodyParams('operationType', 'subrecordMergeType', 'otherRecord', 'mergedRecord', 'unmodifiedRecord'), (req, res) => {
-  
+
   const {username, password} = req.session;
 
   const { operationType, subrecordMergeType } = req.body;
 
-  const [otherRecord, mergedRecord, unmodifiedRecord] = 
+  const [otherRecord, mergedRecord, unmodifiedRecord] =
         [req.body.otherRecord, req.body.mergedRecord, req.body.unmodifiedRecord].map(transformToMarcRecordFamily);
 
   const preferredRecord = req.body.preferredRecord ? transformToMarcRecordFamily(req.body.preferredRecord) : undefined;
 
-  const clientConfig = { 
+  const clientConfig = {
     ...defaultConfig,
     user: username,
     password: password
@@ -108,14 +106,14 @@ mergeController.post('/commit-merge', cors(corsOptions), requireSession, require
         }
 
         const response = _.extend({}, mergedMainRecordResult, {
-          record, 
+          record,
           subrecords: subrecordsInRequestOrder
         });
 
         res.send(response);
       });
 
-      
+
     }).catch(error => {
       logger.log('error', 'Commit merge error', error);
       res.status(500).send(error);
@@ -145,14 +143,14 @@ function requireSession(req, res, next) {
   if (username && password) {
     return next();
   } else {
-    res.sendStatus(HttpStatus.UNAUTHORIZED);    
+    res.sendStatus(HttpStatus.UNAUTHORIZED);
   }
 
 }
 
 function transformToMarcRecordFamily(json) {
-  if (!json) return; 
-  
+  if (!json) return;
+
   return {
     record: transformToMarcRecord(json.record),
     subrecords: json.subrecords.map(transformToMarcRecord)

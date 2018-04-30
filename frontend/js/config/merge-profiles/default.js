@@ -2,18 +2,18 @@
 *
 * @licstart  The following is the entire license notice for the JavaScript code in this file.
 *
-* UI for merging MARC records
+* UI for transforming MARC records
 *
 * Copyright (C) 2015-2017 University Of Helsinki (The National Library Of Finland)
 *
-* This file is part of marc-merge-ui
+* This file is part of melinda-eresource-tool
 *
-* marc-merge-ui program is free software: you can redistribute it and/or modify
+* melinda-eresource-tool program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU Affero General Public License as
 * published by the Free Software Foundation, either version 3 of the
 * License, or (at your option) any later version.
 *
-* oai-pmh-server-backend-module-melinda is distributed in the hope that it will be useful,
+* melinda-eresource-tool is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU Affero General Public License for more details.
@@ -90,6 +90,7 @@ import { preset as MergeValidationPreset } from '../../marc-record-merge-validat
 import { preset as PostMergePreset } from '../../marc-record-merge-postmerge-service';
 import TargetRecord from '../target-record';
 import * as subrecordMergeTypes from '../subrecord-merge-types';
+import { hyphenate } from 'isbn-utils';
 
 module.exports = {
   "name": "Oletus",
@@ -119,7 +120,7 @@ module.exports = {
         "710": { "action": "copy", "options": { "copyUnless": { "9": { "value": "[LOWTAG]<DROP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "711": { "action": "copy", "options": { "copyUnless": { "9": { "value": "[LOWTAG]<DROP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "490": { "action": "copy", "options": { "dropOriginal": true, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
-        "776": { "action": "createFrom", "options": { "convertTag": "020", "ind1": " ", "ind2": " ", "subfields": { "z": { "convertCode": "a" } } } }
+        "776": { "action": "createFrom", "options": { "convertTag": "020", "ind1": " ", "ind2": " ", "subfields": { "z": { "convertCode": "a", modifications: [ hyphenate ] } } } }
       }
     },
     "newFields": [

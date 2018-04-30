@@ -27,7 +27,7 @@
 */
 
 import React from 'react';
-import PropTypes from 'proptypes';
+import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {selectRecordId} from '../record-utils';
 import _ from 'lodash';
