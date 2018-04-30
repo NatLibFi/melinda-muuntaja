@@ -1,7 +1,7 @@
 {
   "name": "@natlibfi/melinda-eresource-tool",
   "description": "UI for transforming MARC records",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": {
     "name": "The National Library of Finland"
   },
