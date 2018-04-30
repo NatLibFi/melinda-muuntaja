@@ -26,6 +26,7 @@
 *
 */
 
-process.env.ALEPH_URL='test-url';
+process.env.MELINDA_API='test-url1';
+process.env.ALEPH_URL='test-url2';
 process.env.ALEPH_USER_LIBRARY='test-lib';
 process.env.DUPLICATE_DB_URL='test-duplicate-db-url';
