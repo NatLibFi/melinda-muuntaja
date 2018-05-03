@@ -42,7 +42,7 @@ const record = new MarcRecord({
     },
     {
       tag: '008',
-      value: '^^^^^^s2016^^^^fi^||||^o^^^^^|0|^0|fin|^'
+      value: '^^^^^^s2018^^^^fi^||||^o^^^^^|0|^0|fin|^'
     },
     {
       tag: '020',
