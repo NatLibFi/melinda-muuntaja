@@ -88,6 +88,44 @@ const record = new MarcRecord({
           value: 'rdacontent'
         }
       ]
+    },
+    {
+      tag: '337',
+      ind1: ' ',
+      ind2: ' ',
+      subfields: [
+        {
+          code: 'a',
+          value: 'tietokonekäyttöinen'
+        },
+        {
+          code: 'b',
+          value: 'c'
+        },
+        {
+          code: '2',
+          value: 'rdamedia'
+        }
+      ]
+    },
+    {
+      tag: '338',
+      ind1: ' ',
+      ind2: ' ',
+      subfields: [
+        {
+          code: 'a',
+          value: 'verkkoaineisto'
+        },
+        {
+          code: 'b',
+          value: 'cr'
+        },
+        {
+          code: '2',
+          value: 'rdacarrier'
+        }
+      ]
     }
   ]
 });
