@@ -181,6 +181,7 @@ export class RecordSelectionControls extends React.Component {
 
     const selectedMergeProfile = mergeProfiles.find(({key}) => key === this.props.selectedMergeProfile);
 
+
     return (
       <div className="row row-margin-swap record-selection-controls">
       
@@ -205,7 +206,7 @@ export class RecordSelectionControls extends React.Component {
         <div className="col s2 offset-s2 profile-selector input-field">
           {mergeProfiles.length > 1 && (
             <div className="input-field">
-              <select ref={(ref) => this.mergeProfileSelect = ref}>
+              <select defaultValue={selectedMergeProfile.key} ref={(ref) => this.mergeProfileSelect = ref}>
                 {mergeProfiles.map(({key, name}) => (
                   <option key={key} value={key}>{name}</option>
                 ))}

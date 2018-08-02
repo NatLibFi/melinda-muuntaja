@@ -75,6 +75,13 @@ export class BaseComponent extends React.Component {
     notifications: PropTypes.array
   }
 
+  componentDidUpdate() {
+    const userConfig = localStorage.getItem('muuntajaConfig');
+    if (userConfig !== null) {
+      this.context.store.dispatch({ type: 'SWITCH_MERGE_CONFIG', config: userConfig });
+    }
+  }
+
   renderValidationIndicator() {
     return null;
   }
@@ -127,7 +134,7 @@ export class BaseComponent extends React.Component {
   }
 
   renderMainPanel() {
-  
+    
     return (
       <div>
         <NavBarContainer />
@@ -176,6 +183,10 @@ function mapStateToProps(state) {
     otherSubrecordCount: sourceSubrecords(state).length,
   };
 }
+
+BaseComponent.contextTypes = {
+  store: PropTypes.object
+};
 
 export const BaseComponentContainer = connect(
   mapStateToProps,
