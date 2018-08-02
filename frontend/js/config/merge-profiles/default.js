@@ -106,13 +106,14 @@ module.exports = {
         "080": { "action": "copy", "options": { "copyIf": { "9": { "value": "[LOWTAG]<KEEP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "084": { "action": "copy", "options": { "copyIf": { "9": { "value": "[LOWTAG]<KEEP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "1..": { "action": "copy", "options": { "dropOriginal": true } },
+        "240": { "action": "copy", "options": { "dropOriginal": true, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "245": { "action": "copy", "options": { "dropOriginal": true, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "246": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "250": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "260": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "263": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "264": { "action": "createFrom", "options": { "convertTag": "264", "ind1": ' ', "ind2": "1", "subfields": { "a": {}, "b": {}, "c": {}, "3": {}, "6": {}, "8": {} } } },
-        "300": { "action": "createFrom", "options": { "subfields": { "a": { modifications: [ { type: "replace", args: [/ [;:]$/, ""] }, { type: "replace", args: [/ s\./, " sivua"] }, { type: "wrap", args: ["1 verkkoaineisto (", ")"] } ] } } } },
+        "300": { "action": "createFrom", "options": { "subfields": { "a": { modifications: [ { type: "replace", args: [/ [;:]$/, ""] }, { type: "replace", args: [/ s\./, " sivua"] }, { type: "wrap", args: ["1 verkkoaineisto (", ")"] } ] }, "b": {} } } },
         "490": { "action": "copy", "options": { "dropOriginal": true, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "500": { "action": "copy", "options": { "copyIf": { "9": { "value": "[LOWTAG]<KEEP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "502": { "action": "copy", "options": { "copyIf": { "9": { "value": "[LOWTAG]<KEEP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
@@ -125,12 +126,14 @@ module.exports = {
         "700": { "action": "copy", "options": { "copyUnless": { "9": { "value": "[LOWTAG]<DROP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "710": { "action": "copy", "options": { "copyUnless": { "9": { "value": "[LOWTAG]<DROP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "711": { "action": "copy", "options": { "copyUnless": { "9": { "value": "[LOWTAG]<DROP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
-        "776": { "action": "createFrom", "options": { "convertTag": "020", "ind1": " ", "ind2": " ", "subfields": { "z": { "convertCode": "a", modifications: [ hyphenate ] } } } }
+        "776": { "action": "createFrom", "options": { "convertTag": "020", "ind1": " ", "ind2": " ", "subfields": { "z": { "convertCode": "a", modifications: [ hyphenate ] } } } },
+        "800": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
+        "810": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
+        "811": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
+        "830": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } }
       }
     },
     "newFields": [
-      { tag: '337', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'tietokonekäyttöinen' }, { code: 'b', value: 'c' }, { code: '2', value: 'rdamedia' } ] },
-      { tag: '338', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'verkkoaineisto' }, { code: 'b', value: 'cr' }, { code: '2', value: 'rdacarrier' } ] },
       { tag: 'LOW', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: '[LOWTAG]' } ] }
     ]
   },
