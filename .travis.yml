@@ -5,6 +5,7 @@ node_js:
   - "node"
 install:
   - npm install
+script: "BABEL_ENV=test mocha --compilers js:babel-core/register --require ./frontend/test/test_bootstrap.js \"frontend/**/*@(.spec.js|.spec.jsx)\""
 after_script:
   - if test "$TRAVIS_NODE_VERSION" != "7";then exit 0;fi
   - if test $TRAVIS_BRANCH = "master";then JOB=$JOB_PROD;elif test $TRAVIS_BRANCH = "test";then JOB=$JOB_TEST;elif test $TRAVIS_BRANCH = "fix-ci";then JOB=$JOB_TEST;fi
