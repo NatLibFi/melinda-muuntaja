@@ -29,6 +29,7 @@
 import { JSDOM } from 'jsdom';
 import chai from 'chai';
 import chaiImmutable from 'chai-immutable';
+import localStorage from 'mock-local-storage'; // eslint-disable-line no-unused-vars
 
 const { window } = new JSDOM('<!doctype html><html><body></body></html>');
 const { document } = window;
@@ -36,6 +37,7 @@ const { document } = window;
 
 global.document = document;
 global.window = window;
+window.localStorage = global.localStorage;
 global.__DEV__ = true;
 
 Object.keys(window).forEach((key) => {
