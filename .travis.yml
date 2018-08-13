@@ -1,12 +1,13 @@
 language: node_js
 
 node_js:
-  - "6.9.1"
+  - "7"
   - "node"
-before_script:
+install:
   - npm install
+script: "BABEL_ENV=test mocha --require mock-local-storage --compilers js:babel-core/register --require ./frontend/test/test_bootstrap.js \"frontend/**/*@(.spec.js|.spec.jsx)\""
 after_script:
-  - if test "$TRAVIS_NODE_VERSION" != "6.9.1";then exit 0;fi
+  - if test "$TRAVIS_NODE_VERSION" != "7";then exit 0;fi
   - if test $TRAVIS_BRANCH = "master";then JOB=$JOB_PROD;elif test $TRAVIS_BRANCH = "test";then JOB=$JOB_TEST;elif test $TRAVIS_BRANCH = "fix-ci";then JOB=$JOB_TEST;fi
   - if test ! -z $JOB;then curl -X POST --data "authtoken=$AUTH_TOKEN&argString=-checkout-reference $TRAVIS_COMMIT" https://melinda-ci.lib.helsinki.fi/api/14/job/$JOB/executions;fi
 env:
