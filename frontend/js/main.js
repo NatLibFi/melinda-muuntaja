@@ -75,4 +75,4 @@ const sessionToken = Cookies.get('sessionToken');
 
 store.dispatch(validateSession(sessionToken));
 
-initKeyboardListener(document, store);
+// initKeyboardListener(document, store);

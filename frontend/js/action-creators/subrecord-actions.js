@@ -83,6 +83,7 @@ export function setSubrecordAction(rowId, actionType) {
 
 export function setEverySubrecordAction() {
   return function(dispatch, getState) {
+    console.log('getstate: ', getstate());
     getState().getIn(['subrecords', 'index']).forEach(rowId => {
       
       const subrecordRow = getState().getIn(['subrecords', rowId]).toJS();  
