@@ -71,19 +71,6 @@ export class RecordSelectionControls extends React.Component {
     };
   }
 
-  componentDidUpdate() {
-    // update text fields if they are prefilled.
-    window.Materialize && window.Materialize.updateTextFields();
-    window.$(this.mergeProfileSelect).on('change', (event) => this.handleMergeProfileChange(event.target.value)).material_select();
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('click', this.closeProfileInfo, false);
-    if (typeof this.unlisten == 'function') {
-      this.unlisten();
-    }
-  }
-
   UNSAFE_componentWillMount() {
     this.unlisten = this.props.history.listen(location => this.props.locationDidChange(location));
 
@@ -103,16 +90,31 @@ export class RecordSelectionControls extends React.Component {
     }
   }
 
+  componentDidUpdate() {
+    // update text fields if they are prefilled.
+    console.log('joo');
+    window.Materialize && window.Materialize.updateTextFields();
+    window.$(this.mergeProfileSelect).on('change', (event) => this.handleMergeProfileChange(event.target.value)).material_select();
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('click', this.closeProfileInfo, false);
+    if (typeof this.unlisten == 'function') {
+      this.unlisten();
+    }
+  }
+
   handleMergeProfileChange(value) {
     if (this.props.selectedMergeProfile !== value) this.props.switchMergeConfig(value);
   }
 
   handleChange(event) {
+    console.log('painettu');
     const { controlsEnabled } = this.props;
     if (!controlsEnabled) {
       return;
     }
-
+    console.log('event: ', event);
     event.persist();
 
     if (event.target.id === 'source_record') {
@@ -213,7 +215,7 @@ export class RecordSelectionControls extends React.Component {
               <label>Muunnosprofiili</label>
             </div>
           )}
-         {selectedMergeProfile.description && (
+          {selectedMergeProfile.description && (
             <a 
               href="#" 
               data-activates="profile-selector-info" 
