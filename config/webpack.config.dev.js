@@ -24,6 +24,10 @@ const plugins = [
   new webpack.optimize.OccurrenceOrderPlugin()
 ];
 
+function resolve (dir) {
+  return path.join(__dirname, '..', dir);
+}
+
 module.exports = {
   // env : process.env.NODE_ENV,
   entry: {
@@ -80,6 +84,15 @@ module.exports = {
       {
         test: /\.(png|jpg|jpeg|gif|svg|woff|woff2|eot|ttf)$/,
         loader: 'url-loader?limit=8192'
+      },
+      {
+        test: /\.(js|jsx)$/,
+        loader: 'eslint-loader',
+        enforce: 'pre',
+        include: [resolve('frontend')],
+        options: {
+          formatter: require('eslint-friendly-formatter')
+        }
       }
     ]
   },
