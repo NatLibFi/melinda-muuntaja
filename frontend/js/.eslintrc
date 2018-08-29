@@ -2,11 +2,8 @@
   "env": {
     "node": true,
     "mocha": true
-  },
+  }, 
   "globals": {
     "__DEV__": true
-  },
-  "rules": {
-    "no-console": "warn"
   }
 }
