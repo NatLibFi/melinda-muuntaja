@@ -89,7 +89,7 @@ module.exports = {
         test: /\.(js|jsx)$/,
         loader: 'eslint-loader',
         enforce: 'pre',
-        include: [resolve('frontend')],
+        include: [resolve('frontend'), resolve('server')],
         options: {
           formatter: require('eslint-friendly-formatter')
         }

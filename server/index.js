@@ -41,7 +41,6 @@ import cookieParser from 'cookie-parser';
 const PORT = readEnvironmentVariable('HTTP_PORT', 3001);
 
 const app = express();
-
 process.on('SIGINT', () => {
   process.exit(-1);
 });

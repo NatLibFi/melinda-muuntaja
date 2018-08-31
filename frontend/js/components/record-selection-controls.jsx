@@ -54,7 +54,7 @@ export class RecordSelectionControls extends React.Component {
     controlsEnabled: PropTypes.bool.isRequired,
     mergeProfiles: PropTypes.array,
     history: PropTypes.object.isRequired
-  }
+  };
 
   constructor() {
     super();
@@ -69,11 +69,25 @@ export class RecordSelectionControls extends React.Component {
     this.state = {
       displayProfileInfo: false
     };
+
+    this.handleChange = this.handleChange.bind(this);
+  }
+
+  componentDidUpdate() {
+    // update text fields if they are prefilled.
+    window.Materialize && window.Materialize.updateTextFields();
+    window.$(this.mergeProfileSelect).on('change', (event) => this.handleMergeProfileChange(event.target.value)).material_select();
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('click', this.closeProfileInfo, false);
+    if (typeof this.unlisten === 'function') {
+      this.unlisten();
+    }
   }
 
   UNSAFE_componentWillMount() {
     this.unlisten = this.props.history.listen(location => this.props.locationDidChange(location));
-
     this.props.locationDidChange(this.props.history.location);
   }
 
@@ -90,34 +104,21 @@ export class RecordSelectionControls extends React.Component {
     }
   }
 
-  componentDidUpdate() {
-    // update text fields if they are prefilled.
-    console.log('joo');
-    window.Materialize && window.Materialize.updateTextFields();
-    window.$(this.mergeProfileSelect).on('change', (event) => this.handleMergeProfileChange(event.target.value)).material_select();
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('click', this.closeProfileInfo, false);
-    if (typeof this.unlisten == 'function') {
-      this.unlisten();
-    }
-  }
-
   handleMergeProfileChange(value) {
     if (this.props.selectedMergeProfile !== value) this.props.switchMergeConfig(value);
   }
 
   handleChange(event) {
-    console.log('painettu');
+    console.log('handleChange: ');
     const { controlsEnabled } = this.props;
     if (!controlsEnabled) {
       return;
     }
-    console.log('event: ', event);
     event.persist();
 
     if (event.target.id === 'source_record') {
+      console.log('event target id: ', event.target.id);
+      console.log('this.props: ', this.props);
       if (event.target.value.length > 0) {
         this.props.setSourceRecordId(event.target.value);
         this.handleSourceChangeDebounced(event);
@@ -162,7 +163,7 @@ export class RecordSelectionControls extends React.Component {
   }
 
   render() {
-    const { controlsEnabled, mergeProfiles } = this.props;
+    const { controlsEnabled, mergeProfiles, sourceRecordId } = this.props;
     const swapButtonClasses = classNames('btn-floating', 'blue', {
       'waves-effect': controlsEnabled,
       'waves-light': controlsEnabled,
@@ -175,8 +176,8 @@ export class RecordSelectionControls extends React.Component {
           <input 
             id="source_record" 
             type="tel" 
-            value={this.props.sourceRecordId} 
-            onChange={this.handleChange.bind(this)} 
+            value={sourceRecordId} 
+            onChange={(event) => this.handleChange(event)} 
             disabled={!controlsEnabled} />
           <label htmlFor="source_record">Lähdetietue</label>
         </div>
@@ -198,7 +199,7 @@ export class RecordSelectionControls extends React.Component {
             id="target_record" 
             type="tel" 
             value={this.props.targetRecordId} 
-            onChange={this.handleChange.bind(this)} 
+            onChange={this.handleChange} 
             disabled={!controlsEnabled}/>
           <label htmlFor="target_record">Pohjatietue</label>
         </div>

@@ -19,6 +19,7 @@
   },
   "main": "index.js",
   "scripts": {
+    "env":"./prepare_env.sh",
     "clean:build": "node ./bin/clean.js createdir",
     "build:html": "node ./bin/buildHtml.js",
     "start": "node build/index.js",
@@ -32,7 +33,7 @@
     "test:server": "BABEL_ENV=test mocha --compilers js:babel-core/register --require ./server/tests/test_bootstrap.js --require @natlibfi/melinda-ui-commons/dist/server/test_helpers/test_bootstrap.js \"./server/tests\"",
     "test:server:watch": "npm run test:server -- --watch",
     "lint": "eslint --ext .jsx,.js .",
-    "dev": "node ./bin/clean.js && npm run watch",
+    "dev": "node ./bin/clean.js && npm run env && npm run watch",
     "watch": "npm run watch:ui & npm run watch:server",
     "watch:ui": "DEBUG=1 webpack-dev-server --config ./config/webpack.config.dev.js --hot --inline --progress",
     "watch:server": "NODE_ENV=debug nodemon --watch server --exec babel-node --presets=es2015 server/index.js",

@@ -579,29 +579,22 @@ export function clearMergedRecord() {
 }
 
 export const fetchRecord = (function() {
-
   const APIBasePath = __DEV__ ? 'http://localhost:3001/api': '/api';
-
   const fetchSourceRecord = recordFetch(APIBasePath, loadSourceRecord, setSourceRecord, setSourceRecordError);
   const fetchTargetRecord = recordFetch(APIBasePath, loadTargetRecord, setTargetRecord, setTargetRecordError);
 
   return function(recordId, type) {
-
     return function (dispatch) {
-
       if (type !== 'SOURCE' && type !== 'TARGET') {
         throw new Error('fetchRecord type parameter must be either SOURCE or TARGET');
       }
-
       if (type === 'SOURCE') {
         return fetchSourceRecord(recordId, dispatch);
       }
-
       if (type === 'TARGET') {
         return fetchTargetRecord(recordId, dispatch);
       }
     };
-
   };
 
 })();
