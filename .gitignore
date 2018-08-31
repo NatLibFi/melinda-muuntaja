@@ -49,3 +49,4 @@ merge-action-archive
 
 .env
 prepare_env.sh
+.idea
