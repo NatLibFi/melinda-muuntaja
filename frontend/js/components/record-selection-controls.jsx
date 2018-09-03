@@ -152,7 +152,7 @@ export class RecordSelectionControls extends React.Component {
       });
       document.removeEventListener('click', this.closeProfileInfo, false);
     }
-  }
+  };
 
   displayProfileInfo(e) {
     e.preventDefault();
@@ -171,70 +171,83 @@ export class RecordSelectionControls extends React.Component {
     });
     const selectedMergeProfile = mergeProfiles.find(({key}) => key === this.props.selectedMergeProfile);
     return (
-      <div className="row row-margin-swap record-selection-controls">
-        <div className="col s2 offset-s1 input-field">
-          <input 
-            id="source_record" 
-            type="tel" 
-            value={sourceRecordId} 
-            onChange={(event) => this.handleChange(event)} 
-            disabled={!controlsEnabled} />
-          <label htmlFor="source_record">Lähdetietue</label>
-        </div>
-        <div className="col s2 control-swap-horizontal input-field">
-          <div>
-            <a 
-              className={swapButtonClasses} 
-              onClick={(e) => this.handleSwap(e)}>
-              <i 
-                className="material-icons tooltip small" 
-                title="Vaihda keskenään">swap_horiz
-              </i>
-            </a>
+      <div>
+        <div className="row row-margin-swap record-selection-controls">
+          <div className="col s2 offset-s1 input-field">
+            <input
+              id="source_record"
+              type="tel"
+              value={sourceRecordId}
+              onChange={(event) => this.handleChange(event)}
+              disabled={!controlsEnabled} />
+            <label htmlFor="source_record">Muunnostyyppi</label>
           </div>
         </div>
-        <div 
-          className="col s2 input-field">
-          <input 
-            id="target_record" 
-            type="tel" 
-            value={this.props.targetRecordId} 
-            onChange={this.handleChange} 
-            disabled={!controlsEnabled}/>
-          <label htmlFor="target_record">Pohjatietue</label>
-        </div>
-        <div className="col s2 offset-s2 profile-selector input-field">
-          {mergeProfiles.length > 1 && (
-            <div className="input-field">
-              <select 
-                defaultValue={selectedMergeProfile.key} 
-                ref={(ref) => this.mergeProfileSelect = ref}>
-                {mergeProfiles.map(({key, name}) => (
-                  <option key={key} value={key}>{name}</option>
-                ))}
-              </select>
-              <label>Muunnosprofiili</label>
+        <div className="row row-margin-swap record-selection-controls">
+          <div className="col s2 offset-s1 input-field">
+            <input
+              id="source_record"
+              type="tel"
+              value={sourceRecordId}
+              onChange={(event) => this.handleChange(event)}
+              disabled={!controlsEnabled} />
+            <label htmlFor="source_record">Lähdetietue</label>
+          </div>
+          <div className="col s2 control-swap-horizontal input-field">
+            <div>
+              <a
+                className={swapButtonClasses}
+                onClick={(e) => this.handleSwap(e)}>
+                <i
+                  className="material-icons tooltip small"
+                  title="Vaihda keskenään">swap_horiz
+                </i>
+              </a>
             </div>
-          )}
-          {selectedMergeProfile.description && (
-            <a 
-              href="#" 
-              data-activates="profile-selector-info" 
-              onClick={(e) => this.displayProfileInfo(e)}>
-              <i 
-                className="material-icons" 
-                title="Kuvaus">info
-              </i>
-            </a>
-          )}
-          {selectedMergeProfile.description && this.state.displayProfileInfo && (
-            <div 
-              id="profile-selector-info" 
-              className="card" 
-              ref={(ref) => this.profileInfoDialog = ref}>
-              <div className="card-content">{selectedMergeProfile.description}</div>
-            </div>
-          )}
+          </div>
+          <div
+            className="col s2 input-field">
+            <input
+              id="target_record"
+              type="tel"
+              value={this.props.targetRecordId}
+              onChange={this.handleChange}
+              disabled={!controlsEnabled}/>
+            <label htmlFor="target_record">Pohjatietue</label>
+          </div>
+          <div className="col s2 offset-s2 profile-selector input-field">
+            {mergeProfiles.length > 1 && (
+              <div className="input-field">
+                <select
+                  defaultValue={selectedMergeProfile.key}
+                  ref={(ref) => this.mergeProfileSelect = ref}>
+                  {mergeProfiles.map(({key, name}) => (
+                    <option key={key} value={key}>{name}</option>
+                  ))}
+                </select>
+                <label>Muunnosprofiili</label>
+              </div>
+            )}
+            {selectedMergeProfile.description && (
+              <a
+                href="#"
+                data-activates="profile-selector-info"
+                onClick={(e) => this.displayProfileInfo(e)}>
+                <i
+                  className="material-icons"
+                  title="Kuvaus">info
+                </i>
+              </a>
+            )}
+            {selectedMergeProfile.description && this.state.displayProfileInfo && (
+              <div
+                id="profile-selector-info"
+                className="card"
+                ref={(ref) => this.profileInfoDialog = ref}>
+                <div className="card-content">{selectedMergeProfile.description}</div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     );

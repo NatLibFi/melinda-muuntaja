@@ -578,7 +578,7 @@ export function clearMergedRecord() {
   };
 }
 
-export const fetchRecord = (function() {
+export const  fetchRecord = (function() {
   const APIBasePath = __DEV__ ? 'http://localhost:3001/api': '/api';
   const fetchSourceRecord = recordFetch(APIBasePath, loadSourceRecord, setSourceRecord, setSourceRecordError);
   const fetchTargetRecord = recordFetch(APIBasePath, loadTargetRecord, setTargetRecord, setTargetRecordError);
@@ -600,6 +600,10 @@ export const fetchRecord = (function() {
 })();
 
 function recordFetch(APIBasePath, loadRecordAction, setRecordAction, setRecordErrorAction) {
+  console.log('APIBasePath: ', APIBasePath);
+  console.log('loadRecordAction: ', loadRecordAction);
+  console.log('setRecordAction: ', setRecordAction);
+  console.log('setRecordErrorAction: ', setRecordErrorAction)
   let currentRecordId;
   return function(recordId, dispatch) {
     currentRecordId = recordId;
@@ -610,25 +614,18 @@ function recordFetch(APIBasePath, loadRecordAction, setRecordAction, setRecordEr
       .then(validateResponseStatus)
       .then(response => response.json())
       .then(json => {
-
-
         if (currentRecordId === recordId) {
-
           const {record, subrecords} = marcRecordsFrom(json.record, json.subrecords);
-
           dispatch(setRecordAction(record, subrecords, recordId));
           dispatch(updateMergedRecord());
         }
-
       }).catch(exceptCoreErrors((error) => {
-
         if (error instanceof FetchNotOkError) {
           switch (error.response.status) {
             case HttpStatus.NOT_FOUND: return dispatch(setRecordErrorAction('Tietuetta ei löytynyt'));
             case HttpStatus.INTERNAL_SERVER_ERROR: return dispatch(setRecordErrorAction('Tietueen lataamisessa tapahtui virhe.'));
           }
         }
-
         dispatch(setRecordErrorAction('There has been a problem with fetch operation: ' + error.message));
       }));
   };
