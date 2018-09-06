@@ -601,9 +601,6 @@ export const  fetchRecord = (function() {
 
 function recordFetch(APIBasePath, loadRecordAction, setRecordAction, setRecordErrorAction) {
   console.log('APIBasePath: ', APIBasePath);
-  console.log('loadRecordAction: ', loadRecordAction);
-  console.log('setRecordAction: ', setRecordAction);
-  console.log('setRecordErrorAction: ', setRecordErrorAction)
   let currentRecordId;
   return function(recordId, dispatch) {
     currentRecordId = recordId;

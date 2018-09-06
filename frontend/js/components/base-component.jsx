@@ -141,9 +141,11 @@ export class BaseComponent extends React.Component {
         { this.props.mergeDialog.visible ? this.renderMergeDialog() : null }
         { this.props.searchDialogVisible ? <SearchDialogContainer /> : ''}
         <ToolBarContainer />
-        <RecordSelectionControlsContainer />
-        <RecordMergePanelContainer />
-        { this.props.shouldRenderSubrecordComponent ? this.renderSubrecordComponent() : ''}
+        <div className="container">
+          <RecordSelectionControlsContainer />
+          <RecordMergePanelContainer />
+          { this.props.shouldRenderSubrecordComponent ? this.renderSubrecordComponent() : ''}
+        </div>
       </div>
     );
   }

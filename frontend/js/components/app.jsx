@@ -32,11 +32,11 @@ import '../../styles/main.scss';
 export class App extends React.Component {
   static propTypes = {
     children: PropTypes.arrayOf(PropTypes.element),
-  }
+  };
 
   render() {
     return (
-      <div>
+      <div className="context">
         {this.props.children}
       </div>
     );

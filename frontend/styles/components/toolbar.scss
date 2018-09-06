@@ -1,12 +1,12 @@
 
 .toolbar {
-  background-color: #ededed;
+  background-color: #fbfbfb;
   height: 88px;
   box-shadow: none;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #efefef;
 
   ul a {
-    color: black;
+    color: #888888;
     padding: 0 20px;
   }
 
@@ -16,7 +16,7 @@
     text-align: center;
 
     .group-label {
-      color: black;
+      color: #888888;
       .badge {
         position: static;
         font-weight: 300;
@@ -28,8 +28,8 @@
     }
   }
   .separator span {
-    border-left: 1px solid #ddd;
-    padding: 15px 0px;
+    border: none;
+    padding: 15px 0;
   }
 
   li {

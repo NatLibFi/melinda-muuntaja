@@ -4,9 +4,19 @@
 html {
   overflow-y: scroll;
 }
-
+.context {
+ background-color: #FDFDFD;
+}
+nav {
+  padding-left: 5%;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.16);
+}
 .navbar-fixed {
   z-index: 1000;    
+}
+
+.input-field {
+  margin-top: 0.7em;
 }
 
 .navbar-fixed nav {
@@ -15,4 +25,16 @@ html {
 
 html.modal-open {
   overflow-y: hidden; 
+}
+
+//util component overrides
+.marc-record-container {
+  .row{
+  margin-left: 0;
+  margin-right: 0;
+  }
+
+  .row-no-bottom-margin {
+    border-bottom: 1px solid rgb(230,230,230);
+  }
 }

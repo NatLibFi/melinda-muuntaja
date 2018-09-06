@@ -42,7 +42,7 @@ export class NavBar extends React.Component {
     statusInfo: PropTypes.string,
     mergeButtonEnabled: PropTypes.bool.isRequired,
     removeSession: PropTypes.func.isRequired,
-  }
+  };
 
   componentDidMount() {
     
@@ -67,23 +67,44 @@ export class NavBar extends React.Component {
   }
 
   render() {
-
     return (
       <div className="navbar-fixed">
         <nav> 
           <div className="nav-wrapper">
-            
+            <ul className="left">
+              <li className="heading">Muuntaja</li>
+            </ul>
             <ul id="nav" className="right">
-              <li><div className="status-info">{this.props.statusInfo}</div></li>
-              <li><button className="waves-effect waves-light btn" disabled={this.disableIfMergeNotPossible()} onClick={this.props.commitMerge} name="commit_merge">Tallenna muunnos</button></li>
-              <li><a className="dropdown-navbar dropdown-button-menu" href="#" data-activates="mainmenu"><i className="material-icons">more_vert</i></a></li>
+              <li>
+                <div className="status-info">{this.props.statusInfo}</div>
+              </li>
+              <li>
+                <button
+                  className="waves-effect waves-light btn"
+                  disabled={this.disableIfMergeNotPossible()}
+                  onClick={this.props.commitMerge}
+                  name="commit_merge">Tallenna muunnos</button>
+              </li>
+              <li>
+                <a
+                  className="dropdown-navbar dropdown-button-menu"
+                  href="#" data-activates="mainmenu">
+                  <i className="material-icons">more_vert</i>
+                </a>
+              </li>
             </ul>
           </div>
         </nav>
-
-        <ul id='mainmenu' className='dropdown-content'>
+        <ul
+          id='mainmenu'
+          className='dropdown-content'>
           <li className="divider" />
-          <li><a href="#" onClick={this.props.removeSession}>Kirjaudu ulos</a></li>
+          <li>
+            <a
+              href="#"
+              onClick={this.props.removeSession}>Kirjaudu ulos
+            </a>
+          </li>
         </ul>
       </div>
     );

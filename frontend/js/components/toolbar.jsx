@@ -31,12 +31,17 @@ import PropTypes from 'prop-types';
 import '../../styles/components/toolbar.scss';
 import {connect} from 'react-redux';
 import * as uiActionCreators from '../ui-actions';
+import {hostRecordActionsEnabled} from '../selectors/merge-status-selector';
 
 export class ToolBar extends React.Component {
 
   static propTypes = {
     resetWorkspace: PropTypes.func.isRequired,
     openSearchDialog: PropTypes.func.isRequired,
+  };
+
+  componentDidMount() {
+    window.$(this.mergeType).on('change', (event) => this.handleSearchIndexChange(event)).material_select();
   }
 
   startNewPair(event) {
@@ -53,7 +58,16 @@ export class ToolBar extends React.Component {
     return (
       <div className="group">
         <ul id="nav">
-          <li><a href="#" onClick={(e) => this.startNewPair(e)}><i className="material-icons tooltip" title="Aloita uusi">add</i></a></li>
+          <li>
+            <a
+              href="#"
+              onClick={(e) => this.startNewPair(e)}>
+              <i
+                className="material-icons tooltip"
+                title="Aloita uusi">add
+              </i>
+            </a>
+          </li>
         </ul>
         <span className="group-label">Uusi</span>
       </div>
@@ -64,7 +78,16 @@ export class ToolBar extends React.Component {
     return (
       <div className="group">
         <ul id="nav">
-          <li><a href="#" onClick={(e) => this.openSearchDialog(e)}><i className="material-icons tooltip" title="Hae tietuetta">search</i></a></li>
+          <li>
+            <a
+              href="#"
+              onClick={(e) => this.openSearchDialog(e)}>
+              <i
+                className="material-icons tooltip"
+                title="Hae tietuetta">search
+              </i>
+            </a>
+          </li>
         </ul>
         <span className="group-label">Hae</span>
       </div>
@@ -75,9 +98,70 @@ export class ToolBar extends React.Component {
     return (
       <div className="group">
         <ul id="nav">
-          <li><a href="https://www.kiwi.fi/x/iBcvBQ" target="_blank" rel="noopener noreferrer"><i className="material-icons tooltip" title="Käyttöohje">help</i></a></li>
+          <li>
+            <a
+              href="https://www.kiwi.fi/x/iBcvBQ"
+              target="_blank"
+              rel="noopener noreferrer">
+              <i
+                className="material-icons tooltip"
+                title="Käyttöohje">help
+              </i>
+            </a>
+          </li>
         </ul>
         <span className="group-label">Ohje</span>
+      </div>
+    );
+  }
+
+  renderMergeProfile(){
+    return (
+      <div className="col s3 input-field">
+        <select ref={(ref) => this.mergeType = ref}>
+          <option value="default">Painetusta digitaaliseen</option>
+          <option value="type.digital">Digitaalisesta painettuun</option>
+        </select>
+        <label>Muunnostyyppi</label>
+      </div>
+    );
+  }
+
+  renderMergeType(){
+    const selectedMergeProfile = mergeProfiles.find(({key}) => key === this.props.selectedMergeProfile);
+    return (
+      <div className="col s4 offset-l profile-selector input-field">
+        {mergeProfiles.length > 1 && (
+          <div className="input-field">
+            <select
+              defaultValue={selectedMergeProfile.key}
+              ref={(ref) => this.mergeProfileSelect = ref}>
+              {mergeProfiles.map(({key, name}) => (
+                <option key={key} value={key}>{name}</option>
+              ))}
+            </select>
+            <label>Muunnosprofiili</label>
+          </div>
+        )}
+        {selectedMergeProfile.description && (
+          <a
+            href="#"
+            data-activates="profile-selector-info"
+            onClick={(e) => this.displayProfileInfo(e)}>
+            <i
+              className="material-icons"
+              title="Kuvaus">info
+            </i>
+          </a>
+        )}
+        {selectedMergeProfile.description && this.state.displayProfileInfo && (
+          <div
+            id="profile-selector-info"
+            className="card"
+            ref={(ref) => this.profileInfoDialog = ref}>
+            <div className="card-content">{selectedMergeProfile.description}</div>
+          </div>
+        )}
       </div>
     );
   }
@@ -85,24 +169,24 @@ export class ToolBar extends React.Component {
   render() {
     return (
       <nav className="toolbar">
-        <div className="nav-wrapper">
+        <div className="nav-wrapper row">
           {this.renderNewPairButton()}
-
-          <ul><li className="separator"><span /></li></ul>
-
           {this.renderSearchRecordButton()}
-
-          <ul><li className="separator"><span /></li></ul>
-
           {this.renderHelpButton()}
-
+          {this.renderMergeProfile()}
+          {this.renderMergeType()};
         </div>
       </nav>
     );
   }
 }
 
-export const ToolBarContainer = connect(
-  () => ({}),
-  uiActionCreators
+function mapStateToProps(state) {
+  return {
+    selectedMergeProfile: state.getIn(['config', 'selectedMergeProfile'])
+  };
+}
+export const ToolBarContainer = connect(() => ({}),
+  uiActionCreators,
+  mapStateToProps
 )(ToolBar);
