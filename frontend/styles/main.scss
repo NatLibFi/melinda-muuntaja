@@ -38,3 +38,11 @@ html.modal-open {
     border-bottom: 1px solid rgb(230,230,230);
   }
 }
+
+// custom classes
+.mt-flex{
+  display: flex;
+  .mt-theme-blue{
+    color: #039be5;
+  }
+}

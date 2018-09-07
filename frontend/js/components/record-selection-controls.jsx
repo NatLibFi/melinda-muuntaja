@@ -66,24 +66,7 @@ export class RecordSelectionControls extends React.Component {
       if (event.target.value.length > 0) this.props.fetchRecord(event.target.value, 'TARGET');
     }, RECORD_LOADING_DELAY);
 
-    this.state = {
-      displayProfileInfo: false
-    };
-
     this.handleChange = this.handleChange.bind(this);
-  }
-
-  componentDidUpdate() {
-    // update text fields if they are prefilled.
-    window.Materialize && window.Materialize.updateTextFields();
-    window.$(this.mergeProfileSelect).on('change', (event) => this.handleMergeProfileChange(event.target.value)).material_select();
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('click', this.closeProfileInfo, false);
-    if (typeof this.unlisten === 'function') {
-      this.unlisten();
-    }
   }
 
   UNSAFE_componentWillMount() {
@@ -145,25 +128,8 @@ export class RecordSelectionControls extends React.Component {
     }
   }
 
-  closeProfileInfo = (e) => {
-    if (e.target !== this.profileInfoDialog && !this.profileInfoDialog.contains(e.target)) {
-      this.setState({
-        displayProfileInfo: false
-      });
-      document.removeEventListener('click', this.closeProfileInfo, false);
-    }
-  };
-
-  displayProfileInfo(e) {
-    e.preventDefault();
-    this.setState({
-      displayProfileInfo: true
-    });
-    document.addEventListener('click', this.closeProfileInfo);
-  }
-
   render() {
-    const { controlsEnabled, mergeProfiles, sourceRecordId } = this.props;
+    const { controlsEnabled, sourceRecordId } = this.props;
     const swapButtonClasses = classNames('btn-floating', 'blue', {
       'waves-effect': controlsEnabled,
       'waves-light': controlsEnabled,
@@ -184,7 +150,7 @@ export class RecordSelectionControls extends React.Component {
                     disabled={!controlsEnabled} />
                   <label htmlFor="source_record">Lähdetietue</label>
                 </div>
-                <div className="col s1 control-swap-horizontal input-field">
+                <div className="col s2 control-swap-horizontal input-field">
                   <div>
                     <a
                       className={swapButtonClasses}
@@ -197,7 +163,7 @@ export class RecordSelectionControls extends React.Component {
                   </div>
                 </div>
                 <div
-                  className="col s4 input-field">
+                  className="col s5 input-field">
                   <input
                     id="target_record"
                     type="tel"

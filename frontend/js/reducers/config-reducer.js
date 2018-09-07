@@ -56,6 +56,7 @@ function setConfiguration(state, userinfo) {
 
   if (preset.hasOwnProperty(department)) configPreset = preset[department];
   else configPreset = preset.defaults;
+  console.log('configPreset: ', configPreset);
 
   return state.set('mergeProfiles', Object.keys(configPreset).reduce((mergeProfiles, key) => {
     if (configPreset[key] === undefined) return mergeProfiles;

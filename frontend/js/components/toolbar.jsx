@@ -31,7 +31,7 @@ import PropTypes from 'prop-types';
 import '../../styles/components/toolbar.scss';
 import {connect} from 'react-redux';
 import * as uiActionCreators from '../ui-actions';
-import {hostRecordActionsEnabled} from '../selectors/merge-status-selector';
+import { withRouter } from 'react-router';
 
 export class ToolBar extends React.Component {
 
@@ -40,8 +40,45 @@ export class ToolBar extends React.Component {
     openSearchDialog: PropTypes.func.isRequired,
   };
 
+  constructor() {
+    super();
+    this.state = {
+      displayProfileInfo: false
+    };
+  }
+
+  closeProfileInfo = (e) => {
+    if (e.target !== this.profileInfoDialog && !this.profileInfoDialog.contains(e.target)) {
+      this.setState({
+        displayProfileInfo: false
+      });
+      document.removeEventListener('click', this.closeProfileInfo, false);
+    }
+  };
+
+  displayProfileInfo(e) {
+    e.preventDefault();
+    this.setState({
+      displayProfileInfo: true
+    });
+    document.addEventListener('click', this.closeProfileInfo);
+  }
+
   componentDidMount() {
     window.$(this.mergeType).on('change', (event) => this.handleSearchIndexChange(event)).material_select();
+  }
+
+  componentDidUpdate() {
+    // update text fields if they are prefilled.
+    window.Materialize && window.Materialize.updateTextFields();
+    window.$(this.mergeProfileSelect).on('change', (event) => this.handleMergeProfileChange(event.target.value)).material_select();
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('click', this.closeProfileInfo, false);
+    if (typeof this.unlisten === 'function') {
+      this.unlisten();
+    }
   }
 
   startNewPair(event) {
@@ -128,6 +165,7 @@ export class ToolBar extends React.Component {
   }
 
   renderMergeType(){
+    const { mergeProfiles } = this.props;
     const selectedMergeProfile = mergeProfiles.find(({key}) => key === this.props.selectedMergeProfile);
     return (
       <div className="col s4 offset-l profile-selector input-field">
@@ -145,6 +183,7 @@ export class ToolBar extends React.Component {
         )}
         {selectedMergeProfile.description && (
           <a
+            className="mt-theme-blue"
             href="#"
             data-activates="profile-selector-info"
             onClick={(e) => this.displayProfileInfo(e)}>
@@ -169,7 +208,7 @@ export class ToolBar extends React.Component {
   render() {
     return (
       <nav className="toolbar">
-        <div className="nav-wrapper row">
+        <div className="nav-wrapper row mt-flex">
           {this.renderNewPairButton()}
           {this.renderSearchRecordButton()}
           {this.renderHelpButton()}
@@ -183,10 +222,11 @@ export class ToolBar extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    selectedMergeProfile: state.getIn(['config', 'selectedMergeProfile'])
+    selectedMergeProfile: state.getIn(['config', 'selectedMergeProfile']),
+    mergeProfiles: state.getIn(['config', 'mergeProfiles']).map((value, key) => ({ key, name: value.get('name'), description: value.get('description') })).toList().toJS()
   };
 }
-export const ToolBarContainer = connect(() => ({}),
-  uiActionCreators,
-  mapStateToProps
-)(ToolBar);
+export const ToolBarContainer = withRouter(connect(
+  mapStateToProps,
+  uiActionCreators
+)(ToolBar));
