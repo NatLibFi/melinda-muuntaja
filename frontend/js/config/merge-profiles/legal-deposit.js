@@ -137,6 +137,7 @@ module.exports = {
     "newFields": [
       { tag: '040', ind1: ' ', ind2: ' ', subfields: [ { code: 'b', value: 'fin' }, { code: 'e', value: 'rda' }] },
       { tag: '506', ind1: '1', ind2: ' ', subfields: [ { code: 'a', value: 'Aineisto on käytettävissä vapaakappalekirjastoissa.'}, { code: 'f', value: 'Online access with authorization.' }] },
+      { tag: '530', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'Julkaistu myös painettuna.'  } ] },
       { tag: '540', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'Aineisto on käytettävissä tutkimus- ja muihin tarkoituksiin;'  }, { code: 'b', value: 'Kansalliskirjasto;' }, { code: 'c', value: 'Laki kulttuuriaineistojen tallettamisesta ja säilyttämisestä' }, { code: 'u', value: 'http://www.finlex.fi/fi/laki/ajantasa/2007/20071433' } ] },
       { tag: '856', ind1: ' ', ind2: ' ', subfields: [ { code: 'u', value: '' }, {code: 'z', value: 'Käytettävissä vapaakappalekirjastoissa'}, { code: '5', value: 'FENNI' }, { code: '5', value: 'VOLTE' }, { code: '5', value: 'JYKDO' }, { code: '5', value: 'ALMA' }, { code: '5', value: 'OULA' }, { code: '5', value: 'JOSKU' } ] },
       { tag: 'LOW', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: '[LOWTAG]' } ] }
