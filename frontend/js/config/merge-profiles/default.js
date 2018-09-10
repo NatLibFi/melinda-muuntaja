@@ -134,6 +134,7 @@ module.exports = {
       }
     },
     "newFields": [
+      { tag: '530', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'Julkaistu myös painettuna.'  } ] },
       { tag: 'LOW', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: '[LOWTAG]' } ] }
     ]
   },
