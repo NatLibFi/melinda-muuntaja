@@ -48,6 +48,7 @@ import history from './history';
 export const SWITCH_MERGE_CONFIG = 'SWITCH_MERGE_CONFIG';
 
 export function switchMergeConfig(config) {
+  console.log('config merge configissa: ', config);
   return function(dispatch) {
     dispatch({
       type: SWITCH_MERGE_CONFIG,
@@ -491,6 +492,8 @@ export function updateMergedRecord() {
     const preferredHasSubrecords = preferredState === 'EMPTY' ? false : getState().getIn(['targetRecord', 'hasSubrecords']);
     const otherRecord = getState().getIn(['sourceRecord', 'record']);
     const otherRecordHasSubrecords = getState().getIn(['sourceRecord', 'hasSubrecords']);
+
+    console.log('ui-actions newFields: ', newFields);
 
     if (preferredRecord && otherRecord) {
       const merge = createRecordMerger(mergeConfiguration);

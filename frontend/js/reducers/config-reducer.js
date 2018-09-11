@@ -38,6 +38,7 @@ const INITIAL_STATE = Map({
 });
 
 export default function ui(state = INITIAL_STATE, action) {
+  console.log('action.config: ', action.config);
   switch (action.type) {
     case SWITCH_MERGE_CONFIG:
       window.localStorage.setItem('muuntajaConfig', action.config);
@@ -46,6 +47,7 @@ export default function ui(state = INITIAL_STATE, action) {
     case CREATE_SESSION_SUCCESS:
       return setConfiguration(state, action.userinfo);
   }
+  console.log('state: ', state.toJS());
   return state;
 }
 

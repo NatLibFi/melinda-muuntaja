@@ -87,9 +87,6 @@ export class RecordSelectionControls extends React.Component {
     }
   }
 
-  handleMergeProfileChange(value) {
-    if (this.props.selectedMergeProfile !== value) this.props.switchMergeConfig(value);
-  }
 
   handleChange(event) {
     console.log('handleChange: ');
@@ -130,18 +127,19 @@ export class RecordSelectionControls extends React.Component {
 
   render() {
     const { controlsEnabled, sourceRecordId } = this.props;
-    const swapButtonClasses = classNames('btn-floating', 'blue', {
+    const swapButtonClasses = classNames('btn-floating', 'mt-btn', {
       'waves-effect': controlsEnabled,
       'waves-light': controlsEnabled,
       'disabled': !controlsEnabled
     });
     return (
       <div>
-        <div className="row">
+        <div className="row mt-card-1">
           <div className="col s12">
             <div className="card mt-card-padding">
               <div className="row row-margin-swap record-selection-controls">
                 <div className="col s5 input-field">
+                  <i class="material-icons prefix">arrow_forward</i>
                   <input
                     id="source_record"
                     type="tel"
@@ -164,6 +162,7 @@ export class RecordSelectionControls extends React.Component {
                 </div>
                 <div
                   className="col s5 input-field">
+                  <i class="material-icons prefix">storage</i>
                   <input
                     id="target_record"
                     type="tel"

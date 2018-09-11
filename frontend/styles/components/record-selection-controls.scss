@@ -1,8 +1,15 @@
 .container {
-  margin-top: 60px;
+  margin-top: 20px;
   width: 90%;
   max-width: 2000px;
   font-family: "Roboto", sans-serif;
+}
+
+.mt-card-1 {
+  .prefix {
+    top: 11px;
+    color: #888888;
+  }
 }
 
 .mt-card-padding {

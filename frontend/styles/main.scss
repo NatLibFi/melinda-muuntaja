@@ -40,9 +40,16 @@ html.modal-open {
 }
 
 // custom classes
-.mt-flex{
-  display: flex;
-  .mt-theme-blue{
-    color: #039be5;
+.mt-theme-blue {
+  color: #039be5;
+}
+.mt-inline {
+  display: inline;
+}
+
+.mt-btn{
+  background-color: #039be5;
+  &:hover{
+    background-color: #0379b3;
   }
 }

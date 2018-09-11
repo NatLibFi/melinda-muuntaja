@@ -1,32 +1,46 @@
 
 .toolbar {
+  padding: 20px 5% 0;
   background-color: #fbfbfb;
-  height: 88px;
   box-shadow: none;
   border-bottom: 1px solid #efefef;
 
-  ul a {
-    color: #888888;
-    padding: 0 20px;
+  .mt-info-toast{
+    left: -340px;
+    top: -13px;
   }
 
-  .group {
-    line-height: 1.4em;
-    float: left;
-    text-align: center;
-
-    .group-label {
-      color: #888888;
-      .badge {
-        position: static;
-        font-weight: 300;
-        font-size: 0.8rem;
-        color: #fff;
-        background-color: #26a69a;
-        border-radius: 2px;
-      }
+  .mt-info-badge{
+    color: #039be5;
+    &:hover{
+      color: #0379b3;
     }
   }
+
+  .mt-controls i {
+    color: #888888;
+    padding: 10px;
+    position: relative;
+    top: 9px;
+    font-size: 32px;
+    &:hover{
+      color: #0379b3;
+    }
+  }
+
+  .group-label {
+    padding-right: 10px;
+    color: #484848;
+    .badge {
+      position: static;
+      font-weight: 300;
+      font-size: 0.8rem;
+      color: #fff;
+      background-color: #26a69a;
+      border-radius: 2px;
+    }
+  }
+  
   .separator span {
     border: none;
     padding: 15px 0;
