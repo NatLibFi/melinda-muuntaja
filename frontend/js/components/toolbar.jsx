@@ -150,8 +150,8 @@ export class ToolBar extends React.Component {
     return (
       <div className="col s3 offset-s1 input-field">
         <select ref={(ref) => this.mergeType = ref}>
-          <option value="default">Painetusta digitaaliseen</option>
-          <option value="type.digital">Digitaalisesta painettuun</option>
+          <option value="default">Painetusta e-aineistoksi</option>
+          <option value="mergeType.digital">e-aineistosta painettuun</option>
         </select>
         <label>Muunnostyyppi</label>
       </div>

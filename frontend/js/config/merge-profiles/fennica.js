@@ -99,6 +99,7 @@ const new901 = `SU${moment().format('YYYYMMDD')}`;
 module.exports = {
   "name": "Fennica",
   "description": "Fennica-kuvailuun tarkoitettu muunnos. Muunnos lisää kansallisbibliografiatunnukset ja käyttöoikeushuomautukset.",
+  "mergeType": "Painetusta E-aineistoksi, e-aineistosta painettuun",
   "record": {
     "targetRecord": TargetRecord,
     "validationRules": MergeValidationPreset.melinda_host,
