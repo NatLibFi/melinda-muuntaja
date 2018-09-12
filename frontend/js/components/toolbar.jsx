@@ -148,7 +148,7 @@ export class ToolBar extends React.Component {
 
   renderMergeProfile(){
     return (
-      <div className="col s3 input-field">
+      <div className="col s3 offset-s1 input-field">
         <select ref={(ref) => this.mergeType = ref}>
           <option value="default">Painetusta digitaaliseen</option>
           <option value="type.digital">Digitaalisesta painettuun</option>
@@ -175,7 +175,7 @@ export class ToolBar extends React.Component {
             <label>Muunnosprofiili</label>
           </div>
         )}
-        <div className="col s3">
+        <div className="col s2">
         {selectedMergeProfile.description && (
             <a
               href="#"

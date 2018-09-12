@@ -139,7 +139,7 @@ export class RecordSelectionControls extends React.Component {
             <div className="card mt-card-padding">
               <div className="row row-margin-swap record-selection-controls">
                 <div className="col s5 input-field">
-                  <i class="material-icons prefix">arrow_forward</i>
+                  <i className="material-icons prefix">arrow_forward</i>
                   <input
                     id="source_record"
                     type="tel"
@@ -162,7 +162,7 @@ export class RecordSelectionControls extends React.Component {
                 </div>
                 <div
                   className="col s5 input-field">
-                  <i class="material-icons prefix">storage</i>
+                  <i className="material-icons prefix">storage</i>
                   <input
                     id="target_record"
                     type="tel"
