@@ -91,6 +91,7 @@ export class RecordMergePanel extends React.Component {
   }
 
   renderTargetRecordPanel(recordState, errorMessage, record) {
+    console.log('record: ', record);
     if (recordState === 'ERROR') {
       return <ErrorMessagePanel message={errorMessage} />;
     }

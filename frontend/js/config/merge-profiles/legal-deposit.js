@@ -95,7 +95,7 @@ import { hyphenate } from 'isbn-utils';
 module.exports = {
   "name": "Vapaakappalekirjastot",
   "description": "E-vapaakappaleille räätälöity muunnos, joka tuottaa käyttöoikeushuomautukset kenttiin 506 ja 540.",
-  "mergeType": "Painetusta E-aineistoksi, e-aineistosta painettuun",
+  "mergeType": "Painetusta e-aineistoksi, e-aineistosta painettuun",
   "record": {
     "targetRecord": TargetRecord,
     "validationRules": MergeValidationPreset.melinda_host,

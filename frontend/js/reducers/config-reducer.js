@@ -53,7 +53,6 @@ export default function ui(state = INITIAL_STATE, action) {
 
 function setConfiguration(state, userinfo) {
   let configPreset;
-
   const department = userinfo.department.toLowerCase();
 
   if (preset.hasOwnProperty(department)) configPreset = preset[department];
@@ -90,7 +89,6 @@ function setConfiguration(state, userinfo) {
 
 function replaceConfigVariables(orig_config, userinfo, forcedLowTag = null) {
   let config = _.clone(orig_config);
-
   config = replacePropertyValue('[LOWTAG]', forcedLowTag || userinfo.department, config);
 
   return config;
