@@ -1,7 +1,7 @@
 {
   "name": "@natlibfi/melinda-eresource-tool",
   "description": "UI for transforming MARC records",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "author": {
     "name": "The National Library of Finland"
   },
@@ -27,7 +27,7 @@
     "build:frontend": "export NODE_ENV=production & NODE_ENV=production & webpack --config ./config/webpack.config.prod.js --progress",
     "build:server": "cd server && BABEL_ENV=production babel . --out-dir ../build --source-maps",
     "test": "npm run lint && npm run test:frontend && npm run test:server",
-    "test:frontend": "BABEL_ENV=test mocha --compilers js:babel-core/register --require ./frontend/test/test_bootstrap.js \"frontend/**/*@(.spec.js|.spec.jsx)\"",
+    "test:frontend": "BABEL_ENV=test mocha --require mock-local-storage --compilers js:babel-core/register --require ./frontend/test/test_bootstrap.js \"frontend/**/*@(.spec.js|.spec.jsx)\"",
     "test:frontend:watch": "npm run test:frontend -- --watch --watch-extensions story,stories",
     "test:server": "BABEL_ENV=test mocha --compilers js:babel-core/register --require ./server/tests/test_bootstrap.js --require @natlibfi/melinda-ui-commons/dist/server/test_helpers/test_bootstrap.js \"./server/tests\"",
     "test:server:watch": "npm run test:server -- --watch",
@@ -37,13 +37,13 @@
     "watch:ui": "DEBUG=1 webpack-dev-server --config ./config/webpack.config.dev.js --hot --inline --progress",
     "watch:server": "NODE_ENV=debug nodemon --watch server --exec babel-node --presets=es2015 server/index.js",
     "cli": "babel-node ./bin/cli.js",
-    "publish-to-npm": "npm run publish --access=public"
+    "publish-to-npm": "npm publish --access=public"
   },
   "license": "AGPL-3.0+",
   "dependencies": {
     "@natlibfi/marc-record-merge": "^5.0.0",
     "@natlibfi/melinda-api-client": "^1.1.6",
-    "@natlibfi/melinda-ui-commons": "^1.0.0",
+    "@natlibfi/melinda-ui-commons": "^2.0.0",
     "@natlibfi/sru-client": "git+https://github.com/NatLibFi/sru-client.git#9670a2c040e0231033a086b82b9a2f95125d71ab",
     "archiver": "^2.1.0",
     "babel-eslint": "^7.1.0",
@@ -65,7 +65,7 @@
     "marc-record-js": "^0.3.2",
     "materialize-css": "^0.100.2",
     "mkdirp": "^0.5.1",
-    "moment": "^2.19.3",
+    "moment": "^2.22.1",
     "object-assign": "^4.1.1",
     "react-router-dom": "^4.2.2",
     "uuid": "^3.1.0",
@@ -105,6 +105,7 @@
     "json-loader": "^0.5.7",
     "json-similarity": "https://github.com/NatLibFi/json-similarity.git#c70cb1ac3270143440c6450463e4ffdee2a15ce2",
     "mocha": "^4.0.1",
+    "mock-local-storage": "^1.0.5",
     "node-sass": "^4.7.2",
     "node-uuid": "^1.4.8",
     "nodemon": "^1.12.4",

@@ -72,26 +72,6 @@ export class RecordSelectionControls extends React.Component {
     };
   }
 
-  componentWillMount() {
-    this.unlisten = this.props.history.listen(location => this.props.locationDidChange(location));
-
-    this.props.locationDidChange(this.props.history.location);
-  }
-
-  componentWillReceiveProps(next) {
-    if (next.targetRecordId === this.props.targetRecordId && next.sourceRecordId === this.props.sourceRecordId) return;
-
-    if (_.identity(next.targetRecordId) && _.identity(next.sourceRecordId)) {
-      this.props.history.push(`/record/${next.sourceRecordId}/to/${next.targetRecordId}`);
-    }
-    else if (_.identity(next.sourceRecordId)) {
-      this.props.history.push(`/record/${next.sourceRecordId}`);
-    }
-    else {
-      this.props.history.push('/');
-    }
-  }
-
   componentDidUpdate() {
     // update text fields if they are prefilled.
     window.Materialize && window.Materialize.updateTextFields();
@@ -107,6 +87,26 @@ export class RecordSelectionControls extends React.Component {
     }
   }
 
+  UNSAFE_componentWillMount() {
+    this.unlisten = this.props.history.listen(location => this.props.locationDidChange(location));
+
+    this.props.locationDidChange(this.props.history.location);
+  }
+
+  UNSAFE_componentWillReceiveProps(next) {
+    if (next.targetRecordId === this.props.targetRecordId && next.sourceRecordId === this.props.sourceRecordId) return;
+
+    if (_.identity(next.targetRecordId) && _.identity(next.sourceRecordId)) {
+      this.props.history.push(`/record/${next.sourceRecordId}/to/${next.targetRecordId}`);
+    }
+    else if (_.identity(next.sourceRecordId)) {
+      this.props.history.push(`/record/${next.sourceRecordId}`);
+    }
+    else {
+      this.props.history.push('/');
+    }
+  }
+
   handleMergeProfileChange(value) {
     if (this.props.selectedMergeProfile !== value) this.props.switchMergeConfig(value);
   }
@@ -118,7 +118,7 @@ export class RecordSelectionControls extends React.Component {
     }
 
     event.persist();
-    
+
     if (event.target.id === 'source_record') {
       if (event.target.value.length > 0) {
         this.props.setSourceRecordId(event.target.value);
@@ -127,7 +127,7 @@ export class RecordSelectionControls extends React.Component {
       else {
         this.props.resetSourceRecord();
       }
-    
+
     }
     if (event.target.id === 'target_record') {
       if (event.target.value.length > 0) {
@@ -181,9 +181,10 @@ export class RecordSelectionControls extends React.Component {
 
     const selectedMergeProfile = mergeProfiles.find(({key}) => key === this.props.selectedMergeProfile);
 
+
     return (
       <div className="row row-margin-swap record-selection-controls">
-      
+
         <div className="col s2 offset-s1 input-field">
           <input id="source_record" type="tel" value={this.props.sourceRecordId} onChange={this.handleChange.bind(this)} disabled={!controlsEnabled} />
           <label htmlFor="source_record">Lähdetietue</label>
@@ -201,11 +202,11 @@ export class RecordSelectionControls extends React.Component {
           <input id="target_record" type="tel" value={this.props.targetRecordId} onChange={this.handleChange.bind(this)} disabled={!controlsEnabled}/>
           <label htmlFor="target_record">Pohjatietue</label>
         </div>
-        
+
         <div className="col s2 offset-s2 profile-selector input-field">
           {mergeProfiles.length > 1 && (
             <div className="input-field">
-              <select ref={(ref) => this.mergeProfileSelect = ref}>
+              <select defaultValue={selectedMergeProfile.key} ref={(ref) => this.mergeProfileSelect = ref}>
                 {mergeProfiles.map(({key, name}) => (
                   <option key={key} value={key}>{name}</option>
                 ))}
@@ -218,13 +219,13 @@ export class RecordSelectionControls extends React.Component {
               <i className="material-icons" title="Kuvaus">info</i>
             </a>
           )}
-        
+
           {selectedMergeProfile.description && this.state.displayProfileInfo && (
             <div id="profile-selector-info" className="card" ref={(ref) => this.profileInfoDialog = ref}>
               <div className="card-content">{selectedMergeProfile.description}</div>
             </div>
           )}
-    
+
         </div>
       </div>
     );

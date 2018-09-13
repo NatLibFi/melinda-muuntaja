@@ -55,7 +55,7 @@ import { fieldOrderComparator } from './marc-field-sort';
 
 
 const defaultPreset = [
-  check041aLength, setAllZeroRecordId, sortMergedRecordFields, 
+  check041aLength, setAllZeroRecordId, sortMergedRecordFields, fix776Order,
 ];
 
 const allPreset = [
@@ -66,6 +66,27 @@ export const preset = {
   defaults: defaultPreset,
   all: allPreset
 };
+
+export function fix776Order(preferredRecord, otherRecord, mergedRecordParam) {
+  let mergedRecord = new MarcRecord(mergedRecordParam);
+  let f776 = mergedRecord.fields.filter(field => field.tag === '776');
+
+  // Not going to do anything if there are multiple 776 fields..
+  if( f776.length !== 1 ) {
+    return { mergedRecord };
+  } else {
+    mergedRecord.fields.forEach(field => {
+      if ( field.tag === '776' ) {
+        field.subfields.sort(function(x, y) {
+          if( x.code < y.code ) return -1;
+          if( x.code > y.code ) return 1;
+          return 0;
+        });
+      }
+    });
+  }
+  return { mergedRecord };
+}
 
 export function applyPostMergeModifications(postMergeFunctions, preferredRecord, otherRecord, originalMergedRecord) {
   let mergedRecord = new MarcRecord(originalMergedRecord);

@@ -42,7 +42,7 @@ const record = new MarcRecord({
     },
     {
       tag: '008',
-      value: '^^^^^^s2016^^^^fi^||||^o^^^^^|0|^0|fin|^'
+      value: '^^^^^^s2018^^^^fi^||||^o^^^^^|0|^0|fin|^'
     },
     {
       tag: '020',
@@ -86,6 +86,44 @@ const record = new MarcRecord({
         {
           code: '2',
           value: 'rdacontent'
+        }
+      ]
+    },
+    {
+      tag: '337',
+      ind1: ' ',
+      ind2: ' ',
+      subfields: [
+        {
+          code: 'a',
+          value: 'tietokonekäyttöinen'
+        },
+        {
+          code: 'b',
+          value: 'c'
+        },
+        {
+          code: '2',
+          value: 'rdamedia'
+        }
+      ]
+    },
+    {
+      tag: '338',
+      ind1: ' ',
+      ind2: ' ',
+      subfields: [
+        {
+          code: 'a',
+          value: 'verkkoaineisto'
+        },
+        {
+          code: 'b',
+          value: 'cr'
+        },
+        {
+          code: '2',
+          value: 'rdacarrier'
         }
       ]
     }

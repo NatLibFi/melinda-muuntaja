@@ -40,6 +40,7 @@ const INITIAL_STATE = Map({
 export default function ui(state = INITIAL_STATE, action) {
   switch (action.type) {
     case SWITCH_MERGE_CONFIG:
+      window.localStorage.setItem('muuntajaConfig', action.config);
       return state.set('selectedMergeProfile', action.config);
 
     case CREATE_SESSION_SUCCESS:
