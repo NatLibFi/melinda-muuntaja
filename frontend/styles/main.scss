@@ -6,7 +6,8 @@ html {
   overflow-y: scroll;
 }
 .context {
- background-color: #FDFDFD;
+ background-color: $theme-background;
+ height: 100vh;
 }
 
 .input-field {

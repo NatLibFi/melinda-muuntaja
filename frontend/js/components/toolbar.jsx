@@ -42,7 +42,6 @@ export class ToolBar extends React.Component {
 
   constructor() {
     super();
-    this.sticky = this.sticky.bind(this);
     this.state = {
       displayProfileInfo: false,
       fixed: 0
@@ -67,11 +66,7 @@ export class ToolBar extends React.Component {
   }
 
   componentDidMount() {
-   this.setState({
-     fixed: document.getElementById('control-box').offsetTop
-   })
     window.$(this.mergeType).on('change', (event) => this.handleSearchIndexChange(event)).material_select();
-    window.addEventListener('scroll', this.sticky);
   }
 
   componentDidUpdate() {
@@ -87,10 +82,6 @@ export class ToolBar extends React.Component {
     }
   }
 
-  sticky() {
-    const nav = document.getElementById('control-box');
-    window.pageYOffset >= this.state.fixed ? nav.classList.add('sticky') : nav.classList.remove('sticky');
-  }
 
   handleMergeProfileChange(value) {
     console.log('value: ', value);
