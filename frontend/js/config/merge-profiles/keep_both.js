@@ -36,7 +36,7 @@ import * as subrecordMergeTypes from '../subrecord-merge-types';
 module.exports = {
   "name": "Pidetään osakohteet",
   "description": "TESTIPROFIILI",
-  "mergeType": "Painetusta e-aineistoksi, e-aineistosta painettuun",
+  "mergeType": "demo",
   "record": {
     "targetRecord": TargetRecord,
     "validationRules": MergeValidationPreset.melinda_host,
