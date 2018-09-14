@@ -1,4 +1,4 @@
-
+@import '../_variables';
 
 .sticky {
   position: fixed;
@@ -19,14 +19,14 @@
   }
 
   .mt-info-badge {
-    color: #039be5;
+    color: $theme-blue;
     &:hover{
-      color: #0379b3;
+      color: $theme-blue-hover;
     }
   }
 
   .mt-controls i {
-    color: #039be5;
+    color: $theme-blue;
     padding: 10px;
     position: relative;
     top: 9px;
@@ -48,11 +48,6 @@
       border-radius: 2px;
     }
   }
-  
-  .separator span {
-    border: none;
-    padding: 15px 0;
-  }
 
   li {
     position: relative;
@@ -67,6 +62,4 @@
       cursor: default !important;
     }
   }
-
- 
 }

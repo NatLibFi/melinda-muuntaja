@@ -1,5 +1,6 @@
 
 @import 'vendor/materialize/materialize';
+@import './variables';
 
 html {
   overflow-y: scroll;
@@ -35,16 +36,24 @@ html.modal-open {
   font-weight: 100;
 }
 
+.fixed-action-btn{
+  .btn-floating {
+    &:hover{
+      background-color: $theme-green-hover;
+    }
+  }
+}
+
 // custom classes
 .mt-theme-blue {
-  color: #039be5;
+  color: $theme-blue;
 }
 .mt-inline {
   display: inline;
 }
 
 .mt-btn{
-  background-color: #039be5;
+  background-color: $theme-blue;
   &:hover{
     background-color: #0379b3;
   }
