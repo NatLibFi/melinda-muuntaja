@@ -67,6 +67,7 @@ function setConfiguration(state, userinfo) {
     return mergeProfiles.set(key, Map({
       name: mergeProfile.name,
       description: mergeProfile.description,
+      mergeType: mergeProfile.mergeType,
       record: Map({
         'targetRecord': mergeProfile.record.targetRecord,
         'validationRules': mergeProfile.record.validationRules,

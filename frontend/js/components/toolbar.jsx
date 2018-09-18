@@ -32,7 +32,8 @@ import '../../styles/components/toolbar.scss';
 import {connect} from 'react-redux';
 import * as uiActionCreators from '../ui-actions';
 import { withRouter } from 'react-router';
-
+import { selectMergeType } from '../action-creators/merge-type-actions';
+import { SELECT_MERGETYPE } from '../constants/action-type-constants';
 export class ToolBar extends React.Component {
 
   static propTypes = {
@@ -43,8 +44,7 @@ export class ToolBar extends React.Component {
   constructor() {
     super();
     this.state = {
-      displayProfileInfo: false,
-      fixed: 0
+      displayProfileInfo: false
     };
   }
 
@@ -65,14 +65,12 @@ export class ToolBar extends React.Component {
     document.addEventListener('click', this.closeProfileInfo);
   }
 
-  componentDidMount() {
-    window.$(this.mergeType).on('change', (event) => this.handleSearchIndexChange(event)).material_select();
-  }
-
   componentDidUpdate() {
+    console.log('props (mergeType): ', this.props.selectedMergeType);
     // update text fields if they are prefilled.
     window.Materialize && window.Materialize.updateTextFields();
     window.$(this.mergeProfileSelect).on('change', (event) => this.handleMergeProfileChange(event.target.value)).material_select();
+    window.$(this.mergeType).on('change', (event) => this.changeMergeType(event)).material_select();
   }
 
   componentWillUnmount() {
@@ -82,10 +80,14 @@ export class ToolBar extends React.Component {
     }
   }
 
+  changeMergeType(event) {
+    console.log('event value: ', event.target.value);
+    selectMergeType(event.target.value);
+  }
+
 
   handleMergeProfileChange(value) {
     console.log('value: ', value);
-    console.log('props (switchMergeConfig): ', this.props.switchMergeConfig);
     if (this.props.selectedMergeProfile !== value) this.props.switchMergeConfig(value);
   }
 
@@ -152,17 +154,18 @@ export class ToolBar extends React.Component {
     return (
       <div className="col s3 offset-s1 input-field">
         <select ref={(ref) => this.mergeType = ref}>
-          <option value="default">Painetusta e-aineistoksi</option>
-          <option value="mergeType.digital">e-aineistosta painettuun</option>
+          <option value="printToE">Painetusta e-aineistoksi</option>
+          <option value="EToPrint">E-aineistosta painettuun</option>
         </select>
         <label>Muunnostyyppi</label>
       </div>
     );
   }
 
-  renderMergeType(){
-    const { mergeProfiles } = this.props;
+  renderMergeType() {
+    const { mergeProfiles, selectedMergeType } = this.props;
     const selectedMergeProfile = mergeProfiles.find(({key}) => key === this.props.selectedMergeProfile);
+    const filteredProfiles = mergeProfiles.filter(profile => profile.mergeType === selectedMergeType);
     return (
       <div>
         {mergeProfiles.length > 1 && (
@@ -170,7 +173,7 @@ export class ToolBar extends React.Component {
             <select
               defaultValue={selectedMergeProfile.key}
               ref={(ref) => this.mergeProfileSelect = ref}>
-              {mergeProfiles.map(({key, name}) => (
+              {filteredProfiles.map(({key, name}) => (
                 <option key={key} value={key}>{name}</option>
               ))}
             </select>
@@ -220,7 +223,12 @@ export class ToolBar extends React.Component {
 function mapStateToProps(state) {
   return {
     selectedMergeProfile: state.getIn(['config', 'selectedMergeProfile']),
-    mergeProfiles: state.getIn(['config', 'mergeProfiles']).map((value, key) => ({ key, name: value.get('name'), description: value.get('description') })).toList().toJS()
+    mergeProfiles: state.getIn(['config', 'mergeProfiles']).map((value, key) => ({ 
+      key, name: value.get('name'), 
+      description: value.get('description'), 
+      mergeType: value.get('mergeType')})
+    ).toList().toJS(),
+    selectedMergeType: state.getIn(['mergeType', 'mergeType'])
   };
 }
 export const ToolBarContainer = withRouter(connect(

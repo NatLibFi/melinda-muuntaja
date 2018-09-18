@@ -75,12 +75,6 @@ export class BaseComponent extends React.Component {
     saveSubrecord: PropTypes.func.isRequired,
     notifications: PropTypes.array
   }
-  componentDidMount() {
-    document.addEventListener('DOMContentLoaded', function() {
-      console.log('moi');
-      const elems = document.querySelectorAll('.fixed-action-btn');
-    });
-  }
   
   componentDidUpdate() {
     const userConfig = localStorage.getItem('muuntajaConfig');
