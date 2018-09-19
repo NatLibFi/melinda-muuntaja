@@ -44,11 +44,20 @@ import * as subrecordMergeTypes from './config/subrecord-merge-types';
 import * as MergeValidation from './marc-record-merge-validate-service';
 import * as PostMerge from './marc-record-merge-postmerge-service';
 import history from './history';
+import { SELECT_MERGETYPE } from './constants/action-type-constants';
 
 export const SWITCH_MERGE_CONFIG = 'SWITCH_MERGE_CONFIG';
 
+export function selectMergeType (mergeType) {
+  return function(dispatch) {
+    dispatch({
+      type: SELECT_MERGETYPE,
+      mergeType
+    });
+  };
+}
+
 export function switchMergeConfig(config) {
-  console.log('config merge configissa: ', config);
   return function(dispatch) {
     dispatch({
       type: SWITCH_MERGE_CONFIG,
@@ -493,8 +502,6 @@ export function updateMergedRecord() {
     const otherRecord = getState().getIn(['sourceRecord', 'record']);
     const otherRecordHasSubrecords = getState().getIn(['sourceRecord', 'hasSubrecords']);
 
-    console.log('ui-actions newFields: ', newFields);
-
     if (preferredRecord && otherRecord) {
       const merge = createRecordMerger(mergeConfiguration);
 
@@ -603,7 +610,6 @@ export const  fetchRecord = (function() {
 })();
 
 function recordFetch(APIBasePath, loadRecordAction, setRecordAction, setRecordErrorAction) {
-  console.log('APIBasePath: ', APIBasePath);
   let currentRecordId;
   return function(recordId, dispatch) {
     currentRecordId = recordId;

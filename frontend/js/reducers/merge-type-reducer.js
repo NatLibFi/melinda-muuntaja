@@ -36,9 +36,8 @@ const INITIAL_STATE = Map({
 export default function mergeType(state = INITIAL_STATE, action) {
   switch (action.type) {
     case SELECT_MERGETYPE:
-      state.set('mergeType', action.mergeType);
-      return INITIAL_STATE;
+      return state
+        .set('mergeType', action.mergeType)
     }
-    console.log('state merge-typessä: ', state.toJS());
     return state
   }

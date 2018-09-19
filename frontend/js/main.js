@@ -39,7 +39,7 @@ import {Router,Route} from 'react-router-dom';
 import {App} from './components/app';
 import * as Cookies from 'js-cookie';
 import { validateSession } from 'commons/action-creators/session-actions';
-// import { initKeyboardListener } from './keyboard-commands';
+import { initKeyboardListener } from './keyboard-commands';
 import history from './history';
 
 // const loggerMiddleware = createLogger();
@@ -74,4 +74,4 @@ const sessionToken = Cookies.get('sessionToken');
 
 store.dispatch(validateSession(sessionToken));
 
-// initKeyboardListener(document, store);
+initKeyboardListener(document, store);

@@ -91,7 +91,6 @@ export class RecordMergePanel extends React.Component {
   }
 
   renderTargetRecordPanel(recordState, errorMessage, record) {
-    console.log('record: ', record);
     if (recordState === 'ERROR') {
       return <ErrorMessagePanel message={errorMessage} />;
     }
@@ -134,8 +133,6 @@ export class RecordMergePanel extends React.Component {
     const status = statuses[this.props.mergedRecordState];
 
     const enabled = status !== 'UPDATE_ONGOING';
-    console.log('hello');
-    console.log('molly');
 
     return (
       <div className="card-action">

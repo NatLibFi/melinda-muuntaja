@@ -89,7 +89,6 @@ export class RecordSelectionControls extends React.Component {
 
 
   handleChange(event) {
-    console.log('handleChange: ');
     const { controlsEnabled } = this.props;
     if (!controlsEnabled) {
       return;

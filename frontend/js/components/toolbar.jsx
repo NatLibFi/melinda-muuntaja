@@ -32,13 +32,11 @@ import '../../styles/components/toolbar.scss';
 import {connect} from 'react-redux';
 import * as uiActionCreators from '../ui-actions';
 import { withRouter } from 'react-router';
-import { selectMergeType } from '../action-creators/merge-type-actions';
-import { SELECT_MERGETYPE } from '../constants/action-type-constants';
 export class ToolBar extends React.Component {
 
   static propTypes = {
     resetWorkspace: PropTypes.func.isRequired,
-    openSearchDialog: PropTypes.func.isRequired,
+    openSearchDialog: PropTypes.func.isRequired
   };
 
   constructor() {
@@ -65,12 +63,15 @@ export class ToolBar extends React.Component {
     document.addEventListener('click', this.closeProfileInfo);
   }
 
-  componentDidUpdate() {
-    console.log('props (mergeType): ', this.props.selectedMergeType);
-    // update text fields if they are prefilled.
-    window.Materialize && window.Materialize.updateTextFields();
+  componentDidMount() {
     window.$(this.mergeProfileSelect).on('change', (event) => this.handleMergeProfileChange(event.target.value)).material_select();
     window.$(this.mergeType).on('change', (event) => this.changeMergeType(event)).material_select();
+  }
+
+
+  componentDidUpdate() {
+    // update text fields if they are prefilled.
+    window.Materialize && window.Materialize.updateTextFields();
   }
 
   componentWillUnmount() {
@@ -81,13 +82,11 @@ export class ToolBar extends React.Component {
   }
 
   changeMergeType(event) {
-    console.log('event value: ', event.target.value);
-    selectMergeType(event.target.value);
+    this.props.selectMergeType(event.target.value);
   }
 
 
   handleMergeProfileChange(value) {
-    console.log('value: ', value);
     if (this.props.selectedMergeProfile !== value) this.props.switchMergeConfig(value);
   }
 
@@ -155,7 +154,7 @@ export class ToolBar extends React.Component {
       <div className="col s3 offset-s1 input-field">
         <select ref={(ref) => this.mergeType = ref}>
           <option value="printToE">Painetusta e-aineistoksi</option>
-          <option value="EToPrint">E-aineistosta painettuun</option>
+          <option value="demo">E-aineistosta painettuun</option>
         </select>
         <label>Muunnostyyppi</label>
       </div>
