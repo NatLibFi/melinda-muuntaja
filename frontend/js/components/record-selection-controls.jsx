@@ -90,10 +90,6 @@ export class RecordSelectionControls extends React.Component {
 
   handleChange(event) {
     console.log('painettu: ', event.target.value.length);
-    const { controlsEnabled } = this.props;
-    if (!controlsEnabled) {
-      return;
-    }
     event.persist();
 
     if (event.target.id === 'source_record') {
@@ -146,13 +142,13 @@ export class RecordSelectionControls extends React.Component {
                       id="source_record"
                       type="tel"
                       value={sourceRecordId}
-                      disabled={!controlsEnabled} />
+                      onChange={(event) => this.handleChange(event)}
+                      />
                     <label htmlFor="source_record">Lähdetietue</label>
                   </div>
                   <div className="input-field col s2">
                     <button 
                       className="btn"
-                      onClick={(event) => this.handleChange(event)}
                       >Hae</button>
                   </div>
                 </div>

@@ -27,6 +27,7 @@
 */
 
 import React from 'react';
+import 'jquery';
 import PropTypes from 'prop-types';
 import { commitMerge} from '../ui-actions';
 import {connect} from 'react-redux';

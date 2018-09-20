@@ -45,6 +45,7 @@ const plugins = [
 module.exports = {
   entry: {
     app: path.resolve(PATHS.app, 'main.js'),
+    vendor: ['react', 'jquery']
   },
   output: {
     path: PATHS.build,
@@ -63,7 +64,7 @@ module.exports = {
     // We can now require('file') instead of require('file.jsx')
     extensions: ['.js', '.jsx', '.scss']
   },
-  module: {
+  module: { 
     loaders: [
       {
         test: /\.jsx?$/,

@@ -12,6 +12,10 @@ const PATHS = {
 };
 
 const plugins = [
+  new webpack.ProvidePlugin({
+    $: 'jquery',
+    jQuery: 'jquery'
+  }),  
   // Shared code
   new webpack.optimize.CommonsChunkPlugin({ name:'vendor', filename: 'js/vendor.bundle.js' }),
   // Avoid publishing files when compilation fails
@@ -32,7 +36,7 @@ module.exports = {
       'react-hot-loader/patch',
       path.resolve(PATHS.app, 'main.js')
     ],
-    vendor: ['react']
+    vendor: ['react', 'jquery']
   },
   output: {
     path: PATHS.build,
