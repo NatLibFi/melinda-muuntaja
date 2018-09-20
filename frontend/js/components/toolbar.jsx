@@ -63,15 +63,17 @@ export class ToolBar extends React.Component {
     document.addEventListener('click', this.closeProfileInfo);
   }
 
-  componentDidMount() {
-    window.$(this.mergeProfileSelect).on('change', (event) => this.handleMergeProfileChange(event.target.value)).material_select();
-    window.$(this.mergeType).on('change', (event) => this.changeMergeType(event)).material_select();
-  }
+  // componentDidMount() {
+  //   window.$(this.mergeProfileSelect).on('change', (event) => this.handleMergeProfileChange(event.target.value)).material_select();
+  //   window.$(this.mergeType).on('change', (event) => this.changeMergeType(event)).material_select();
+  // }
 
 
   componentDidUpdate() {
     // update text fields if they are prefilled.
     window.Materialize && window.Materialize.updateTextFields();
+    window.$(this.mergeProfileSelect).on('change', (event) => this.handleMergeProfileChange(event.target.value)).material_select();
+    window.$(this.mergeType).on('change', (event) => this.changeMergeType(event)).material_select();
   }
 
   componentWillUnmount() {

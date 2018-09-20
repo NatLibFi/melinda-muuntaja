@@ -4,6 +4,9 @@
 
 html {
   overflow-y: scroll;
+  .marc-record-panel{
+    font-family: 'roboto_monoregular';
+  }
 }
 .context {
  background-color: $theme-background;
@@ -13,8 +16,6 @@ html {
 .input-field {
   margin-top: 0.7em;
 }
-
-
 
 html.modal-open {
   overflow-y: hidden; 

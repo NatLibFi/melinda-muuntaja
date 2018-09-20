@@ -89,6 +89,7 @@ export class RecordSelectionControls extends React.Component {
 
 
   handleChange(event) {
+    console.log('painettu: ', event.target.value.length);
     const { controlsEnabled } = this.props;
     if (!controlsEnabled) {
       return;
@@ -137,15 +138,23 @@ export class RecordSelectionControls extends React.Component {
           <div className="col s12">
             <div className="card mt-card-padding">
               <div className="row row-margin-swap record-selection-controls">
-                <div className="col s5 input-field">
-                  <i className="material-icons prefix">arrow_forward</i>
-                  <input
-                    id="source_record"
-                    type="tel"
-                    value={sourceRecordId}
-                    onChange={(event) => this.handleChange(event)}
-                    disabled={!controlsEnabled} />
-                  <label htmlFor="source_record">Lähdetietue</label>
+                <div
+                  className="col s5">
+                  <div className="input-field col s10">
+                    <i className="material-icons prefix">arrow_forward</i>
+                    <input
+                      id="source_record"
+                      type="tel"
+                      value={sourceRecordId}
+                      disabled={!controlsEnabled} />
+                    <label htmlFor="source_record">Lähdetietue</label>
+                  </div>
+                  <div className="input-field col s2">
+                    <button 
+                      className="btn"
+                      onClick={(event) => this.handleChange(event)}
+                      >Hae</button>
+                  </div>
                 </div>
                 <div className="col s2 control-swap-horizontal input-field">
                   <div>

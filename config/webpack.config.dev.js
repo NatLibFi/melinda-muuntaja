@@ -76,10 +76,17 @@ module.exports = {
           { loader: 'postcss-loader', options: { config: { path: 'postcss.config' } } }
         ]
       },
-      // Inline base64 URLs for <=8k images, direct URLs for the rest
       {
-        test: /\.(png|jpg|jpeg|gif|svg|woff|woff2|eot|ttf)$/,
-        loader: 'url-loader?limit=8192'
+        test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+        use: [
+          { 
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'fonts/'
+            }
+          }
+        ]
       }
     ]
   },
