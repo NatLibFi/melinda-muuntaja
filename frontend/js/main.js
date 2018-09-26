@@ -41,14 +41,12 @@ import * as Cookies from 'js-cookie';
 import { validateSession } from 'commons/action-creators/session-actions';
 import { initKeyboardListener } from './keyboard-commands';
 import history from './history';
-
-import 'jquery';
-
-
 // const loggerMiddleware = createLogger();
-
+// import 'jquery';
+// window.jQuery = window.$ = require('jquery');
+// import 'materialize-css/dist/js/materialize.min.js';
+// import 'materialize-css/dist/css/materialize.min.css';
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-
 const store = createStore(
   rootReducer,
   composeEnhancers(

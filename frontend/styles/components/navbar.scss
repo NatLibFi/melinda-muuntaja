@@ -2,19 +2,28 @@
 .status-info {
   margin-right: 10px;
 }
-.heading {
-  font-size:1.5em;
-}
 
 nav {
   padding-left: 5%;
   box-shadow: 0 1px 2px 0 rgba(0,0,0,0.16);
-  background-color: red; /* For browsers that do not support gradients */
-  background-image: linear-gradient(to right, #00b3f0 , #a9dbec);
+  background-color: #00b3f0; /* For browsers that do not support gradients  */
+  background-image: linear-gradient(to right, #305d6d, #7bb9ce);
+
+  .heading{
+    text-transform: uppercase;
+    font-weight: 100;
+    font-size: 1.5em;
+    padding: 7px 0 0 11px;
+  }
+
 }
 
 .navbar-fixed {
-  z-index: 1000;    
+  z-index: 1000;
+  .mt-logo {
+    height: 70px;
+    padding-bottom: 5px;
+  } 
 }
 .navbar-fixed nav {
   position: static;    

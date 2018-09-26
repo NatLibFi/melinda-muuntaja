@@ -11,11 +11,7 @@ const PATHS = {
   build: path.resolve(__dirname, '../build')
 };
 
-const plugins = [
-  new webpack.ProvidePlugin({
-    $: 'jquery',
-    jQuery: 'jquery'
-  }),  
+const plugins = [ 
   // Shared code
   new webpack.optimize.CommonsChunkPlugin({ name:'vendor', filename: 'js/vendor.bundle.js' }),
   // Avoid publishing files when compilation fails
@@ -25,7 +21,11 @@ const plugins = [
     'process.env.DATA_PROTECTION_CONSENT_URL': JSON.stringify('https://www.kiwi.fi/download/attachments/93205241/melinda-verkkok%C3%A4ytt%C3%B6liittym%C3%A4t%20asiantuntijoille.pdf?api=v2'),
     __DEV__: JSON.stringify(JSON.parse(process.env.DEBUG || 'false'))
   }),
-  new webpack.optimize.OccurrenceOrderPlugin()
+  new webpack.optimize.OccurrenceOrderPlugin(),
+  new webpack.ProvidePlugin({
+    $: 'jquery',
+    jQuery: 'jquery'
+  })  
 ];
 
 module.exports = {
@@ -34,9 +34,10 @@ module.exports = {
     app: [
       'babel-polyfill',
       'react-hot-loader/patch',
+      'font-awesome/scss/font-awesome.scss',
       path.resolve(PATHS.app, 'main.js')
     ],
-    vendor: ['react', 'jquery']
+    vendor: ['react']
   },
   output: {
     path: PATHS.build,
@@ -81,13 +82,25 @@ module.exports = {
         ]
       },
       {
-        test: /\.(png|woff|woff2|eot|ttf|svg)$/,
+        test: /\.(woff|woff2|eot|ttf|svg)$/, // font-face imports
         use: [
           { 
             loader: 'file-loader',
             options: {
               name: '[name].[ext]',
               outputPath: 'fonts/'
+            }
+          }
+        ]
+      },
+      {
+        test: /\.(jpg|gif|png)$/, // images
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: 'images/[name]-[hash:8].[ext]',
+              outputPath: 'images/'
             }
           }
         ]
@@ -98,7 +111,8 @@ module.exports = {
   devServer: {
     contentBase: path.resolve(__dirname, '../frontend'),
     port: 3000,
-    historyApiFallback: true
+    historyApiFallback: true,
+    overlay: true
   },
   devtool: 'eval'
 };

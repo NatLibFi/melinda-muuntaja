@@ -27,16 +27,18 @@
 */
 
 import React from 'react';
-import 'jquery';
 import PropTypes from 'prop-types';
 import { commitMerge} from '../ui-actions';
 import {connect} from 'react-redux';
 import { mergeButtonEnabled } from '../selectors/merge-status-selector';
 import '../../styles/components/navbar.scss';
 import { removeSession } from 'commons/action-creators/session-actions';
+import 'jquery'
+import 'materialize-css';
+import melindaLogo from '../../images/melinda-logo.png'
 
 export class NavBar extends React.Component {
-
+  
   static propTypes = {
     commitMerge: PropTypes.func.isRequired,
     mergeStatus: PropTypes.string,
@@ -46,7 +48,6 @@ export class NavBar extends React.Component {
   };
 
   componentDidMount() {
-    
     window.$('.dropdown-navbar').dropdown({
       inDuration: 300,
       outDuration: 225,
@@ -72,28 +73,46 @@ export class NavBar extends React.Component {
       <div className="navbar-fixed">
         <nav> 
           <div className="nav-wrapper">
-            <ul className="left">
-              <li className="heading">Muuntaja</li>
-            </ul>
-            <ul id="nav" className="right">
-              <li>
-                <div className="status-info">{this.props.statusInfo}</div>
-              </li>
-              <li>
-                <button
-                  className="waves-effect waves-light btn"
-                  disabled={this.disableIfMergeNotPossible()}
-                  onClick={this.props.commitMerge}
-                  name="commit_merge">Tallenna muunnos</button>
-              </li>
-              <li>
-                <a
-                  className="dropdown-navbar dropdown-button-menu"
-                  href="#" data-activates="mainmenu">
-                  <i className="material-icons">more_vert</i>
-                </a>
-              </li>
-            </ul>
+            <div className="row">
+              <div className="col s1">
+                <ul>
+                  <li>
+                    <a className="brand-logo">
+                      <img 
+                        className="mt-logo" 
+                        src={melindaLogo}>
+                      </img>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div className="col s2">
+                <ul className="left">
+                  <li className="heading">Muuntaja</li>
+                </ul>
+              </div>
+              <div className="col s9">
+                <ul id="nav" className="right">
+                  <li>
+                    <div className="status-info">{this.props.statusInfo}</div>
+                  </li>
+                  <li>
+                    <button
+                      className="waves-effect waves-light btn"
+                      disabled={this.disableIfMergeNotPossible()}
+                      onClick={this.props.commitMerge}
+                      name="commit_merge">Tallenna muunnos</button>
+                  </li>
+                  <li>
+                    <a
+                      className="dropdown-navbar dropdown-button-menu"
+                      href="#" data-activates="mainmenu">
+                      <i className="material-icons">more_vert</i>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         </nav>
         <ul
