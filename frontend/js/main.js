@@ -41,6 +41,8 @@ import * as Cookies from 'js-cookie';
 import { validateSession } from 'commons/action-creators/session-actions';
 import { initKeyboardListener } from './keyboard-commands';
 import history from './history';
+import 'material-design-icons-iconfont';
+
 // const loggerMiddleware = createLogger();
 // import 'jquery';
 // window.jQuery = window.$ = require('jquery');

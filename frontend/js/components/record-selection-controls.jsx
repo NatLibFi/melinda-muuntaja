@@ -146,7 +146,7 @@ export class RecordSelectionControls extends React.Component {
                       />
                     <label htmlFor="source_record">Lähdetietue</label>
                   </div>
-                  <div className="input-field col s2">
+                  <div className="input-field col s2 mt-submit-btn-1">
                     <button 
                       className="btn"
                       >Hae</button>
@@ -166,14 +166,21 @@ export class RecordSelectionControls extends React.Component {
                 </div>
                 <div
                   className="col s5 input-field">
-                  <i className="material-icons prefix">storage</i>
-                  <input
-                    id="target_record"
-                    type="tel"
-                    value={this.props.targetRecordId}
-                    onChange={this.handleChange}
-                    disabled={!controlsEnabled}/>
-                  <label htmlFor="target_record">Pohjatietue</label>
+                  <div className="col s10">
+                    <i className="material-icons prefix">storage</i>
+                    <input
+                      id="target_record"
+                      type="tel"
+                      value={this.props.targetRecordId}
+                      onChange={this.handleChange}
+                      disabled={!controlsEnabled}/>
+                    <label htmlFor="target_record">Pohjatietue</label>
+                  </div>
+                  <div className="input-field col s2 mt-submit-btn-2">
+                    <button 
+                      className="btn"
+                      >Hae</button>
+                  </div>
                 </div>
               </div>
             </div>

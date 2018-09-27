@@ -33,8 +33,7 @@ module.exports = {
   entry: {
     app: [
       'babel-polyfill',
-      'react-hot-loader/patch',
-      'font-awesome/scss/font-awesome.scss',
+      'react-hot-loader/patch', 
       path.resolve(PATHS.app, 'main.js')
     ],
     vendor: ['react']
@@ -78,7 +77,14 @@ module.exports = {
         use: [
           'style-loader',
           'css-loader',
-          { loader: 'postcss-loader', options: { config: { path: 'postcss.config' } } }
+          { 
+            loader: 'postcss-loader',
+            options: { 
+              config: { 
+                path: 'postcss.config' 
+              } 
+            } 
+          }
         ]
       },
       {

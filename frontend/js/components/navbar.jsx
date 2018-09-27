@@ -33,8 +33,6 @@ import {connect} from 'react-redux';
 import { mergeButtonEnabled } from '../selectors/merge-status-selector';
 import '../../styles/components/navbar.scss';
 import { removeSession } from 'commons/action-creators/session-actions';
-import 'jquery'
-import 'materialize-css';
 import melindaLogo from '../../images/melinda-logo.png'
 
 export class NavBar extends React.Component {
