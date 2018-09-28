@@ -31,7 +31,7 @@ const plugins = [
 module.exports = {
   // env : process.env.NODE_ENV,
   entry: {
-    app: [
+    'js/app': [
       'babel-polyfill',
       'react-hot-loader/patch', 
       path.resolve(PATHS.app, 'main.js')
@@ -40,7 +40,7 @@ module.exports = {
   },
   output: {
     path: PATHS.build,
-    filename: 'js/[name].js',
+    filename: '[name].js',
     publicPath: '/'
   },
   stats: {

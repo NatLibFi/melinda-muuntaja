@@ -24,12 +24,12 @@ const plugins = [
     }
   ]),
   // Shared code
-  new webpack.optimize.CommonsChunkPlugin([
+  new webpack.optimize.CommonsChunkPlugin(
     { 
       name:'vendor', 
       filename: 'js/vendor.bundle.js'
     }
-  ]),
+  ),
   // Avoid publishing files when compilation fails
   new webpack.NoEmitOnErrorsPlugin(),
   new webpack.DefinePlugin({
@@ -49,14 +49,14 @@ const plugins = [
 
 module.exports = {
   entry: {
-    app: path.resolve(PATHS.app, 'main.js'),
+    'js/app': path.resolve(PATHS.app, 'main.js'),
     vendor: ['react'],
-    jquery: path.resolve(__dirname, '../frontend/utils/jquery.min.js'),
-    materialize: path.resolve(__dirname, '../frontend/utils/materialize.min.js')
+    'utils/jquery.min': path.resolve(__dirname, '../frontend/utils/jquery.min.js'),
+    'utils/materialize.min': path.resolve(__dirname, '../frontend/utils/materialize.min.js')
   },
   output: {
     path: PATHS.build,
-    filename: 'js/[name].js',
+    filename: '[name].js',
     publicPath: '/'
   },
   stats: {
