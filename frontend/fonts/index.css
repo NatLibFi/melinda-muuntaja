@@ -10,6 +10,15 @@
 }
 
 @font-face {
+    font-family: 'roboto_monoregular';
+    src: url('./roboto-mono/robotomono-regular-webfont.woff2') format('woff2'),
+         url('./roboto-mono/robotomono-regular-webfont.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+/* @font-face {
     font-family: 'roboto_monobold_italic';
     src: url('./roboto-mono/robotomono-bolditalic-webfont.woff2') format('woff2'),
          url('./roboto-mono/robotomono-bolditalic-webfont.woff') format('woff');
@@ -60,18 +69,9 @@
     font-weight: normal;
     font-style: normal;
 
-}
+} */
 
-@font-face {
-    font-family: 'roboto_monoregular';
-    src: url('./roboto-mono/robotomono-regular-webfont.woff2') format('woff2'),
-         url('./roboto-mono/robotomono-regular-webfont.woff') format('woff');
-    font-weight: normal;
-    font-style: normal;
-
-}
-
-@font-face {
+/* @font-face {
     font-family: 'roboto_monothin';
     src: url('./roboto-mono/robotomono-thin-webfont.woff2') format('woff2'),
          url('./roboto-mono/robotomono-thin-webfont.woff') format('woff');
@@ -86,4 +86,4 @@
          url('./roboto-mono/robotomono-thinitalic-webfont.woff') format('woff');
     font-weight: normal;
     font-style: normal;
-}
+} */
