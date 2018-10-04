@@ -310,6 +310,7 @@ export function setSearchError(error) {
 export const SET_SEARCH_QUERY = 'SET_SEARCH_QUERY';
 
 export function setSearchQuery(query) {
+  console.log('query: ', query);
   return {
     type: SET_SEARCH_QUERY,
     query
@@ -336,6 +337,7 @@ export function setSearchIndex(index) {
 }
 
 export function locationDidChange(location) {
+  console.log('location: ', location);
   return function(dispatch, getState) {
     dispatch(setLocation(location));
 

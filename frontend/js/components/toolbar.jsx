@@ -63,10 +63,10 @@ export class ToolBar extends React.Component {
     document.addEventListener('click', this.closeProfileInfo);
   }
 
-  // componentDidMount() {
-  //   window.$(this.mergeProfileSelect).on('change', (event) => this.handleMergeProfileChange(event.target.value)).material_select();
-  //   window.$(this.mergeType).on('change', (event) => this.changeMergeType(event)).material_select();
-  // }
+  componentDidMount() {
+    window.$(this.mergeProfileSelect).on('change', (event) => this.handleMergeProfileChange(event.target.value)).material_select();
+    window.$(this.mergeType).on('change', (event) => this.changeMergeType(event)).material_select();
+  }
 
 
   componentDidUpdate() {
@@ -165,6 +165,7 @@ export class ToolBar extends React.Component {
 
   renderMergeType() {
     const { mergeProfiles, selectedMergeType } = this.props;
+    console.log('mergeProfiles: ', mergeProfiles)
     const selectedMergeProfile = mergeProfiles.find(({key}) => key === this.props.selectedMergeProfile);
     const filteredProfiles = mergeProfiles.filter(profile => profile.mergeType === selectedMergeType);
     return (

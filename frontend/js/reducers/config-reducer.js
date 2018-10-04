@@ -38,7 +38,6 @@ const INITIAL_STATE = Map({
 });
 
 export default function ui(state = INITIAL_STATE, action) {
-  console.log('action.config: ', action.config);
   switch (action.type) {
     case SWITCH_MERGE_CONFIG:
       window.localStorage.setItem('muuntajaConfig', action.config);
@@ -47,7 +46,6 @@ export default function ui(state = INITIAL_STATE, action) {
     case CREATE_SESSION_SUCCESS:
       return setConfiguration(state, action.userinfo);
   }
-  console.log('state: ', state.toJS());
   return state;
 }
 
@@ -57,7 +55,6 @@ function setConfiguration(state, userinfo) {
 
   if (preset.hasOwnProperty(department)) configPreset = preset[department];
   else configPreset = preset.defaults;
-  console.log('configPreset: ', configPreset);
 
   return state.set('mergeProfiles', Object.keys(configPreset).reduce((mergeProfiles, key) => {
     if (configPreset[key] === undefined) return mergeProfiles;

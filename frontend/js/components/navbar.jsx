@@ -45,6 +45,11 @@ export class NavBar extends React.Component {
     removeSession: PropTypes.func.isRequired,
   };
 
+  constructor() {
+   super();
+   this.endSession = this.endSession.bind(this);
+  }
+
   componentDidMount() {
     window.$('.dropdown-navbar').dropdown({
       inDuration: 300,
@@ -64,6 +69,14 @@ export class NavBar extends React.Component {
 
   statusInfo() {
     return this.props.mergeStatus === 'COMMIT_MERGE_ERROR' ? 'Tietueiden tallentamisessa tapahtui virhe' : this.props.statusInfo;
+  }
+
+  endSession() {
+    this.props.removeSession();
+  }
+  
+  clearLocalStorage() {
+    window.localStorage.clear();
   }
 
   render() {
@@ -120,14 +133,14 @@ export class NavBar extends React.Component {
           <li>
             <a
               href="#"
-              onClick={this.props.removeSession}>Kirjaudu ulos
+              onClick={() => {this.endSession(); this.clearLocalStorage()}}>Kirjaudu ulos
             </a>
           </li>
         </ul>
       </div>
     );
   }
-} 
+}
 
 function mapStateToProps(state) {
   return {

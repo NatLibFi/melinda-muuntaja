@@ -58,18 +58,21 @@ export class RecordSelectionControls extends React.Component {
 
   constructor() {
     super();
-    this.handleSourceChangeDebounced = _.debounce((event) => {
-      if (event.target.value.length > 0) this.props.fetchRecord(event.target.value, 'SOURCE');
-    }, RECORD_LOADING_DELAY);
 
-    this.handleTargetChangeDebounced = _.debounce((event) => {
-      if (event.target.value.length > 0) this.props.fetchRecord(event.target.value, 'TARGET');
-    }, RECORD_LOADING_DELAY);
+    // this.handleTargetChangeDebounced = _.debounce((event) => {
+    //   if (event.target.value.length > 0) this.props.fetchRecord(event.target.value, 'TARGET');
+    // }, RECORD_LOADING_DELAY);
+
+    // this.handleSourceChangeDebounced = _.debounce((event) => {
+    //   if (event.target.value.length > 0) this.props.fetchRecord(event.target.value, 'SOURCE');
+    // }, RECORD_LOADING_DELAY);
 
     this.handleChange = this.handleChange.bind(this);
+    this.fetchData = this.fetchData.bind(this);
   }
 
   UNSAFE_componentWillMount() {
+    console.log('history: ', this.props.history)
     this.unlisten = this.props.history.listen(location => this.props.locationDidChange(location));
     this.props.locationDidChange(this.props.history.location);
   }
@@ -89,15 +92,12 @@ export class RecordSelectionControls extends React.Component {
 
 
   handleChange(event) {
-    console.log('painettu: ', event.target.value.length);
     event.persist();
 
     if (event.target.id === 'source_record') {
-      console.log('event target id: ', event.target.id);
-      console.log('this.props: ', this.props);
       if (event.target.value.length > 0) {
         this.props.setSourceRecordId(event.target.value);
-        this.handleSourceChangeDebounced(event);
+        // this.handleSourceChangeDebounced(event);
       }
       else {
         this.props.resetSourceRecord();
@@ -106,7 +106,7 @@ export class RecordSelectionControls extends React.Component {
     if (event.target.id === 'target_record') {
       if (event.target.value.length > 0) {
         this.props.setTargetRecordId(event.target.value);
-        this.handleTargetChangeDebounced(event);
+        // this.handleTargetChangeDebounced(event);
       }
       else {
         this.props.resetTargetRecord();
@@ -118,6 +118,15 @@ export class RecordSelectionControls extends React.Component {
     const { controlsEnabled } = this.props;
     if (controlsEnabled) {
       this.props.swapRecords();
+    }
+  }
+
+  fetchData(event, target) {
+    event.persist();
+    console.log('target: ', target);
+    const {sourceRecordId} = this.props;
+    if (sourceRecordId) {
+      this.props.fetchRecord(sourceRecordId, target);
     }
   }
 
@@ -142,12 +151,14 @@ export class RecordSelectionControls extends React.Component {
                       id="source_record"
                       type="tel"
                       value={sourceRecordId}
-                      onChange={(event) => this.handleChange(event)}
+                      onChange={this.handleChange}
                       />
                     <label htmlFor="source_record">Lähdetietue</label>
                   </div>
                   <div className="input-field col s2 mt-submit-btn-1">
-                    <button 
+                    <button
+                      type="submit"
+                      onClick={(event) => this.fetchData(event, 'SOURCE')}
                       className="btn"
                       >Hae</button>
                   </div>
@@ -179,6 +190,7 @@ export class RecordSelectionControls extends React.Component {
                   <div className="input-field col s2 mt-submit-btn-2">
                     <button 
                       className="btn"
+                      onClick={(event) => this.fetchData(event, 'TARGET')}
                       >Hae</button>
                   </div>
                 </div>
