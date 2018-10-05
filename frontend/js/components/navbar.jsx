@@ -33,7 +33,7 @@ import {connect} from 'react-redux';
 import { mergeButtonEnabled } from '../selectors/merge-status-selector';
 import '../../styles/components/navbar.scss';
 import { removeSession } from 'commons/action-creators/session-actions';
-import melindaLogo from '../../images/melinda-logo.png'
+import melindaLogo from '../../images/melinda-logo.png';
 
 export class NavBar extends React.Component {
   
@@ -46,8 +46,8 @@ export class NavBar extends React.Component {
   };
 
   constructor() {
-   super();
-   this.endSession = this.endSession.bind(this);
+    super();
+    this.endSession = this.endSession.bind(this);
   }
 
   componentDidMount() {
@@ -91,8 +91,8 @@ export class NavBar extends React.Component {
                     <a className="brand-logo">
                       <img 
                         className="mt-logo" 
-                        src={melindaLogo}>
-                      </img>
+                        src={melindaLogo}
+                      />
                     </a>
                   </li>
                 </ul>
@@ -133,7 +133,7 @@ export class NavBar extends React.Component {
           <li>
             <a
               href="#"
-              onClick={() => {this.endSession(); this.clearLocalStorage()}}>Kirjaudu ulos
+              onClick={() => {this.endSession(); this.clearLocalStorage();}}>Kirjaudu ulos
             </a>
           </li>
         </ul>

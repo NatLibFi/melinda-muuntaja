@@ -36,7 +36,6 @@ import { withRouter } from 'react-router';
 import { hostRecordActionsEnabled } from '../selectors/merge-status-selector';
 import classNames from 'classnames';
 
-const RECORD_LOADING_DELAY = 500;
 export class RecordSelectionControls extends React.Component {
 
   static propTypes = {
@@ -72,7 +71,7 @@ export class RecordSelectionControls extends React.Component {
   }
 
   UNSAFE_componentWillMount() {
-    console.log('history: ', this.props.history)
+    console.log('history: ', this.props.history);
     this.unlisten = this.props.history.listen(location => this.props.locationDidChange(location));
     this.props.locationDidChange(this.props.history.location);
   }
@@ -152,7 +151,7 @@ export class RecordSelectionControls extends React.Component {
                       type="tel"
                       value={sourceRecordId}
                       onChange={this.handleChange}
-                      />
+                    />
                     <label htmlFor="source_record">Lähdetietue</label>
                   </div>
                   <div className="input-field col s2 mt-submit-btn-1">
@@ -160,7 +159,7 @@ export class RecordSelectionControls extends React.Component {
                       type="submit"
                       onClick={(event) => this.fetchData(event, 'SOURCE')}
                       className="btn"
-                      >Hae</button>
+                    >Hae</button>
                   </div>
                 </div>
                 <div className="col s2 control-swap-horizontal input-field">
@@ -191,7 +190,7 @@ export class RecordSelectionControls extends React.Component {
                     <button 
                       className="btn"
                       onClick={(event) => this.fetchData(event, 'TARGET')}
-                      >Hae</button>
+                    >Hae</button>
                   </div>
                 </div>
               </div>

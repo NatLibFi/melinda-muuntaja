@@ -27,17 +27,17 @@
 */
 
 import { Map } from 'immutable';
-import { SELECT_MERGETYPE } from '../constants/action-type-constants'
+import { SELECT_MERGETYPE } from '../constants/action-type-constants';
 
 const INITIAL_STATE = Map({
-    mergeType: 'printToE'
+  mergeType: 'printToE'
 });
 
 export default function mergeType(state = INITIAL_STATE, action) {
   switch (action.type) {
     case SELECT_MERGETYPE:
       return state
-        .set('mergeType', action.mergeType)
-    }
-    return state
+        .set('mergeType', action.mergeType);
   }
+  return state;
+}

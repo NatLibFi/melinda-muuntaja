@@ -36,7 +36,12 @@ export class ToolBar extends React.Component {
 
   static propTypes = {
     resetWorkspace: PropTypes.func.isRequired,
-    openSearchDialog: PropTypes.func.isRequired
+    openSearchDialog: PropTypes.func.isRequired,
+    selectMergeType: PropTypes.func.isRequired,
+    selectedMergeProfile: PropTypes.func.isRequired,
+    switchMergeConfig: PropTypes.func.isRequired,
+    mergeProfiles: PropTypes.func.isRequired,
+    selectedMergeType: PropTypes.func.isRequired
   };
 
   constructor() {
@@ -45,15 +50,6 @@ export class ToolBar extends React.Component {
       displayProfileInfo: false
     };
   }
-
-  closeProfileInfo = (e) => {
-    if (e.target !== this.profileInfoDialog && !this.profileInfoDialog.contains(e.target)) {
-      this.setState({
-        displayProfileInfo: false
-      });
-      document.removeEventListener('click', this.closeProfileInfo, false);
-    }
-  };
 
   displayProfileInfo(e) {
     e.preventDefault();
@@ -82,6 +78,15 @@ export class ToolBar extends React.Component {
       this.unlisten();
     }
   }
+
+  closeProfileInfo = (e) => {
+    if (e.target !== this.profileInfoDialog && !this.profileInfoDialog.contains(e.target)) {
+      this.setState({
+        displayProfileInfo: false
+      });
+      document.removeEventListener('click', this.closeProfileInfo, false);
+    }
+  };
 
   changeMergeType(event) {
     this.props.selectMergeType(event.target.value);
@@ -165,7 +170,7 @@ export class ToolBar extends React.Component {
 
   renderMergeType() {
     const { mergeProfiles, selectedMergeType } = this.props;
-    console.log('mergeProfiles: ', mergeProfiles)
+    console.log('mergeProfiles: ', mergeProfiles);
     const selectedMergeProfile = mergeProfiles.find(({key}) => key === this.props.selectedMergeProfile);
     const filteredProfiles = mergeProfiles.filter(profile => profile.mergeType === selectedMergeType);
     return (
@@ -183,7 +188,7 @@ export class ToolBar extends React.Component {
           </div>
         )}
         <div className="col s2">
-        {selectedMergeProfile.description && (
+          {selectedMergeProfile.description && (
             <a
               href="#"
               data-activates="profile-selector-info"
@@ -215,8 +220,8 @@ export class ToolBar extends React.Component {
           {this.renderSearchRecordButton()}
           {this.renderHelpButton()}
         </div>
-          {this.renderMergeProfile()}
-          {this.renderMergeType()}
+        {this.renderMergeProfile()}
+        {this.renderMergeType()}
       </div>
     );
   }

@@ -1,9 +1,15 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { commitMerge} from '../ui-actions';
-import {connect} from 'react-redux';
+import { connect } from 'react-redux';
 import { mergeButtonEnabled } from '../selectors/merge-status-selector';
 import { removeSession } from 'commons/action-creators/session-actions';
 import classNames from 'classnames';
+
+SaveButton.propTypes = {
+  mergeButtonEnabled: PropTypes.func.isRequired,
+  commitMerge: PropTypes.func.isRequired
+};
 
 const SaveButton = (props) => {
   const btnGroupClasses = classNames(
@@ -13,7 +19,7 @@ const SaveButton = (props) => {
     {
       'disabled': !props.mergeButtonEnabled
     }
-  )
+  );
   return(
     <div className="fixed-action-btn">
       <a 
@@ -23,8 +29,8 @@ const SaveButton = (props) => {
         <i className="large material-icons">save</i>
       </a>
     </div>
-  )
-}
+  );
+};
 
 function mapStateToProps(state) {
   return {
