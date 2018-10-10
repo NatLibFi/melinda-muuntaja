@@ -6,11 +6,6 @@ import { mergeButtonEnabled } from '../selectors/merge-status-selector';
 import { removeSession } from 'commons/action-creators/session-actions';
 import classNames from 'classnames';
 
-SaveButton.propTypes = {
-  mergeButtonEnabled: PropTypes.func.isRequired,
-  commitMerge: PropTypes.func.isRequired
-};
-
 const SaveButton = (props) => {
   const btnGroupClasses = classNames(
     'btn-floating', 
@@ -30,6 +25,11 @@ const SaveButton = (props) => {
       </a>
     </div>
   );
+};
+
+SaveButton.propTypes = {
+  mergeButtonEnabled: PropTypes.bool,
+  commitMerge: PropTypes.func.isRequired
 };
 
 function mapStateToProps(state) {

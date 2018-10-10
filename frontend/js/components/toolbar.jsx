@@ -38,10 +38,10 @@ export class ToolBar extends React.Component {
     resetWorkspace: PropTypes.func.isRequired,
     openSearchDialog: PropTypes.func.isRequired,
     selectMergeType: PropTypes.func.isRequired,
-    selectedMergeProfile: PropTypes.func.isRequired,
+    selectedMergeProfile: PropTypes.string.isRequired,
     switchMergeConfig: PropTypes.func.isRequired,
-    mergeProfiles: PropTypes.func.isRequired,
-    selectedMergeType: PropTypes.func.isRequired
+    mergeProfiles: PropTypes.array,
+    selectedMergeType: PropTypes.string.isRequired
   };
 
   constructor() {
@@ -49,14 +49,6 @@ export class ToolBar extends React.Component {
     this.state = {
       displayProfileInfo: false
     };
-  }
-
-  displayProfileInfo(e) {
-    e.preventDefault();
-    this.setState({
-      displayProfileInfo: true
-    });
-    document.addEventListener('click', this.closeProfileInfo);
   }
 
   // componentDidMount() {
@@ -77,6 +69,14 @@ export class ToolBar extends React.Component {
     if (typeof this.unlisten === 'function') {
       this.unlisten();
     }
+  }
+
+  displayProfileInfo(e) {
+    e.preventDefault();
+    this.setState({
+      displayProfileInfo: true
+    });
+    document.addEventListener('click', this.closeProfileInfo);
   }
 
   closeProfileInfo = (e) => {

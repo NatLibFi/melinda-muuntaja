@@ -37,6 +37,8 @@ const INITIAL_STATE = Map({
   mergeProfiles: Map()
 });
 
+
+
 export default function ui(state = INITIAL_STATE, action) {
   switch (action.type) {
     case SWITCH_MERGE_CONFIG:
@@ -50,6 +52,8 @@ export default function ui(state = INITIAL_STATE, action) {
 }
 
 function setConfiguration(state, userinfo) {
+  console.log('presets: ', preset);
+
   let configPreset;
   const department = userinfo.department.toLowerCase();
 
@@ -60,6 +64,8 @@ function setConfiguration(state, userinfo) {
     if (configPreset[key] === undefined) return mergeProfiles;
 
     const mergeProfile = replaceConfigVariables(configPreset[key], userinfo, configPreset[key].lowTag);
+
+    console.log('mergeProfile.subrecords.mergeType: ', mergeProfile.subrecords.mergeType);
 
     return mergeProfiles.set(key, Map({
       name: mergeProfile.name,
