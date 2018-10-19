@@ -27,91 +27,27 @@
 */
 
 import MarcRecord from 'marc-record-js';
-import { decorateFieldsWithUuid } from '../record-utils';
+import { decorateFieldsWithUuid } from '../../record-utils';
 
 const record = new MarcRecord({
-  leader: '^^^^^cam^a^^^^^^^4i',
+  leader: '^^^^^caa^a22002174i^4500',
   fields: [
     {
-      tag: '008',
-      value: '^^^^^^s2018^^^^fi^|^^|^|^^^^||0|^0^fin|c'
+      tag: '001',
+      value: '000000000'
     },
     {
-      tag: '041',
-      ind1: ' ',
+      tag: '773',
+      ind1: '0',
       ind2: ' ',
       subfields: [
         {
-          code: 'a',
-          value: 'fin'
-        }
-      ]
-    },
-    {
-      tag: '336',
-      ind1: ' ',
-      ind2: ' ',
-      subfields: [
-        {
-          code: 'a',
-          value: 'teksti'
+          code: '7',
+          value: 'p1am'   
         },
         {
-          code: 'b',
-          value: 'txt'
-        },
-        {
-          code: '2',
-          value: 'rdacontent'
-        }
-      ]
-    },
-    {
-      tag: '337',
-      ind1: ' ',
-      ind2: ' ',
-      subfields: [
-        {
-          code: 'a',
-          value: 'käytettävissä ilman laitetta'
-        },
-        {
-          code: 'b',
-          value: 'n'
-        },
-        {
-          code: '2',
-          value: 'rdamedia'
-        }
-      ]
-    },
-    {
-      tag: '338',
-      ind1: ' ',
-      ind2: ' ',
-      subfields: [
-        {
-          code: 'a',
-          value: 'nide'
-        },
-        {
-          code: 'b',
-          value: 'nc'
-        },
-        {
-          code: '2',
-          value: 'rdacarrier'
-        }
-      ]
-    },
-    {
-      tag: '530',
-      ind1: ' ',
-      ind2: ' ',
-      subfields: [
-        {
-          code: 'a',
-          value: 'Julkaistu myös verkkoaineistona.'
+          code: 'w',
+          value: '(FI-MELINDA)[future-host-id]'
         }
       ]
     }

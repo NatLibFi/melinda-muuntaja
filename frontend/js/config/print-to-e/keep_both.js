@@ -26,30 +26,30 @@
 *
 */
 
-import { Map } from 'immutable'; 
-import {RESET_WORKSPACE, TOGGLE_COMPACT_SUBRECORD_VIEW, UPDATE_SUBRECORD_ARRANGEMENT } from '../constants/action-type-constants';
+/*eslint-disable quotes*/
 
-const INITIAL_STATE = Map({
-  compactSubrecordView: false,
-  compactedRows: []
-});
+import { preset as MergeValidationPreset } from '../../marc-record-merge-validate-service';
+import { preset as PostMergePreset } from '../../marc-record-merge-postmerge-service';
+import TargetRecord from './target-record';
+import * as subrecordMergeTypes from '../subrecord-merge-types';
 
-export default function ui(state = INITIAL_STATE, action) {
-  console.log('ui-reducer: ', action);
-  switch (action.type) {
-    case RESET_WORKSPACE:
-      return INITIAL_STATE;
-    case TOGGLE_COMPACT_SUBRECORD_VIEW:
-      return setCompactSubrecordView(state, action.enabled, action.rowsToCompact);
-    case UPDATE_SUBRECORD_ARRANGEMENT:
-      return setCompactSubrecordView(state, false, []);
+module.exports = {
+  "name": "Pidetään osakohteet",
+  "description": "TESTIPROFIILI",
+  "mergeType": "demo",
+  "record": {
+    "targetRecord": TargetRecord,
+    "validationRules": MergeValidationPreset.melinda_host,
+    "postMergeFixes": PostMergePreset.defaults,
+    "mergeConfiguration": {
+      "fields": {
+        "1..": { "action": "copy", "options": { "dropOriginal": true } },
+      }
+    }
+  },
+  "subrecords": {
+    "mergeType": subrecordMergeTypes.KEEP_BOTH
   }
-  return state;
-}
+};
 
-function setCompactSubrecordView(state, isEnabled, rowsToCompact) {
-
-  return state
-    .set('compactSubrecordView', isEnabled)
-    .set('compactedRows', rowsToCompact);
-}
+/*eslint-enable quotes*/

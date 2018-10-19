@@ -79,8 +79,6 @@ export function setSourceRecordError(state, error) {
 }
 
 export function setSourceRecordId(state, recordId) {
-  const test = state.setIn(['id'], recordId);
-  console.log('test: ', test.toJS());
   return state.setIn(['id'], recordId);
 }
 

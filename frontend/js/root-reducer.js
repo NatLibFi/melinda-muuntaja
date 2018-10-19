@@ -38,7 +38,6 @@ import sourceRecord from './reducers/source-record-reducer';
 import targetRecord from './reducers/target-record-reducer';
 import mergedRecord from './reducers/merged-record-reducer';
 import mergeStatus from  './reducers/merge-status-reducer';
-import mergeType from './reducers/merge-type-reducer';
 import config from  './reducers/config-reducer';
 import search from  './reducers/search-reducer';
 import ui from  './reducers/ui-reducer';
@@ -64,7 +63,6 @@ export const combinedRootReducer = combineReducers({
   targetRecord,
   mergedRecord,
   mergeStatus,
-  mergeType,
   subrecords,
   config,
   search

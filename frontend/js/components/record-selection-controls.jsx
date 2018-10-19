@@ -71,7 +71,6 @@ export class RecordSelectionControls extends React.Component {
   }
 
   UNSAFE_componentWillMount() {
-    console.log('history: ', this.props.history);
     this.unlisten = this.props.history.listen(location => this.props.locationDidChange(location));
     this.props.locationDidChange(this.props.history.location);
   }
@@ -122,7 +121,6 @@ export class RecordSelectionControls extends React.Component {
 
   fetchData(event, target) {
     event.persist();
-    console.log('target: ', target);
     const {sourceRecordId} = this.props;
     if (sourceRecordId) {
       this.props.fetchRecord(sourceRecordId, target);

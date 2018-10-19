@@ -44,16 +44,18 @@ import * as subrecordMergeTypes from './config/subrecord-merge-types';
 import * as MergeValidation from './marc-record-merge-validate-service';
 import * as PostMerge from './marc-record-merge-postmerge-service';
 import history from './history';
-import { SELECT_MERGETYPE } from './constants/action-type-constants';
+import { CHANGE_MERGE_PROFILE } from './constants/action-type-constants';
 
 export const SWITCH_MERGE_CONFIG = 'SWITCH_MERGE_CONFIG';
+export const SWITCH_MERGE_TYPE = 'SWITCH_MERGE_TYPE';
 
-export function selectMergeType (mergeType) {
+export function switchMergeType(config) {
   return function(dispatch) {
     dispatch({
-      type: SELECT_MERGETYPE,
-      mergeType
+      type: SWITCH_MERGE_TYPE,
+      config
     });
+    dispatch(updateMergedRecord());
   };
 }
 
@@ -61,6 +63,16 @@ export function switchMergeConfig(config) {
   return function(dispatch) {
     dispatch({
       type: SWITCH_MERGE_CONFIG,
+      config
+    });
+    dispatch(updateMergedRecord());
+  };
+}
+
+export function changeMergeProfile(config) {
+  return function(dispatch) {
+    dispatch({
+      type: CHANGE_MERGE_PROFILE, 
       config
     });
     dispatch(updateMergedRecord());
@@ -310,7 +322,6 @@ export function setSearchError(error) {
 export const SET_SEARCH_QUERY = 'SET_SEARCH_QUERY';
 
 export function setSearchQuery(query) {
-  console.log('query: ', query);
   return {
     type: SET_SEARCH_QUERY,
     query
@@ -337,7 +348,6 @@ export function setSearchIndex(index) {
 }
 
 export function locationDidChange(location) {
-  console.log('location: ', location);
   return function(dispatch, getState) {
     dispatch(setLocation(location));
 

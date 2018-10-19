@@ -2,18 +2,18 @@
 *
 * @licstart  The following is the entire license notice for the JavaScript code in this file.
 *
-* UI for merging MARC records
+* UI for transforming MARC records
 *
 * Copyright (C) 2015-2017 University Of Helsinki (The National Library Of Finland)
 *
-* This file is part of marc-merge-ui
+* This file is part of melinda-eresource-tool
 *
-* marc-merge-ui program is free software: you can redistribute it and/or modify
+* melinda-eresource-tool program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU Affero General Public License as
 * published by the Free Software Foundation, either version 3 of the
 * License, or (at your option) any later version.
 *
-* oai-pmh-server-backend-module-melinda is distributed in the hope that it will be useful,
+* melinda-eresource-tool is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU Affero General Public License for more details.
@@ -88,13 +88,13 @@ mustBeIdentical (true|false)
 
 import { preset as MergeValidationPreset } from '../../marc-record-merge-validate-service';
 import { preset as PostMergePreset } from '../../marc-record-merge-postmerge-service';
-import TargetRecord from '../target-record';
+import TargetRecord from './target-record';
 import * as subrecordMergeTypes from '../subrecord-merge-types';
 import { hyphenate } from 'isbn-utils';
 
 module.exports = {
-  "name": "Vapaakappalekirjastot",
-  "description": "E-vapaakappaleille räätälöity muunnos, joka tuottaa käyttöoikeushuomautukset kenttiin 506 ja 540.",
+  "name": "Oletus",
+  "description": "Muunnos täydentää e-aineiston tietueen painetun aineiston tietueen tiedoilla. Luokitus- ja sisällönkuvailukentistä kopioidaan vain omalle organisaatiolle merkityt kentät. Muunnos ei käsittele osakohteita.",
   "mergeType": "printToE",
   "record": {
     "targetRecord": TargetRecord,
@@ -111,11 +111,11 @@ module.exports = {
         "245": { "action": "copy", "options": { "dropOriginal": true, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "246": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "250": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
-        "260": { "action": "createFrom", "options": { "convertTag": "264", "ind1": ' ', "ind2": "1", "subfields": { "a": {}, "b": {}, "c": {}, "3": {}, "6": {}, "8": {} } } },
+        "260": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "263": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "264": { "action": "createFrom", "options": { "convertTag": "264", "ind1": ' ', "ind2": "1", "subfields": { "a": {}, "b": {}, "c": {}, "3": {}, "6": {}, "8": {} } } },
-        "300": { "action": "createFrom", "options": { "subfields": { "a": { modifications: [ { type: "replace", args: [/ [;:]$/, ""] }, { type: "replace", args: [/ s\./, " sivua"] }, { type: "wrap", args: ["1 verkkoaineisto (", ")"] } ] } } } },
-        "490": { "action": "createFrom", "options": { "subfields": { "a": {},  "x": { "modifications": [ { "type": "replace", "args": [/[0-9-]+/, ""] } ] }, "v": {} } } },
+        "300": { "action": "createFrom", "options": { "subfields": { "a": { modifications: [ { type: "replace", args: [/ [;:]$/, ""] }, { type: "replace", args: [/ s\./, " sivua"] }, { type: "wrap", args: ["1 verkkoaineisto (", ")"] } ] }, "b": {} } } },
+        "490": { "action": "copy", "options": { "dropOriginal": true, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "500": { "action": "copy", "options": { "copyIf": { "9": { "value": "[LOWTAG]<KEEP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "502": { "action": "copy", "options": { "copyIf": { "9": { "value": "[LOWTAG]<KEEP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "506": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
@@ -127,8 +127,7 @@ module.exports = {
         "700": { "action": "copy", "options": { "copyUnless": { "9": { "value": "[LOWTAG]<DROP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "710": { "action": "copy", "options": { "copyUnless": { "9": { "value": "[LOWTAG]<DROP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "711": { "action": "copy", "options": { "copyUnless": { "9": { "value": "[LOWTAG]<DROP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
-        // "490": { "action": "copy", "options": { "dropOriginal": true, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
-        "776": { "action": "createFrom", "options": { "convertTag": "020", "ind1": " ", "ind2": " ", "subfields": { "z": { "convertCode": "a", "modifications": [ hyphenate ] } } } },
+        "776": { "action": "createFrom", "options": { "convertTag": "020", "ind1": " ", "ind2": " ", "subfields": { "z": { "convertCode": "a", modifications: [ hyphenate ] } } } },
         "800": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "810": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "811": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
@@ -136,10 +135,6 @@ module.exports = {
       }
     },
     "newFields": [
-      { tag: '040', ind1: ' ', ind2: ' ', subfields: [ { code: 'b', value: 'fin' }, { code: 'e', value: 'rda' }] },
-      { tag: '506', ind1: '1', ind2: ' ', subfields: [ { code: 'a', value: 'Aineisto on käytettävissä vapaakappalekirjastoissa.'}, { code: 'f', value: 'Online access with authorization.' }] },
-      { tag: '540', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'Aineisto on käytettävissä tutkimus- ja muihin tarkoituksiin;'  }, { code: 'b', value: 'Kansalliskirjasto;' }, { code: 'c', value: 'Laki kulttuuriaineistojen tallettamisesta ja säilyttämisestä' }, { code: 'u', value: 'http://www.finlex.fi/fi/laki/ajantasa/2007/20071433' } ] },
-      { tag: '856', ind1: ' ', ind2: ' ', subfields: [ { code: 'u', value: '' }, {code: 'z', value: 'Käytettävissä vapaakappalekirjastoissa'}, { code: '5', value: 'FENNI' }, { code: '5', value: 'VOLTE' }, { code: '5', value: 'JYKDO' }, { code: '5', value: 'ALMA' }, { code: '5', value: 'OULA' }, { code: '5', value: 'JOSKU' } ] },
       { tag: 'LOW', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: '[LOWTAG]' } ] }
     ]
   },

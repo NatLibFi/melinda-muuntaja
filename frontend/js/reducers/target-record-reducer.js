@@ -72,5 +72,6 @@ export function setTargetRecordError(state, error) {
 }
 
 export function setTargetRecordId(state, recordId) {
+  console.log('state immutable: ', state.toJS(), recordId);
   return state.setIn(['id'], recordId);
 }

@@ -88,7 +88,7 @@ mustBeIdentical (true|false)
 import { preset as MergeValidationPreset } from '../../marc-record-merge-validate-service';
 import { preset as PostMergePreset } from '../../marc-record-merge-postmerge-service';
 import * as subrecordMergeTypes from '../subrecord-merge-types';
-import TargetRecord from '../target-record';
+import TargetRecord from './target-record';
 // import * as subrecordMergeTypes from '../subrecord-merge-types';
 // const hyphenate = require('isbn-utils')
 
@@ -97,7 +97,7 @@ import TargetRecord from '../target-record';
 module.exports = {
   "name": "Eemeli",
   "description": "Muunnos täydentää e-aineiston tietueen painetun aineiston tietueen tiedoilla. Luokitus- ja sisällönkuvailukentistä kopioidaan vain omalle organisaatiolle merkityt kentät. Muunnos ei käsittele osakohteita.",
-  "mergeType": "printToE",
+  "mergeType": "eToPrint",
   "record": {
     "targetRecord": TargetRecord,
     "validationRules": MergeValidationPreset.melinda_host,

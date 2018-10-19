@@ -26,11 +26,20 @@
 *
 */
 
-exports.default = require('./default');
-exports.no_subrecords = require('./no_subrecords');
-exports.shared = require('./shared');
-exports.fennica = require('./fennica');
-exports.legal_deposit = require('./legal-deposit');
-exports.merge_subrecords = require('./merge_subrecords');
-exports.keep_both = require('./keep_both');
-exports.eToPrint = require('./e-to-print');
+// import { Map } from 'immutable';
+// import { SET_MERGEPROFILE } from '../constants/action-type-constants';
+
+// const INITIAL_STATE = Map({
+//   mergeProfiles: 'printToE'
+// });
+
+// export default function setMergeProfiles(state = INITIAL_STATE, action) {
+//   console.log('mergeType reducer: ', action.mergeType);
+//   switch (action.type) {
+//     case SET_MERGEPROFILE:
+//       return state
+//         .set('mergeType', action.mergeType);
+//   }
+//   console.log('mergeProfiles reducer: ', state.toJS());
+//   return state;
+// }

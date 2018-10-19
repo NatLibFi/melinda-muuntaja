@@ -2,18 +2,18 @@
 *
 * @licstart  The following is the entire license notice for the JavaScript code in this file.
 *
-* UI for transforming MARC records
+* UI for merging MARC records
 *
 * Copyright (C) 2015-2017 University Of Helsinki (The National Library Of Finland)
 *
-* This file is part of melinda-eresource-tool
+* This file is part of marc-merge-ui
 *
-* melinda-eresource-tool program is free software: you can redistribute it and/or modify
+* marc-merge-ui program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU Affero General Public License as
 * published by the Free Software Foundation, either version 3 of the
 * License, or (at your option) any later version.
 *
-* melinda-eresource-tool is distributed in the hope that it will be useful,
+* oai-pmh-server-backend-module-melinda is distributed in the hope that it will be useful,
 * but WITHOUT ANY WARRANTY; without even the implied warranty of
 * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 * GNU Affero General Public License for more details.
@@ -88,13 +88,17 @@ mustBeIdentical (true|false)
 
 import { preset as MergeValidationPreset } from '../../marc-record-merge-validate-service';
 import { preset as PostMergePreset } from '../../marc-record-merge-postmerge-service';
-import TargetRecord from '../target-record';
+import TargetRecord from './target-record';
 import * as subrecordMergeTypes from '../subrecord-merge-types';
 import { hyphenate } from 'isbn-utils';
+import moment from 'moment';
+
+const new901 = `SU${moment().format('YYYYMMDD')}`;
+
 
 module.exports = {
-  "name": "Oletus",
-  "description": "Muunnos täydentää e-aineiston tietueen painetun aineiston tietueen tiedoilla. Luokitus- ja sisällönkuvailukentistä kopioidaan vain omalle organisaatiolle merkityt kentät. Muunnos ei käsittele osakohteita.",
+  "name": "Fennica",
+  "description": "Fennica-kuvailuun tarkoitettu muunnos. Muunnos lisää kansallisbibliografiatunnukset ja käyttöoikeushuomautukset.",
   "mergeType": "printToE",
   "record": {
     "targetRecord": TargetRecord,
@@ -104,37 +108,39 @@ module.exports = {
       "fields": {
         "020": { "action": "createFrom", "options": { "convertTag": "776", "ind1": "0", "ind2": "8", "subfields": { "i": { "replaceValue": "Painettu:" }, "a": { convertCode: "z", modifications: [ { type: "replace", args: [/-/g, ""] } ] } } } },
         "041": { "action": "copy", "options": { "dropOriginal": true, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
-        "080": { "action": "copy", "options": { "copyIf": { "9": { "value": "[LOWTAG]<KEEP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
+        "080": { "action": "copy", "options": { "copyIf": { "9": { "value": "FENNI<KEEP>" } } } },
         "084": { "action": "copy", "options": { "copyIf": { "9": { "value": "[LOWTAG]<KEEP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
-        "1..": { "action": "copy", "options": { "dropOriginal": true } },
         "240": { "action": "copy", "options": { "dropOriginal": true, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "245": { "action": "copy", "options": { "dropOriginal": true, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "246": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
-        "250": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
-        "260": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
+        "250": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP>)>/ } } },
+        "260": { "action": "createFrom", "options": { "convertTag": "264", "ind1": ' ', "ind2": "1", "subfields": { "a": {}, "b": {}, "c": {}, "3": {}, "6": {}, "8": {} } } },
         "263": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "264": { "action": "createFrom", "options": { "convertTag": "264", "ind1": ' ', "ind2": "1", "subfields": { "a": {}, "b": {}, "c": {}, "3": {}, "6": {}, "8": {} } } },
-        "300": { "action": "createFrom", "options": { "subfields": { "a": { modifications: [ { type: "replace", args: [/ [;:]$/, ""] }, { type: "replace", args: [/ s\./, " sivua"] }, { type: "wrap", args: ["1 verkkoaineisto (", ")"] } ] }, "b": {} } } },
-        "490": { "action": "copy", "options": { "dropOriginal": true, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
-        "500": { "action": "copy", "options": { "copyIf": { "9": { "value": "[LOWTAG]<KEEP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
-        "502": { "action": "copy", "options": { "copyIf": { "9": { "value": "[LOWTAG]<KEEP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
-        "506": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
-        "520": { "action": "copy", "options": { "copyIf": { "9": { "value": "[LOWTAG]<KEEP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
-        "540": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
-        "567": { "action": "copy", "options": { "copyIf": { "9": { "value": "[LOWTAG]<KEEP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
-        "588": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
-        "6..": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
+        "1..": { "action": "copy", "options": { "dropOriginal": true } },
+        "300": { "action": "createFrom", "options": { "subfields": { "a": { modifications: [ { type: "replace", args: [/ [;:]$/, ""] }, { type: "replace", args: [/ s\./, " sivua"] }, { type: "wrap", args: ["1 verkkoaineisto (", ")"] } ] }, "b": {}} } },
+        "490": { "action": "createFrom", "options": { "subfields": { "a": {},  "x": { "modifications": [ { "type": "replace", "args": [/[0-9-]+/, ""] } ] }, "v": {} } } },
+        "6..": { "action": "copy", "options": { "copyIf": { "9": { "value": "FENNI<KEEP>" } } } },
+        "5..": { "action": "copy", "options": { "copyIf": { "9": { "value": "FENNI<KEEP>" } } } },
         "700": { "action": "copy", "options": { "copyUnless": { "9": { "value": "[LOWTAG]<DROP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "710": { "action": "copy", "options": { "copyUnless": { "9": { "value": "[LOWTAG]<DROP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "711": { "action": "copy", "options": { "copyUnless": { "9": { "value": "[LOWTAG]<DROP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
+        // "490": { "action": "copy", "options": { "dropOriginal": true, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "776": { "action": "createFrom", "options": { "convertTag": "020", "ind1": " ", "ind2": " ", "subfields": { "z": { "convertCode": "a", modifications: [ hyphenate ] } } } },
-        "800": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
+        "830": { "action": "createFrom", "options": { "subfields": { "a": {},  "x": { "modifications": [ { "type": "replace", "args": [/[0-9-]+/, ""] } ] }, "v": {} } } },
         "810": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
         "811": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } },
-        "830": { "action": "copy", "options": { "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP|DROP)>/ } } }
+        "900": { "action": "copy", "options": { "copyUnless": { "9": { "value": "[LOWTAG]<DROP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP)>/ } } },
+        "910": { "action": "copy", "options": { "copyUnless": { "9": { "value": "[LOWTAG]<DROP>" } }, "reduce": { "subfields": ["9"], "condition": "unless", "value": /[LOWTAG]<(KEEP)>/ } } }
       }
     },
     "newFields": [
+      { tag: '040', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'FI-NL' }, { code: 'b', value: 'fin' }, { code: 'e', value: 'rda' }] },
+      { tag: '042', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'finb' } ] },
+      { tag: '506', ind1: '1', ind2: ' ', subfields: [ { code: 'a', value: 'Aineisto on käytettävissä vapaakappalekirjastoissa.'}, { code: 'f', value: 'Online access with authorization.' }, { code: '2', value: 'star' }, { code: '5', value: 'FI-NL' }, { code: '9', value: 'FENNI<KEEP>' }] },
+      { tag: '540', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: 'Aineisto on käytettävissä tutkimus- ja muihin tarkoituksiin;'  }, { code: 'b', value: 'Kansalliskirjasto;' }, { code: 'c', value: 'Laki kulttuuriaineistojen tallettamisesta ja säilyttämisestä' }, { code: 'u', value: 'http://www.finlex.fi/fi/laki/ajantasa/2007/20071433' }, { code: '5', value: 'FI-NL' }, { code: '9', value: 'FENNI<KEEP>' } ] },
+      { tag: '856', ind1: ' ', ind2: ' ', subfields: [ { code: 'u', value: '' }, {code: 'z', value: 'Käytettävissä vapaakappalekirjastoissa'}, { code: '5', value: 'FENNI' }, { code: '5', value: 'VOLTE' }, { code: '5', value: 'JYKDO' }, { code: '5', value: 'ALMA' }, { code: '5', value: 'OULA' }, { code: '5', value: 'JOSKU' } ] },
+      { tag: '901', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: new901 }, {code: '5', value: 'FENNI'} ] },
       { tag: 'LOW', ind1: ' ', ind2: ' ', subfields: [ { code: 'a', value: '[LOWTAG]' } ] }
     ]
   },

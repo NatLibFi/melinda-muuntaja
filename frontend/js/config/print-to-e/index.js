@@ -26,30 +26,10 @@
 *
 */
 
-/*eslint-disable quotes*/
-
-import { preset as MergeValidationPreset } from '../../marc-record-merge-validate-service';
-import { preset as PostMergePreset } from '../../marc-record-merge-postmerge-service';
-import TargetRecord from '../target-record';
-import * as subrecordMergeTypes from '../subrecord-merge-types';
-
-module.exports = {
-  "name": "Pidetään osakohteet",
-  "description": "TESTIPROFIILI",
-  "mergeType": "demo",
-  "record": {
-    "targetRecord": TargetRecord,
-    "validationRules": MergeValidationPreset.melinda_host,
-    "postMergeFixes": PostMergePreset.defaults,
-    "mergeConfiguration": {
-      "fields": {
-        "1..": { "action": "copy", "options": { "dropOriginal": true } },
-      }
-    }
-  },
-  "subrecords": {
-    "mergeType": subrecordMergeTypes.KEEP_BOTH
-  }
-};
-
-/*eslint-enable quotes*/
+exports.default = require('./default');
+exports.no_subrecords = require('./no_subrecords');
+exports.shared = require('./shared');
+exports.fennica = require('./fennica');
+exports.legal_deposit = require('./legal-deposit');
+exports.merge_subrecords = require('./merge_subrecords');
+exports.keep_both = require('./keep_both');
