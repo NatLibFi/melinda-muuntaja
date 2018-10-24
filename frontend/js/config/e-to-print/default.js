@@ -101,7 +101,7 @@ module.exports = {
   "record": {
     "targetRecord": TargetRecord,
     "validationRules": MergeValidationPreset.melinda_host,
-    "postMergeFixes": PostMergePreset.defaults,
+    "postMergeFixes": PostMergePreset.eToPrintPreset,
     "mergeConfiguration": {
       "fields": {
         "1..|041|080|084|240|245|246|250|260|263|264|490|500|502|520|567|588|6[^5].|65[^5]|700|710|711|800|810|811|830": {

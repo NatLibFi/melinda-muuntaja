@@ -71,12 +71,13 @@ function setMergeProfiles (state, configPreset, userinfo, mergeType) {
     if (configPreset[key] === undefined) return mergeProfiles;
 
     const mergeProfile = replaceConfigVariables(configPreset[key], userinfo, configPreset[key].lowTag);
+    console.log('mergeConfiguration: ', mergeProfile.record);
     return mergeProfiles.set(key, Map({
       name: mergeProfile.name,
       description: mergeProfile.description,
       mergeType: mergeProfile.mergeType,
       record: Map({
-        'targetRecord': mergeProfile.record.targetRecord,  // pohjatietueen asetus
+        'targetRecord': mergeProfile.record.targetRecord,
         'validationRules': mergeProfile.record.validationRules,
         'postMergeFixes': mergeProfile.record.postMergeFixes,
         'mergeConfiguration': mergeProfile.record.mergeConfiguration,

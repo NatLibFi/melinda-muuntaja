@@ -89,7 +89,7 @@ export class ToolBar extends React.Component {
   };
 
   changeMergeTypeHandler = (event) => {
-    this.props.switchMergeType(event.target.value);
+    if (this.props.selectedMergeType !== event.target.value) this.props.switchMergeType(event.target.value);
   }
 
 

@@ -58,18 +58,35 @@ const defaultPreset = [
   check041aLength, setAllZeroRecordId, sortMergedRecordFields, fix776Order,
 ];
 
+const eToPrintPreset = [
+  removeTag
+];
+
 const allPreset = [
   check041aLength, addLOWSIDFieldsFromOther, addLOWSIDFieldsFromPreferred, add035zFromOther, add035zFromPreferred, removeExtra035aFromMerged, 
   setAllZeroRecordId, add583NoteAboutMerge, removeCATHistory, add500ReprintInfo, handle880Fields, sortMergedRecordFields ];
 
 export const preset = {
   defaults: defaultPreset,
+  eToPrintPreset,
   all: allPreset
 };
+
+export function removeTag(mergedRecordParam) {
+  const tagList = ['007', '347', '506', '540', '856']; // tags to be removed
+  const mergedRecord = new MarcRecord(mergedRecordParam);
+  return {
+    mergedRecord: {
+      ...mergedRecord, 
+      fields: mergedRecord.fields.filter(field => !tagList.includes(field.tag))
+    }
+  };
+}
 
 export function fix776Order(preferredRecord, otherRecord, mergedRecordParam) {
   let mergedRecord = new MarcRecord(mergedRecordParam);
   let f776 = mergedRecord.fields.filter(field => field.tag === '776');
+
 
   // Not going to do anything if there are multiple 776 fields..
   if( f776.length !== 1 ) {
@@ -94,10 +111,10 @@ export function applyPostMergeModifications(postMergeFunctions, preferredRecord,
     mergedRecord,
     notes: []
   };
-
   const result = postMergeFunctions.reduce((result, fn) => {
+    console.log('result.mergedRecord: ', result.mergedRecord);
     const fnResult = fn(preferredRecord, otherRecord, result.mergedRecord);
-
+    console.log('fnResult: ', fnResult);
     return {
       mergedRecord: fnResult.mergedRecord,
       notes: _.concat(result.notes, fnResult.notes || [])

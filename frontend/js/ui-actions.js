@@ -514,11 +514,9 @@ export function updateMergedRecord() {
     const otherRecord = getState().getIn(['sourceRecord', 'record']);
     const otherRecordHasSubrecords = getState().getIn(['sourceRecord', 'hasSubrecords']);
 
-    if (preferredRecord && otherRecord) {
+    if (preferredRecord && otherRecord) { //targetRecord and sourceRecord
       const merge = createRecordMerger(mergeConfiguration);
-
       const validationRulesClone = _.clone(validationRules);
-
       if (subrecordMergeType === subrecordMergeTypes.DISALLOW_SUBRECORDS) {
         validationRulesClone.push(MergeValidation.otherRecordDoesNotHaveSubrecords);
         validationRulesClone.push(MergeValidation.preferredRecordDoesNotHaveSubrecords);
@@ -543,6 +541,7 @@ export function updateMergedRecord() {
         })
         .then(mergedRecord => PostMerge.applyPostMergeModifications(postMergeFixes, preferredRecord, otherRecord, mergedRecord))
         .then(result => {
+          console.log('result postmergen jälkeen: ', result);
           dispatch(setMergedRecord(result.record));
         })
         .catch(exceptCoreErrors(error => {
@@ -567,6 +566,7 @@ export function updateMergedRecord() {
 export const SET_MERGED_RECORD = 'SET_MERGED_RECORD';
 
 export function setMergedRecord(record) {
+  console.log('setMergedRecord: ', record);
   return {
     'type': SET_MERGED_RECORD,
     'record': record
@@ -600,7 +600,7 @@ export function clearMergedRecord() {
   };
 }
 
-export const  fetchRecord = (function() {
+export const fetchRecord = (function() {
   const APIBasePath = __DEV__ ? 'http://localhost:3001/api': '/api';
   const fetchSourceRecord = recordFetch(APIBasePath, loadSourceRecord, setSourceRecord, setSourceRecordError);
   const fetchTargetRecord = recordFetch(APIBasePath, loadTargetRecord, setTargetRecord, setTargetRecordError);
