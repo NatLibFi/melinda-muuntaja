@@ -548,7 +548,6 @@ export function updateMergedRecord() {
 
           return mergedRecord;
         })
-        // alkaa tästä
         .then(mergedRecord => PostMerge.applyPostMergeModifications(postMergeFixes, preferredRecord, otherRecord, mergedRecord))
         .then(result => {
           console.log('result postmergen jälkeen: ', result);

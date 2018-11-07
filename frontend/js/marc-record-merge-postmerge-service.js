@@ -74,37 +74,16 @@ export const preset = {
 };
 // preferredRecord(pohjatietue), otherRecord(lähdetietue), result.mergedRecord
 export function removeTag(preferredRecord, otherRecord, mergedRecordParam) {
-  console.log('removeTag: ', removeTag);
   const tagList = ['007', '347', '506', '540', '856']; // tags to be removed
-  let filteredMergedRecordParam = {
+  const filteredMergedRecordParam = {
     ...mergedRecordParam, 
     fields: mergedRecordParam.fields.filter(field => !tagList.includes(field.tag))
   };
   const mergedRecord = new MarcRecord(filteredMergedRecordParam);
+  
   return {
     mergedRecord
   };
-}
-
-function findTag (record, value) {
-  return record.fields.find(obj => obj.tag === value);
-}
-
-function replaceString(sourceTag, index, replaceWith) {
-  return sourceTag.value.substring(0, index) + 'Ö' + sourceTag.value.substring(index+1);
-}
-
-function updateProperty(record, sourceRecordTag) {
-  const tagIndex = record.fields.findIndex(obj => obj.tag === '008');
-  const recordCopy = { ...record};
-  const updatedTag = {
-    ...record.fields[tagIndex]
-  };
-
-  updatedTag.value = sourceRecordTag.value;
-  recordCopy.fields[tagIndex] = updatedTag;
-
-  return recordCopy;
 }
 
 export function eToPrintSelect008(preferredRecord, otherRecord, mergedRecordParam) {
@@ -112,37 +91,39 @@ export function eToPrintSelect008(preferredRecord, otherRecord, mergedRecordPara
   const mergedRecordParamCopy = { ...mergedRecordParam};
   const sourceRecordTag = findTag(otherRecord, '008');
   const targetRecordTag = findTag(preferredRecord, '008');
+  const sourceTag = { ...sourceRecordTag};
   let updated008record;
 
   indexList.forEach(index => {
     const replaceWith = targetRecordTag.value[index];
-    
-    sourceRecordTag.value = replaceString(sourceRecordTag, index, replaceWith);
-    updated008record = updateProperty(mergedRecordParamCopy, sourceRecordTag);
-
+    sourceTag.value = replaceString(sourceTag, index, replaceWith);
+    updated008record = updateProperty(mergedRecordParamCopy, sourceTag);
   });
 
-  console.log('updated008record: ', updated008record);
-  // const f008Other = otherRecord.get(/^008$/).shift(); // lähdetietue
-  // const f008preferred = preferredRecord.get(/^008$/).shift(); // pohjatietue
-  // const f008New = {tag: '008', value: f008Other.value};
-
-  // console.log('lähdetietue: ', f008Other.value);
-  // console.log('pohjatietue: ', f008preferred);
-  // console.log('f008New: ', f008New.value[23]);
-
-
-  // f008New[23] = f008preferred[23];
-  // f008New[39] = f008preferred[39];
-
-  // console.log('xxxx:', f008Other.value[23], f008preferred.value[23], f008New.value[23]);
-  // console.log('xxxx:', f008Other.value[39], f008preferred.value[39], f008New.value[39]);
-
-  // mergedRecord.removeField(f008preferred);
-  // mergedRecord.insertField(f008New);
   return {
     mergedRecord: new MarcRecord(updated008record)
   };
+
+  function findTag (record, value) {
+    return record.fields.find(obj => obj.tag === value);
+  }
+
+  function replaceString(sourceTag, index, replaceWith) {
+    return sourceTag.value.substring(0, index) + replaceWith + sourceTag.value.substring(index+1);
+  }
+  
+  function updateProperty(record, sourceRecordTag) {
+    const tagIndex = record.fields.findIndex(obj => obj.tag === '008');
+    const recordCopy = { ...record};
+    const updatedTag = {
+      ...record.fields[tagIndex]
+    };
+  
+    updatedTag.value = sourceRecordTag.value;
+    recordCopy.fields[tagIndex] = updatedTag;
+  
+    return recordCopy;
+  }
 }
 
 export function fix776Order(preferredRecord, otherRecord, mergedRecordParam) {
