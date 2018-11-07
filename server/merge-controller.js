@@ -123,7 +123,6 @@ mergeController.post('/commit-merge', cors(corsOptions), requireSession, require
 
 function loadRecord(client, id) {
   return new Promise((resolve, reject) => {
-
     client.loadChildRecords(id, {handle_deleted: 1, include_parent: 1}).then((records) => {
       logger.log('debug', `Record ${id} with subrecords loaded`);
       const record = _.head(records);
@@ -136,7 +135,6 @@ function loadRecord(client, id) {
 }
 
 function requireSession(req, res, next) {
-
   const username = _.get(req, 'session.username');
   const password = _.get(req, 'session.password');
 

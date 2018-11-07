@@ -55,7 +55,6 @@ export const preset = {
 
 export function validateMergeCandidates(validationFunctions, preferredRecord, otherRecord, preferredHasSubrecords, otherRecordHasSubrecords) {
   const validationResults = validationFunctions.map(fn => fn(preferredRecord, otherRecord, preferredHasSubrecords, otherRecordHasSubrecords));
-
   return Promise.all(validationResults).then(results => {
     
     const failures = results.filter(result => result.valid === false);

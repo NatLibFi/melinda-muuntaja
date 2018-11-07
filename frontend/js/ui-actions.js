@@ -60,6 +60,7 @@ export function switchMergeType(config) {
 }
 
 export function switchMergeConfig(config) {
+  console.log('switchMergeConfig: ', config);
   return function(dispatch) {
     dispatch({
       type: SWITCH_MERGE_CONFIG,
@@ -501,12 +502,20 @@ export function updateMergedRecord() {
 
   return function(dispatch, getState) {
 
-    const mergeProfile = getState().getIn(['config', 'mergeProfiles', getState().getIn(['config', 'selectedMergeProfile']), 'record']);
+    const getMergeProfile = getState().getIn(['config', 'mergeProfiles', getState().getIn(['config', 'selectedMergeProfile']), 'record']);
+    console.log('getMergeProfile', getMergeProfile);
+    const defaultProfile = getState().getIn(['config', 'mergeProfiles']);
+    const mergeProfile = getMergeProfile === undefined ? defaultProfile.first() : getMergeProfile;
     const subrecordMergeType = getState().getIn(['config', 'mergeProfiles', getState().getIn(['config', 'selectedMergeProfile']), 'subrecords', 'mergeType']);
+    
+    console.log('mergeProfileeee: ', mergeProfile);
+
     const mergeConfiguration = mergeProfile.get('mergeConfiguration');
     const validationRules = mergeProfile.get('validationRules');
     const postMergeFixes = mergeProfile.get('postMergeFixes');
     const newFields = mergeProfile.get('newFields');
+
+    console.log('mergeProfilex:', mergeProfile.toJS());
 
     const preferredState = getState().getIn(['targetRecord', 'state']);
     const preferredRecord = preferredState === 'EMPTY' ? mergeProfile.get('targetRecord') : getState().getIn(['targetRecord', 'record']);
@@ -539,6 +548,7 @@ export function updateMergedRecord() {
 
           return mergedRecord;
         })
+        // alkaa tästä
         .then(mergedRecord => PostMerge.applyPostMergeModifications(postMergeFixes, preferredRecord, otherRecord, mergedRecord))
         .then(result => {
           console.log('result postmergen jälkeen: ', result);
@@ -566,7 +576,6 @@ export function updateMergedRecord() {
 export const SET_MERGED_RECORD = 'SET_MERGED_RECORD';
 
 export function setMergedRecord(record) {
-  console.log('setMergedRecord: ', record);
   return {
     'type': SET_MERGED_RECORD,
     'record': record
@@ -604,7 +613,6 @@ export const fetchRecord = (function() {
   const APIBasePath = __DEV__ ? 'http://localhost:3001/api': '/api';
   const fetchSourceRecord = recordFetch(APIBasePath, loadSourceRecord, setSourceRecord, setSourceRecordError);
   const fetchTargetRecord = recordFetch(APIBasePath, loadTargetRecord, setTargetRecord, setTargetRecordError);
-
   return function(recordId, type) {
     return function (dispatch) {
       if (type !== 'SOURCE' && type !== 'TARGET') {
@@ -626,6 +634,7 @@ function recordFetch(APIBasePath, loadRecordAction, setRecordAction, setRecordEr
   return function(recordId, dispatch) {
     currentRecordId = recordId;
 
+    // sets state to loading
     dispatch(loadRecordAction(recordId));
 
     return fetch(`${APIBasePath}/${recordId}`)

@@ -89,6 +89,7 @@ export class ToolBar extends React.Component {
   };
 
   changeMergeTypeHandler = (event) => {
+    console.log('event: ', event.target.value);
     if (this.props.selectedMergeType !== event.target.value) this.props.switchMergeType(event.target.value);
   }
 
@@ -105,6 +106,12 @@ export class ToolBar extends React.Component {
   openSearchDialog(event) {
     event.preventDefault();
     this.props.openSearchDialog();
+  }
+
+  setDefaultProfile(profile) {
+    console.log('muutosta painettu', profile);
+    this.props.switchMergeConfig('default');
+    return null;
   }
 
   renderNewPairButton() {
@@ -170,8 +177,11 @@ export class ToolBar extends React.Component {
 
   renderMergeProfile() {
     const { mergeProfiles, selectedMergeType } = this.props;
-    const selectedMergeProfile = mergeProfiles.find(({key}) => key === this.props.selectedMergeProfile);
+    const profile = mergeProfiles.find(({key}) => key === this.props.selectedMergeProfile);
+    console.log('profilexx: ', profile);
+    const selectedMergeProfile = profile === undefined ?  mergeProfiles[0] : profile;
     const filteredProfiles = mergeProfiles.filter(profile => profile.mergeType === selectedMergeType);
+
     return (
       <div>
         {mergeProfiles.length > 0 && (
@@ -227,6 +237,7 @@ export class ToolBar extends React.Component {
 }
 
 function mapStateToProps(state) {
+  console.log('selectedMergeProfile:', state.getIn(['config', 'selectedMergeProfile']));
   return {
     selectedMergeProfile: state.getIn(['config', 'selectedMergeProfile']),
     mergeProfiles: state.getIn(['config', 'mergeProfiles']).map((value, key) => ({ 

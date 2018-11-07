@@ -46,7 +46,8 @@ export default function ui(state = INITIAL_STATE, action) {
     case SWITCH_MERGE_TYPE:
       return setConfiguration(state, userinfo, action.config);
     case SWITCH_MERGE_CONFIG:
-      window.localStorage.setItem('muuntajaConfig', action.config);
+      console.log('action.config: ', action.config);
+      //window.localStorage.setItem('muuntajaConfig', action.config);
       return state.set('selectedMergeProfile', action.config);
 
     case CREATE_SESSION_SUCCESS:
@@ -60,7 +61,7 @@ function setConfiguration(state, userinfo, mergeType = 'printToE') {
   const presets = mergeType ? configPresets.find(preset => preset.mergeType === mergeType) : printToE;
   let configPreset;
   const department = userinfo.department.toLowerCase();
-
+  
   if (presets.hasOwnProperty(department)) configPreset = presets[department];
   else configPreset = presets.defaults;
   return setMergeProfiles(state, configPreset, userinfo, mergeType);
@@ -71,7 +72,6 @@ function setMergeProfiles (state, configPreset, userinfo, mergeType) {
     if (configPreset[key] === undefined) return mergeProfiles;
 
     const mergeProfile = replaceConfigVariables(configPreset[key], userinfo, configPreset[key].lowTag);
-    console.log('mergeConfiguration: ', mergeProfile.record);
     return mergeProfiles.set(key, Map({
       name: mergeProfile.name,
       description: mergeProfile.description,
@@ -95,7 +95,8 @@ function setMergeProfiles (state, configPreset, userinfo, mergeType) {
     }));
   }, Map()))
     .set('userInfo', userinfo)
-    .set('mergeType', mergeType);
+    .set('mergeType', mergeType)
+    .set('selectedMergeProfile', 'default');
 }
 
 function replaceConfigVariables(orig_config, userinfo, forcedLowTag = null) {

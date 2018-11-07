@@ -59,7 +59,8 @@ const defaultPreset = [
 ];
 
 const eToPrintPreset = [
-  removeTag
+  removeTag,
+  eToPrintSelect008
 ];
 
 const allPreset = [
@@ -71,15 +72,76 @@ export const preset = {
   eToPrintPreset,
   all: allPreset
 };
-
-export function removeTag(mergedRecordParam) {
+// preferredRecord(pohjatietue), otherRecord(lähdetietue), result.mergedRecord
+export function removeTag(preferredRecord, otherRecord, mergedRecordParam) {
+  console.log('removeTag: ', removeTag);
   const tagList = ['007', '347', '506', '540', '856']; // tags to be removed
-  const mergedRecord = new MarcRecord(mergedRecordParam);
+  let filteredMergedRecordParam = {
+    ...mergedRecordParam, 
+    fields: mergedRecordParam.fields.filter(field => !tagList.includes(field.tag))
+  };
+  const mergedRecord = new MarcRecord(filteredMergedRecordParam);
   return {
-    mergedRecord: {
-      ...mergedRecord, 
-      fields: mergedRecord.fields.filter(field => !tagList.includes(field.tag))
-    }
+    mergedRecord
+  };
+}
+
+function findTag (record, value) {
+  return record.fields.find(obj => obj.tag === value);
+}
+
+function replaceString(sourceTag, index, replaceWith) {
+  return sourceTag.value.substring(0, index) + 'Ö' + sourceTag.value.substring(index+1);
+}
+
+function updateProperty(record, sourceRecordTag) {
+  const tagIndex = record.fields.findIndex(obj => obj.tag === '008');
+  const recordCopy = { ...record};
+  const updatedTag = {
+    ...record.fields[tagIndex]
+  };
+
+  updatedTag.value = sourceRecordTag.value;
+  recordCopy.fields[tagIndex] = updatedTag;
+
+  return recordCopy;
+}
+
+export function eToPrintSelect008(preferredRecord, otherRecord, mergedRecordParam) {
+  const indexList = [23, 39];
+  const mergedRecordParamCopy = { ...mergedRecordParam};
+  const sourceRecordTag = findTag(otherRecord, '008');
+  const targetRecordTag = findTag(preferredRecord, '008');
+  let updated008record;
+
+  indexList.forEach(index => {
+    const replaceWith = targetRecordTag.value[index];
+    
+    sourceRecordTag.value = replaceString(sourceRecordTag, index, replaceWith);
+    updated008record = updateProperty(mergedRecordParamCopy, sourceRecordTag);
+
+  });
+
+  console.log('updated008record: ', updated008record);
+  // const f008Other = otherRecord.get(/^008$/).shift(); // lähdetietue
+  // const f008preferred = preferredRecord.get(/^008$/).shift(); // pohjatietue
+  // const f008New = {tag: '008', value: f008Other.value};
+
+  // console.log('lähdetietue: ', f008Other.value);
+  // console.log('pohjatietue: ', f008preferred);
+  // console.log('f008New: ', f008New.value[23]);
+
+
+  // f008New[23] = f008preferred[23];
+  // f008New[39] = f008preferred[39];
+
+  // console.log('xxxx:', f008Other.value[23], f008preferred.value[23], f008New.value[23]);
+  // console.log('xxxx:', f008Other.value[39], f008preferred.value[39], f008New.value[39]);
+
+  // mergedRecord.removeField(f008preferred);
+  // mergedRecord.insertField(f008New);
+  return {
+    mergedRecord: new MarcRecord(updated008record)
   };
 }
 
@@ -112,9 +174,7 @@ export function applyPostMergeModifications(postMergeFunctions, preferredRecord,
     notes: []
   };
   const result = postMergeFunctions.reduce((result, fn) => {
-    console.log('result.mergedRecord: ', result.mergedRecord);
     const fnResult = fn(preferredRecord, otherRecord, result.mergedRecord);
-    console.log('fnResult: ', fnResult);
     return {
       mergedRecord: fnResult.mergedRecord,
       notes: _.concat(result.notes, fnResult.notes || [])
@@ -149,14 +209,12 @@ export function addLOWSIDFieldsFromOther(preferredRecord, otherRecord, mergedRec
   var otherRecordLOWFieldList = otherRecord.fields
     .filter(field => field.tag === 'LOW')
     .map(markAsPostmergeField);
-
   mergedRecord.fields = mergedRecord.fields.concat(otherRecordLOWFieldList);
 
   const otherRecordLibraryIdList = selectValues(otherRecord, 'LOW', 'a');
 
   otherRecordLibraryIdList.forEach(libraryId => {
     const otherRecordSIDFieldList = selectFieldsByValue(otherRecord, 'SID', 'b', libraryId.toLowerCase());
-
     if (otherRecordSIDFieldList.length > 0) {
 
       mergedRecord.fields = _.concat(mergedRecord.fields, otherRecordSIDFieldList.map(markAsPostmergeField));
