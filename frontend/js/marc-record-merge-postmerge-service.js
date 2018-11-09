@@ -52,16 +52,12 @@ import uuid from 'node-uuid';
 import moment from 'moment';
 import { selectValues, selectRecordId, selectFieldsByValue, fieldHasSubfield, resetComponentHostLinkSubfield, isLinkedFieldOf } from './record-utils';
 import { fieldOrderComparator } from './marc-field-sort';
-
-
+import { eToPrintPreset } from './config/e-to-print/postmerge/eToPrint-postmerge';
+   
 const defaultPreset = [
   check041aLength, setAllZeroRecordId, sortMergedRecordFields, fix776Order,
 ];
 
-const eToPrintPreset = [
-  removeTag,
-  eToPrintSelect008
-];
 
 const allPreset = [
   check041aLength, addLOWSIDFieldsFromOther, addLOWSIDFieldsFromPreferred, add035zFromOther, add035zFromPreferred, removeExtra035aFromMerged, 
@@ -72,59 +68,7 @@ export const preset = {
   eToPrintPreset,
   all: allPreset
 };
-// preferredRecord(pohjatietue), otherRecord(lähdetietue), result.mergedRecord
-export function removeTag(preferredRecord, otherRecord, mergedRecordParam) {
-  const tagList = ['007', '347', '506', '540', '856']; // tags to be removed
-  const filteredMergedRecordParam = {
-    ...mergedRecordParam, 
-    fields: mergedRecordParam.fields.filter(field => !tagList.includes(field.tag))
-  };
-  const mergedRecord = new MarcRecord(filteredMergedRecordParam);
-  
-  return {
-    mergedRecord
-  };
-}
 
-export function eToPrintSelect008(preferredRecord, otherRecord, mergedRecordParam) {
-  const indexList = [23, 39];
-  const mergedRecordParamCopy = { ...mergedRecordParam};
-  const sourceRecordTag = findTag(otherRecord, '008');
-  const targetRecordTag = findTag(preferredRecord, '008');
-  const sourceTag = { ...sourceRecordTag};
-  let updated008record;
-
-  indexList.forEach(index => {
-    const replaceWith = targetRecordTag.value[index];
-    sourceTag.value = replaceString(sourceTag, index, replaceWith);
-    updated008record = updateProperty(mergedRecordParamCopy, sourceTag);
-  });
-
-  return {
-    mergedRecord: new MarcRecord(updated008record)
-  };
-
-  function findTag (record, value) {
-    return record.fields.find(obj => obj.tag === value);
-  }
-
-  function replaceString(sourceTag, index, replaceWith) {
-    return sourceTag.value.substring(0, index) + replaceWith + sourceTag.value.substring(index+1);
-  }
-  
-  function updateProperty(record, sourceRecordTag) {
-    const tagIndex = record.fields.findIndex(obj => obj.tag === '008');
-    const recordCopy = { ...record};
-    const updatedTag = {
-      ...record.fields[tagIndex]
-    };
-  
-    updatedTag.value = sourceRecordTag.value;
-    recordCopy.fields[tagIndex] = updatedTag;
-  
-    return recordCopy;
-  }
-}
 
 export function fix776Order(preferredRecord, otherRecord, mergedRecordParam) {
   let mergedRecord = new MarcRecord(mergedRecordParam);

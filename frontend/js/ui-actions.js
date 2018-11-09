@@ -507,8 +507,6 @@ export function updateMergedRecord() {
     const defaultProfile = getState().getIn(['config', 'mergeProfiles']);
     const mergeProfile = getMergeProfile === undefined ? defaultProfile.first() : getMergeProfile;
     const subrecordMergeType = getState().getIn(['config', 'mergeProfiles', getState().getIn(['config', 'selectedMergeProfile']), 'subrecords', 'mergeType']);
-    
-    console.log('mergeProfileeee: ', mergeProfile);
 
     const mergeConfiguration = mergeProfile.get('mergeConfiguration');
     const validationRules = mergeProfile.get('validationRules');
@@ -516,6 +514,7 @@ export function updateMergedRecord() {
     const newFields = mergeProfile.get('newFields');
 
     console.log('mergeProfilex:', mergeProfile.toJS());
+    console.log('postMergeFixes: ', postMergeFixes);
 
     const preferredState = getState().getIn(['targetRecord', 'state']);
     const preferredRecord = preferredState === 'EMPTY' ? mergeProfile.get('targetRecord') : getState().getIn(['targetRecord', 'record']);
