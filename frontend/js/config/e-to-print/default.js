@@ -95,7 +95,7 @@ import TargetRecord from './target-record';
 // tuodaan lähdetietueesta
 
 module.exports = {
-  "name": "Eemeli",
+  "name": "Oletus",
   "description": "Muunnos täydentää e-aineiston tietueen painetun aineiston tietueen tiedoilla. Luokitus- ja sisällönkuvailukentistä kopioidaan vain omalle organisaatiolle merkityt kentät. Muunnos ei käsittele osakohteita.",
   "mergeType": "eToPrint",
   "record": {

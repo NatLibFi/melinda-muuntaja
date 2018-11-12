@@ -5,7 +5,8 @@ import { merge, isEmpty } from 'lodash';
 export const eToPrintPreset = [
   eToPrintRemoveTags,
   eToPrintSelect008,
-  eToPrintSelect040
+  eToPrintSelect040,
+  eToPrintSelect020
 ];
 
 // helper functions
@@ -70,6 +71,7 @@ export function eToPrintSelect008(preferredRecord, otherRecord, mergedRecordPara
     return recordCopy;
   }
 }
+
 // if tag 040 in fields, imports 040 from sourceRecord and creates, replaces or merges with postMergeContent
 export function eToPrintSelect040(targetRecord, sourceRecord, mergedRecordParam) {
   const fieldTag = '040';
@@ -103,4 +105,54 @@ export function eToPrintSelect040(targetRecord, sourceRecord, mergedRecordParam)
   return { 
     mergedRecord: new MarcRecord(mergedRecordParam)
   };
+}
+
+// 
+function eToPrintSelect020 (targetRecord, sourceRecord, mergedRecordParam) {
+  const fieldTag = '020';
+  
+  const tag020 = { ...filterTag(sourceRecord, fieldTag) };
+  const tag776 = filterTag(sourceRecord, '776');
+  
+  const field776a = tag776.subfields.find(obj => obj.code === 'z').value;
+  const updatedSubfields = tag020.subfields.map((field) => updateValue(field, field776a));
+  tag020.subfields = updatedSubfields;
+  
+  const fieldIndex = findIndex(mergedRecordParam, fieldTag);
+  
+  const updatedMergedRecordParam = { 
+    ...mergedRecordParam,
+    fields: mergedRecordParam.fields.map((field, index) => updateField(field, updatedSubfields, fieldIndex, index)) 
+  };
+  
+  return { 
+    mergedRecord: new MarcRecord(updatedMergedRecordParam)
+  };
+
+  function updateField(field, updatedSubfields, fieldIndex, index) {
+    if (index === fieldIndex) {
+      return {
+        ...field,
+        subfields: updatedSubfields
+      };
+    }
+    return field;
+  }
+
+  function updateValue(field, value) {
+    if (field.code === 'q') {
+      return {
+        ...field,
+        value: ' '
+      };
+    }
+    if (field.code === 'a') {
+      return {
+        ...field,
+        value
+      };
+    }
+    return field;
+  }
+
 }
