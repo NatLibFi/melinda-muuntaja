@@ -1,15 +1,16 @@
 // preferredRecord(pohjatietue), otherRecord(lähdetietue), result.mergedRecord
 import MarcRecord from 'marc-record-js';
-import { merge, isEmpty } from 'lodash';
+import { isEmpty } from 'lodash';
 
 export const eToPrintPreset = [
   eToPrintRemoveTags,
   eToPrintSelect008,
   eToPrintSelect040,
-  eToPrintSelect020
+  eToPrintSelect020,
+  eToPrintSelect300
 ];
 
-// helper functions
+// helper functions ->
 function filterTag (record, fieldTag) {
   return record.fields.find(obj => obj.tag === fieldTag);
 }
@@ -18,7 +19,17 @@ function findIndex (record, fieldTag) {
   return record.fields.findIndex(obj => obj.tag === fieldTag);
 }
 
-// eToPrint Postmerge functions
+function updateField(field, updatedSubfields, fieldIndex, index) {
+  if (index === fieldIndex) {
+    return {
+      ...field,
+      subfields: updatedSubfields
+    };
+  }
+  return field;
+}
+
+// eToPrint Postmerge functions ->
 
 // removes specified tags from record (mergedRecordParam)
 export function eToPrintRemoveTags(preferredRecord, otherRecord, mergedRecordParam) {
@@ -139,16 +150,6 @@ function eToPrintSelect020 (targetRecord, sourceRecord, mergedRecordParam) {
     mergedRecord: new MarcRecord(mergedRecordParam)
   };
 
-  function updateField(field, updatedSubfields, fieldIndex, index) {
-    if (index === fieldIndex) {
-      return {
-        ...field,
-        subfields: updatedSubfields
-      };
-    }
-    return field;
-  }
-
   function updateValue(field, value) {
     if (field.code === 'q') {
       return {
@@ -167,4 +168,45 @@ function eToPrintSelect020 (targetRecord, sourceRecord, mergedRecordParam) {
 
 }
 
-// 300 field, imports code a and b from sourcerecord. 
+// 300 field, imports code a and b from sourcerecord. Subfield a is manipulated with x sivua if regexp matches
+function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
+  const fieldTag = '300';
+  const tag300 = {...filterTag(sourceRecord, fieldTag)};
+  const tag300a = tag300.subfields.map(field => updateA(field))
+    .find(field => field.code === 'a');
+  
+  const tag300b = {...filterTag(sourceRecord, fieldTag)}
+    .subfields.find(field => field.code === 'b');
+
+  tag300.subfields = [tag300a, tag300b];
+  
+  const fieldIndex = findIndex(mergedRecordParam, fieldTag);
+  
+  const updatedMergedRecordParam = {
+    ...mergedRecordParam,
+    fields: mergedRecordParam.fields.map((field, index) => updateField(field, tag300.subfields, fieldIndex, index))
+  };
+
+  return { 
+    mergedRecord: new MarcRecord(updatedMergedRecordParam)
+  };
+
+  function updateA(field) {
+    if (field.code === 'a') {
+      return {
+        ...field,
+        value: checkMatch(field.value)
+      };
+    }
+    return field;
+  }
+
+  function checkMatch(value) {    
+    const isMatch =/^1 verkkoaineisto \((.*)\)$/.exec(value);
+    if (isMatch) {
+      return isMatch[1];
+    }
+    return value;
+  }
+
+}
