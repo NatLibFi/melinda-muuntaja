@@ -110,23 +110,36 @@ export function eToPrintSelect040(targetRecord, sourceRecord, mergedRecordParam)
 // 
 function eToPrintSelect020 (targetRecord, sourceRecord, mergedRecordParam) {
   const fieldTag = '020';
-  
   const tag020 = { ...filterTag(sourceRecord, fieldTag) };
   const tag776 = filterTag(sourceRecord, '776');
+  const field776a = tag776 !== undefined ? tag776.subfields.find(obj => obj.code === 'z') : '';
+
+  if (!isEmpty(field776a) && !isEmpty(tag020)) {
+    const updatedSubfields = tag020.subfields.map((field) => updateValue(field, field776a.value));
+    tag020.subfields = updatedSubfields;
   
-  const field776a = tag776.subfields.find(obj => obj.code === 'z').value;
-  const updatedSubfields = tag020.subfields.map((field) => updateValue(field, field776a));
-  tag020.subfields = updatedSubfields;
-  
-  const fieldIndex = findIndex(mergedRecordParam, fieldTag);
-  
-  const updatedMergedRecordParam = { 
-    ...mergedRecordParam,
-    fields: mergedRecordParam.fields.map((field, index) => updateField(field, updatedSubfields, fieldIndex, index)) 
-  };
+    if (!tag020.subfields.some(obj => obj.code === 'a')) {
+      tag020.subfields = [ ...tag020.subfields, { code: 'a', value: field776a.value } ];
+    }
+
+    if (!tag020.subfields.some(obj => obj.code === 'q')) {
+      tag020.subfields = [ ...tag020.subfields, { code: 'q', value: ' ' } ];
+    }
+
+    const fieldIndex = findIndex(mergedRecordParam, fieldTag);
+    
+    const updatedMergedRecordParam = { 
+      ...mergedRecordParam,
+      fields: mergedRecordParam.fields.map((field, index) => updateField(field, tag020.subfields, fieldIndex, index))
+    };
+    
+    return { 
+      mergedRecord: new MarcRecord(updatedMergedRecordParam)
+    };
+  }
   
   return { 
-    mergedRecord: new MarcRecord(updatedMergedRecordParam)
+    mergedRecord: new MarcRecord(mergedRecordParam)
   };
 
   function updateField(field, updatedSubfields, fieldIndex, index) {
