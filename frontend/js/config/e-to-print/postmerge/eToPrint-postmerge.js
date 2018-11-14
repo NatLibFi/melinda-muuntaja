@@ -72,27 +72,24 @@ export function eToPrintSelect008(preferredRecord, otherRecord, mergedRecordPara
   }
 }
 
-// if tag 040 in fields, imports 040 from sourceRecord and creates, replaces or merges with postMergeContent
+// if tag 040 in fields, imports 040 from sourceRecord and creates/replaces with postMergeContent
 export function eToPrintSelect040(targetRecord, sourceRecord, mergedRecordParam) {
   const fieldTag = '040';
   const tag040 = { ...filterTag(sourceRecord, fieldTag)};
   const postMergeContent = [
     { code: 'a', value: '' },
     { code: 'b', value: 'fin' },
-    { code: 'c', value: 'rda' }
+    { code: 'e', value: 'rda' }
   ]; 
 
   if (!isEmpty(tag040)) {
-    const filteredTags = tag040.subfields.filter(tag => tag.code !== 'a' && tag.code !== 'b' && tag.code !== 'e');
-    
-    const mergedSubfields = merge( ...filteredTags, postMergeContent);
     const index = findIndex(sourceRecord, fieldTag);
  
     const updated040Field = {
       ...sourceRecord.fields[index]
     };
     
-    updated040Field.subfields = mergedSubfields; 
+    updated040Field.subfields = postMergeContent; 
 
     const fields = [ ...sourceRecord.fields ];
     fields[index] = updated040Field;
@@ -137,7 +134,7 @@ function eToPrintSelect020 (targetRecord, sourceRecord, mergedRecordParam) {
       mergedRecord: new MarcRecord(updatedMergedRecordParam)
     };
   }
-  
+
   return { 
     mergedRecord: new MarcRecord(mergedRecordParam)
   };
@@ -169,3 +166,5 @@ function eToPrintSelect020 (targetRecord, sourceRecord, mergedRecordParam) {
   }
 
 }
+
+// 300 field, imports code a and b from sourcerecord. 
