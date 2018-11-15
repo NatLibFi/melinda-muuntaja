@@ -8,7 +8,8 @@ export const eToPrintPreset = [
   eToPrintSelect040,
   eToPrintSelect020,
   eToPrintSelect300,
-  eToPrintSelect655
+  eToPrintSelect655,
+  eToPrintSelect776
 ];
 
 // helper functions ->
@@ -180,21 +181,25 @@ function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
     
     const tag300b = {...filterTag(sourceRecord, fieldTag)}
       .subfields.find(field => field.code === 'b');
-
-    tag300.subfields = [tag300a, tag300b];
+;
+    if (tag300b !== undefined){
+      tag300.subfields = [tag300a, tag300b];
     
-    const fieldIndex = findIndex(mergedRecordParam, fieldTag);
-    
-    const updatedMergedRecordParam = {
-      ...mergedRecordParam,
-      fields: mergedRecordParam.fields.map((field, index) => updateField(field, tag300.subfields, fieldIndex, index))
-    };
-
+      const fieldIndex = findIndex(mergedRecordParam, fieldTag);
+      
+      const updatedMergedRecordParam = {
+        ...mergedRecordParam,
+        fields: mergedRecordParam.fields.map((field, index) => updateField(field, tag300.subfields, fieldIndex, index))
+      };
+      
+      return { 
+        mergedRecord: new MarcRecord(updatedMergedRecordParam)
+      };
+    }
     return { 
-      mergedRecord: new MarcRecord(updatedMergedRecordParam)
+      mergedRecord: new MarcRecord(mergedRecordParam)
     };
   }
-
   return { 
     mergedRecord: new MarcRecord(mergedRecordParam)
   };
@@ -218,6 +223,7 @@ function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
   }
 }
 
+// removes string a content if 'e-kirjat' match and replaces with an empty content
 function eToPrintSelect655(targetRecord, sourceRecord, mergedRecordParam) {
   // mock object for development
   // const mockRecord = {
@@ -274,4 +280,11 @@ function eToPrintSelect655(targetRecord, sourceRecord, mergedRecordParam) {
     }
     return field;
   }
+}
+
+function eToPrintSelect776(targetRecord, sourceRecord, mergedRecordParam) {
+  console.log('eToPrintSelect776');
+  return { 
+    mergedRecord: new MarcRecord(mergedRecordParam)
+  };
 }
