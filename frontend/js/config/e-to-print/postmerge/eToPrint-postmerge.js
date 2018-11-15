@@ -1,13 +1,14 @@
 // preferredRecord(pohjatietue), otherRecord(lähdetietue), result.mergedRecord
 import MarcRecord from 'marc-record-js';
-import { isEmpty } from 'lodash';
+import { isEmpty, isEqual } from 'lodash';
 
 export const eToPrintPreset = [
   eToPrintRemoveTags,
   eToPrintSelect008,
   eToPrintSelect040,
   eToPrintSelect020,
-  eToPrintSelect300
+  eToPrintSelect300,
+  eToPrintSelect655
 ];
 
 // helper functions ->
@@ -172,23 +173,30 @@ function eToPrintSelect020 (targetRecord, sourceRecord, mergedRecordParam) {
 function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
   const fieldTag = '300';
   const tag300 = {...filterTag(sourceRecord, fieldTag)};
-  const tag300a = tag300.subfields.map(field => updateA(field))
-    .find(field => field.code === 'a');
   
-  const tag300b = {...filterTag(sourceRecord, fieldTag)}
-    .subfields.find(field => field.code === 'b');
+  if (!isEmpty(tag300)) {
+    const tag300a = tag300.subfields.map(field => updateA(field))
+      .find(field => field.code === 'a');
+    
+    const tag300b = {...filterTag(sourceRecord, fieldTag)}
+      .subfields.find(field => field.code === 'b');
 
-  tag300.subfields = [tag300a, tag300b];
-  
-  const fieldIndex = findIndex(mergedRecordParam, fieldTag);
-  
-  const updatedMergedRecordParam = {
-    ...mergedRecordParam,
-    fields: mergedRecordParam.fields.map((field, index) => updateField(field, tag300.subfields, fieldIndex, index))
-  };
+    tag300.subfields = [tag300a, tag300b];
+    
+    const fieldIndex = findIndex(mergedRecordParam, fieldTag);
+    
+    const updatedMergedRecordParam = {
+      ...mergedRecordParam,
+      fields: mergedRecordParam.fields.map((field, index) => updateField(field, tag300.subfields, fieldIndex, index))
+    };
+
+    return { 
+      mergedRecord: new MarcRecord(updatedMergedRecordParam)
+    };
+  }
 
   return { 
-    mergedRecord: new MarcRecord(updatedMergedRecordParam)
+    mergedRecord: new MarcRecord(mergedRecordParam)
   };
 
   function updateA(field) {
@@ -208,5 +216,62 @@ function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
     }
     return value;
   }
+}
 
+function eToPrintSelect655(targetRecord, sourceRecord, mergedRecordParam) {
+  // mock object for development
+  // const mockRecord = {
+  //   fields: [
+  //     {
+  //       tag: 'SID',
+  //       ind1: ' ',
+  //       ind2: ' ',
+  //       subfields: [
+  //         {
+  //           code: 'a',
+  //           value: 'e-tietuekirjat'
+  //         },
+  //         {
+  //           code: 'b',
+  //           value: 'n'
+  //         },
+  //         {
+  //           code: '2',
+  //           value: 'rdamedia'
+  //         }
+  //       ]
+  //     }
+  //   ]
+  // };
+  const fieldTag = '655';
+  const fieldIndex = findIndex(sourceRecord, fieldTag);
+  const tag655 = {...filterTag(sourceRecord, fieldTag)};
+  
+  if(!isEmpty(tag655.subfields)) {
+    const updatedSubfields = tag655.subfields.map(checkContent);
+    tag655.subfields = updatedSubfields;
+
+    const updatedMergedRecordParam = { 
+      ...mergedRecordParam,
+      fields: mergedRecordParam.fields.map((field, index) => updateField(field, tag655.subfields, fieldIndex, index))
+    };
+
+    return { 
+      mergedRecord: new MarcRecord(updatedMergedRecordParam)
+    };
+  }
+
+  return { 
+    mergedRecord: new MarcRecord(mergedRecordParam)
+  }; 
+
+  function checkContent(field) {
+    if (field.code === 'a' && isEqual(field.value, 'e-tietuekirjat')) {
+      return {
+        ...field,
+        value: ' '
+      };
+    }
+    return field;
+  }
 }
