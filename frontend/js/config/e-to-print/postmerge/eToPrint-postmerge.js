@@ -181,7 +181,7 @@ function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
     
     const tag300b = {...filterTag(sourceRecord, fieldTag)}
       .subfields.find(field => field.code === 'b');
-;
+
     if (tag300b !== undefined){
       tag300.subfields = [tag300a, tag300b];
     
@@ -214,12 +214,9 @@ function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
     return field;
   }
 
-  function checkMatch(value) {    
+  function checkMatch(value) {
     const isMatch =/^1 verkkoaineisto \((.*)\)$/.exec(value);
-    if (isMatch) {
-      return isMatch[1];
-    }
-    return value;
+    return isMatch ? isMatch[1] : value;
   }
 }
 
@@ -283,8 +280,104 @@ function eToPrintSelect655(targetRecord, sourceRecord, mergedRecordParam) {
 }
 
 function eToPrintSelect776(targetRecord, sourceRecord, mergedRecordParam) {
-  console.log('eToPrintSelect776');
+  // mock object for development
+  // const mockRecord = {
+  //   fields: [
+  //     {
+  //       tag: '776',
+  //       ind1: ' ',
+  //       ind2: ' ',
+  //       subfields: [
+  //         {
+  //           code: 'i',
+  //           value: 'testitepponen'
+  //         },
+  //         {
+  //           code: 'b',
+  //           value: 'n'
+  //         },
+  //         {
+  //           code: '2',
+  //           value: 'rdamedia'
+  //         }
+  //       ]
+  //     }
+  //   ]
+  // };
+
+  const fieldTag = '776';
+  const tag776 = {...sourceRecord.fields.find(field => field.tag === fieldTag)};
+  const tag020Field = {...filterTag(sourceRecord, '020')};
+  
+  if(!isEmpty(tag776.subfields) && !isEmpty(tag020Field)) {
+    const tag020a = tag020Field.subfields.find(field => field.code == 'a');
+    const tag020q = tag020Field.subfields.find(field => field.code == 'q');
+    const fieldIndex = findIndex(mergedRecordParam, fieldTag);
+    
+    const base776tag = {
+      tag: '776',
+      ind1: '1',
+      ind2: '2',
+      subfields: [
+        {
+          code: 'i',
+          value: check020q(tag020q.value)
+        },
+        {
+          code: 'z',
+          value: trim020a(tag020a.value)
+        }
+      ]
+    };
+
+    const baseMergedRecordParam = createBaseMergeParams(mergedRecordParam, base776tag, fieldIndex);
+    const removedSubfieldMergeParams = removeEmptySubfield(base776tag, fieldIndex);
+    
+    const updatedMergedRecordParam = isEmpty(removedSubfieldMergeParams) ? baseMergedRecordParam : removedSubfieldMergeParams;
+
+    const mergedRecord = new MarcRecord({...updatedMergedRecordParam});
+    
+    return { 
+      mergedRecord 
+    };
+  }
   return { 
     mergedRecord: new MarcRecord(mergedRecordParam)
   };
+  
+  function check020q(value){
+    return  value ? `Verkkoaineisto(${value}):` : 'Verkkoaineisto:';
+  }
+
+  function trim020a(fieldA){
+    return fieldA ?  fieldA.replace(/-/g, '') : '';
+  }
+
+  function createBaseMergeParams(mergedRecordParam, base776tag, fieldIndex) {
+    return { 
+      ...mergedRecordParam,
+      fields: mergedRecordParam.fields.map((field, index) => updateTag(field, base776tag, fieldIndex, index))
+    };
+  }
+
+  function removeEmptySubfield(base776tag, fieldIndex) {
+    if (isEmpty(base776tag.subfields[1].value)) {
+      const updated776tag = {
+        ...base776tag,
+        subfields: base776tag.subfields.filter(field => field.code == 'i')
+      };
+    
+      return { 
+        ...mergedRecordParam,
+        fields: mergedRecordParam.fields.map((field, index) => updateTag(field, updated776tag, fieldIndex, index))
+      };
+    }
+  }
+
+  function updateTag(field, updated776tag, fieldIndex, index) {
+    if (index === fieldIndex) {
+      return field = updated776tag;
+    }
+    return field;
+  }
 }
