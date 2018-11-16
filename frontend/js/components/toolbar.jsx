@@ -51,12 +51,6 @@ export class ToolBar extends React.Component {
     };
   }
 
-  // componentDidMount() {
-  //   window.$(this.mergeProfileSelect).on('change', (event) => this.handleMergeProfileChange(event.target.value)).material_select();
-  //   window.$(this.mergeType).on('change', (event) => this.changeMergeType(event)).material_select();
-  // }
-
-
   componentDidUpdate() {
     // update text fields if they are prefilled.
     window.Materialize && window.Materialize.updateTextFields();
@@ -89,7 +83,6 @@ export class ToolBar extends React.Component {
   };
 
   changeMergeTypeHandler = (event) => {
-    console.log('event: ', event.target.value);
     if (this.props.selectedMergeType !== event.target.value) this.props.switchMergeType(event.target.value);
   }
 
@@ -109,7 +102,6 @@ export class ToolBar extends React.Component {
   }
 
   setDefaultProfile(profile) {
-    console.log('muutosta painettu', profile);
     this.props.switchMergeConfig('default');
     return null;
   }
@@ -178,7 +170,6 @@ export class ToolBar extends React.Component {
   renderMergeProfile() {
     const { mergeProfiles, selectedMergeType } = this.props;
     const profile = mergeProfiles.find(({key}) => key === this.props.selectedMergeProfile);
-    console.log('profilexx: ', profile);
     const selectedMergeProfile = profile === undefined ?  mergeProfiles[0] : profile;
     const filteredProfiles = mergeProfiles.filter(profile => profile.mergeType === selectedMergeType);
 
@@ -237,7 +228,6 @@ export class ToolBar extends React.Component {
 }
 
 function mapStateToProps(state) {
-  console.log('selectedMergeProfile:', state.getIn(['config', 'selectedMergeProfile']));
   return {
     selectedMergeProfile: state.getIn(['config', 'selectedMergeProfile']),
     mergeProfiles: state.getIn(['config', 'mergeProfiles']).map((value, key) => ({ 

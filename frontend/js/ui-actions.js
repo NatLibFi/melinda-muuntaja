@@ -60,7 +60,6 @@ export function switchMergeType(config) {
 }
 
 export function switchMergeConfig(config) {
-  console.log('switchMergeConfig: ', config);
   return function(dispatch) {
     dispatch({
       type: SWITCH_MERGE_CONFIG,
@@ -503,7 +502,6 @@ export function updateMergedRecord() {
   return function(dispatch, getState) {
 
     const getMergeProfile = getState().getIn(['config', 'mergeProfiles', getState().getIn(['config', 'selectedMergeProfile']), 'record']);
-    console.log('getMergeProfile', getMergeProfile);
     const defaultProfile = getState().getIn(['config', 'mergeProfiles']);
     const mergeProfile = getMergeProfile === undefined ? defaultProfile.first() : getMergeProfile;
     const subrecordMergeType = getState().getIn(['config', 'mergeProfiles', getState().getIn(['config', 'selectedMergeProfile']), 'subrecords', 'mergeType']);
@@ -512,9 +510,6 @@ export function updateMergedRecord() {
     const validationRules = mergeProfile.get('validationRules');
     const postMergeFixes = mergeProfile.get('postMergeFixes');
     const newFields = mergeProfile.get('newFields');
-
-    console.log('mergeProfilex:', mergeProfile.toJS());
-    console.log('postMergeFixes: ', postMergeFixes);
 
     const preferredState = getState().getIn(['targetRecord', 'state']);
     const preferredRecord = preferredState === 'EMPTY' ? mergeProfile.get('targetRecord') : getState().getIn(['targetRecord', 'record']);
@@ -549,7 +544,6 @@ export function updateMergedRecord() {
         })
         .then(mergedRecord => PostMerge.applyPostMergeModifications(postMergeFixes, preferredRecord, otherRecord, mergedRecord))
         .then(result => {
-          console.log('result postmergen jälkeen: ', result);
           dispatch(setMergedRecord(result.record));
         })
         .catch(exceptCoreErrors(error => {

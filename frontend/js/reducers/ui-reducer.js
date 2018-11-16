@@ -35,7 +35,6 @@ const INITIAL_STATE = Map({
 });
 
 export default function ui(state = INITIAL_STATE, action) {
-  console.log('ui-reducer: ', action);
   switch (action.type) {
     case RESET_WORKSPACE:
       return INITIAL_STATE;
