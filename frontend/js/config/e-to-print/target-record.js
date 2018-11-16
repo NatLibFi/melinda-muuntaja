@@ -27,46 +27,23 @@
 */
 
 import MarcRecord from 'marc-record-js';
-import { decorateFieldsWithUuid } from '../record-utils';
+import { decorateFieldsWithUuid } from '../../record-utils';
 
 const record = new MarcRecord({
-  leader: '00000cam^a2200613^i^4500',
+  leader: '^^^^^cam^a^^^^^^^4i',
   fields: [
     {
-      tag: '001',
-      value: '000000000'
-    },
-    {
-      tag: '007',
-      value: 'cr^||^||||||||'
-    },
-    {
       tag: '008',
-      value: '^^^^^^s2018^^^^fi^||||^o^^^^^|0|^0|fin|^'
+      value: '^^^^^^s2018^^^^fi^|^^|^|^^^^||0|^0^fin|c'
     },
     {
-      tag: '020',
+      tag: '041',
       ind1: ' ',
       ind2: ' ',
       subfields: [
         {
           code: 'a',
-          value: ''
-        },
-        {
-          code: 'q',
-          value: 'PDF'
-        }
-      ]
-    },
-    {
-      tag: '041',
-      ind1: '0',
-      ind2: ' ',
-      subfields: [
-        {
-          code: 'a',
-          value: 'eng'
+          value: 'fin'
         }
       ]
     },
@@ -96,11 +73,11 @@ const record = new MarcRecord({
       subfields: [
         {
           code: 'a',
-          value: 'tietokonekäyttöinen'
+          value: 'käytettävissä ilman laitetta'
         },
         {
           code: 'b',
-          value: 'c'
+          value: 'n'
         },
         {
           code: '2',
@@ -115,15 +92,26 @@ const record = new MarcRecord({
       subfields: [
         {
           code: 'a',
-          value: 'verkkoaineisto'
+          value: 'nide'
         },
         {
           code: 'b',
-          value: 'cr'
+          value: 'nc'
         },
         {
           code: '2',
           value: 'rdacarrier'
+        }
+      ]
+    },
+    {
+      tag: '530',
+      ind1: ' ',
+      ind2: ' ',
+      subfields: [
+        {
+          code: 'a',
+          value: 'Julkaistu myös verkkoaineistona.'
         }
       ]
     }

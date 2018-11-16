@@ -26,29 +26,34 @@
 *
 */
 
-/*eslint-disable quotes*/
+import MarcRecord from 'marc-record-js';
+import { decorateFieldsWithUuid } from '../../record-utils';
 
-import { preset as MergeValidationPreset } from '../../marc-record-merge-validate-service';
-import { preset as PostMergePreset } from '../../marc-record-merge-postmerge-service';
-import TargetRecord from '../target-record';
-import * as subrecordMergeTypes from '../subrecord-merge-types';
-
-module.exports = {
-  "name": "Pidetään osakohteet",
-  "description": "TESTIPROFIILI",
-  "record": {
-    "targetRecord": TargetRecord,
-    "validationRules": MergeValidationPreset.melinda_host,
-    "postMergeFixes": PostMergePreset.defaults,
-    "mergeConfiguration": {
-      "fields": {
-        "1..": { "action": "copy", "options": { "dropOriginal": true } },
-      }
+const record = new MarcRecord({
+  leader: '^^^^^caa^a22002174i^4500',
+  fields: [
+    {
+      tag: '001',
+      value: '000000000'
+    },
+    {
+      tag: '773',
+      ind1: '0',
+      ind2: ' ',
+      subfields: [
+        {
+          code: '7',
+          value: 'p1am'   
+        },
+        {
+          code: 'w',
+          value: '(FI-MELINDA)[future-host-id]'
+        }
+      ]
     }
-  },
-  "subrecords": {
-    "mergeType": subrecordMergeTypes.KEEP_BOTH
-  }
-};
+  ]
+});
 
-/*eslint-enable quotes*/
+decorateFieldsWithUuid(record);
+
+module.exports = record;

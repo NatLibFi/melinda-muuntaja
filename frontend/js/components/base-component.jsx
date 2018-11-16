@@ -36,6 +36,7 @@ import { RecordSelectionControlsContainer } from './record-selection-controls';
 import { RecordMergePanelContainer } from './record-merge-panel';
 import { SubrecordComponent } from 'commons/components/subrecord/subrecord-component';
 import { SigninFormPanelContainer } from 'commons/components/signin-form-panel';
+import SaveButton from './save-button';
 import {connect} from 'react-redux';
 import * as uiActionCreators from '../ui-actions';
 import { MergeDialog } from './merge-dialog';
@@ -74,7 +75,7 @@ export class BaseComponent extends React.Component {
     saveSubrecord: PropTypes.func.isRequired,
     notifications: PropTypes.array
   }
-
+  
   componentDidUpdate() {
     const userConfig = localStorage.getItem('muuntajaConfig');
     if (userConfig !== null) {
@@ -141,9 +142,12 @@ export class BaseComponent extends React.Component {
         { this.props.mergeDialog.visible ? this.renderMergeDialog() : null }
         { this.props.searchDialogVisible ? <SearchDialogContainer /> : ''}
         <ToolBarContainer />
-        <RecordSelectionControlsContainer />
-        <RecordMergePanelContainer />
-        { this.props.shouldRenderSubrecordComponent ? this.renderSubrecordComponent() : ''}
+        <div className="container">
+          <RecordSelectionControlsContainer />
+          <RecordMergePanelContainer />
+          { this.props.shouldRenderSubrecordComponent ? this.renderSubrecordComponent() : ''}
+          <SaveButton />
+        </div>
       </div>
     );
   }

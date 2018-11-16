@@ -1,5 +1,9 @@
-env:
-  node: true
-  mocha: true
-globals:
-  __DEV__: true
+{
+  "env": {
+    "node": true,
+    "mocha": true
+  }, 
+  "globals": {
+    "__DEV__": true
+  }
+}

@@ -29,11 +29,11 @@
     flex-direction: column;
 
     .modal-search-dialog-title {
-      padding-bottom: 0px;
+      padding-bottom: 0;
     }
 
     .modal-search-dialog-content {
-      padding-top: 0px;
+      padding-top: 0;
       flex: 1;
       overflow: auto;
     }
@@ -64,8 +64,8 @@
         .selected-record-container {
           position:absolute;
 
-          bottom: 0px;
-          right: 0px;
+          bottom: 0;
+          right: 0;
 
           margin-right: 5px;
           margin-bottom: 5px;

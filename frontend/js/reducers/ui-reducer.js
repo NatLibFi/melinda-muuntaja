@@ -27,7 +27,7 @@
 */
 
 import { Map } from 'immutable'; 
-import { RESET_WORKSPACE, TOGGLE_COMPACT_SUBRECORD_VIEW, UPDATE_SUBRECORD_ARRANGEMENT } from '../constants/action-type-constants';
+import {RESET_WORKSPACE, TOGGLE_COMPACT_SUBRECORD_VIEW, UPDATE_SUBRECORD_ARRANGEMENT } from '../constants/action-type-constants';
 
 const INITIAL_STATE = Map({
   compactSubrecordView: false,
@@ -42,7 +42,6 @@ export default function ui(state = INITIAL_STATE, action) {
       return setCompactSubrecordView(state, action.enabled, action.rowsToCompact);
     case UPDATE_SUBRECORD_ARRANGEMENT:
       return setCompactSubrecordView(state, false, []);
-
   }
   return state;
 }

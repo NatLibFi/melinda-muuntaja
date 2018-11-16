@@ -3,3 +3,28 @@
   margin-right: 10px;
 }
 
+nav {
+  padding-left: 5%;
+  box-shadow: 0 1px 2px 0 rgba(0,0,0,0.16);
+  background-color: #305d6d; /* For browsers not support gradients  */
+  background-image: linear-gradient(to right, #305d6d, #7bb9ce);
+
+  .heading{
+    text-transform: uppercase;
+    font-weight: 100;
+    font-size: 1.1em;
+    padding: 10px 0 0 11px;
+  }
+
+}
+
+.navbar-fixed {
+  z-index: 1000;
+  .mt-logo {
+    height: 70px;
+    padding-bottom: 5px;
+  } 
+}
+.navbar-fixed nav {
+  position: static;    
+}

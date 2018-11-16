@@ -25,30 +25,4 @@
 * for the JavaScript code in this file.
 *
 */
-
-/*eslint-disable quotes*/
-
-import { preset as MergeValidationPreset } from '../../marc-record-merge-validate-service';
-import { preset as PostMergePreset } from '../../marc-record-merge-postmerge-service';
-import TargetRecord from '../target-record';
-import * as subrecordMergeTypes from '../subrecord-merge-types';
-
-module.exports = {
-  "name": "Ei osakohteita",
-  "description": "TESTIPROFIILI",
-  "record": {
-    "targetRecord": TargetRecord,
-    "validationRules": MergeValidationPreset.melinda_host,
-    "postMergeFixes": PostMergePreset.defaults,
-    "mergeConfiguration": {
-      "fields": {
-        "1..": { "action": "copy", "options": { "dropOriginal": true } },
-      }
-    }
-  },
-  "subrecords": {
-    "mergeType": subrecordMergeTypes.DISALLOW_SUBRECORDS
-  }
-};
-
-/*eslint-enable quotes*/
+exports.default = require('./default');

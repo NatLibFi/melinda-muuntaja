@@ -52,11 +52,12 @@ import uuid from 'node-uuid';
 import moment from 'moment';
 import { selectValues, selectRecordId, selectFieldsByValue, fieldHasSubfield, resetComponentHostLinkSubfield, isLinkedFieldOf } from './record-utils';
 import { fieldOrderComparator } from './marc-field-sort';
-
-
+import { eToPrintPreset } from './config/e-to-print/postmerge/eToPrint-postmerge';
+   
 const defaultPreset = [
   check041aLength, setAllZeroRecordId, sortMergedRecordFields, fix776Order,
 ];
+
 
 const allPreset = [
   check041aLength, addLOWSIDFieldsFromOther, addLOWSIDFieldsFromPreferred, add035zFromOther, add035zFromPreferred, removeExtra035aFromMerged, 
@@ -64,12 +65,15 @@ const allPreset = [
 
 export const preset = {
   defaults: defaultPreset,
+  eToPrintPreset,
   all: allPreset
 };
+
 
 export function fix776Order(preferredRecord, otherRecord, mergedRecordParam) {
   let mergedRecord = new MarcRecord(mergedRecordParam);
   let f776 = mergedRecord.fields.filter(field => field.tag === '776');
+
 
   // Not going to do anything if there are multiple 776 fields..
   if( f776.length !== 1 ) {
@@ -94,10 +98,8 @@ export function applyPostMergeModifications(postMergeFunctions, preferredRecord,
     mergedRecord,
     notes: []
   };
-
   const result = postMergeFunctions.reduce((result, fn) => {
     const fnResult = fn(preferredRecord, otherRecord, result.mergedRecord);
-
     return {
       mergedRecord: fnResult.mergedRecord,
       notes: _.concat(result.notes, fnResult.notes || [])
@@ -132,14 +134,12 @@ export function addLOWSIDFieldsFromOther(preferredRecord, otherRecord, mergedRec
   var otherRecordLOWFieldList = otherRecord.fields
     .filter(field => field.tag === 'LOW')
     .map(markAsPostmergeField);
-
   mergedRecord.fields = mergedRecord.fields.concat(otherRecordLOWFieldList);
 
   const otherRecordLibraryIdList = selectValues(otherRecord, 'LOW', 'a');
 
   otherRecordLibraryIdList.forEach(libraryId => {
     const otherRecordSIDFieldList = selectFieldsByValue(otherRecord, 'SID', 'b', libraryId.toLowerCase());
-
     if (otherRecordSIDFieldList.length > 0) {
 
       mergedRecord.fields = _.concat(mergedRecord.fields, otherRecordSIDFieldList.map(markAsPostmergeField));

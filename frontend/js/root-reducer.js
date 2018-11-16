@@ -72,7 +72,7 @@ function normalizeMergedRecord(state) {
   const sourceRecordStatus = state.getIn(['sourceRecord', 'state']);
   const targetRecordStatus = state.getIn(['targetRecord', 'state']);
 
-  if (sourceRecordStatus == 'LOADING' || targetRecordStatus == 'LOADING') {
+  if (sourceRecordStatus === 'LOADING' || targetRecordStatus === 'LOADING') {
     return state.set('mergedRecord', DEFAULT_MERGED_RECORD);
   }
   return state;

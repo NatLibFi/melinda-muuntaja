@@ -1,35 +1,45 @@
+@import '../_variables';
 
 .toolbar {
-  background-color: #ededed;
-  height: 88px;
+  padding: 20px 5% 0;
+  background-color: #fbfbfb;
   box-shadow: none;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid #efefef;
 
-  ul a {
-    color: black;
-    padding: 0 20px;
+  .mt-info-toast{
+    left: -220px;
+    top: -13px;
   }
 
-  .group {
-    line-height: 1.4em;
-    float: left;
-    text-align: center;
-
-    .group-label {
-      color: black;
-      .badge {
-        position: static;
-        font-weight: 300;
-        font-size: 0.8rem;
-        color: #fff;
-        background-color: #26a69a;
-        border-radius: 2px;
-      }
+  .mt-info-badge {
+    color: $theme-blue;
+    &:hover{
+      color: $theme-blue-hover;
     }
   }
-  .separator span {
-    border-left: 1px solid #ddd;
-    padding: 15px 0px;
+
+  .mt-controls i {
+    color: $theme-blue;
+    padding: 10px;
+    position: relative;
+    top: 9px;
+    font-size: 32px;
+    &:hover{
+      color: #0379b3;
+    }
+  }
+
+  .group-label {
+    padding-right: 10px;
+    color: #484848;
+    .badge {
+      position: static;
+      font-weight: 300;
+      font-size: 0.8rem;
+      color: #fff;
+      background-color: #26a69a;
+      border-radius: 2px;
+    }
   }
 
   li {
@@ -45,6 +55,4 @@
       cursor: default !important;
     }
   }
-
- 
 }

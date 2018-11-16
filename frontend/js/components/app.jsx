@@ -29,16 +29,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import '../../styles/main.scss';
-
+import '../../fonts/index.css';
 export class App extends React.Component {
-
   static propTypes = {
     children: PropTypes.arrayOf(PropTypes.element),
-  }
+  };
 
   render() {
     return (
-      <div>
+      <div className="context">
         {this.props.children}
       </div>
     );

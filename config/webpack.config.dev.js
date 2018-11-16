@@ -11,7 +11,7 @@ const PATHS = {
   build: path.resolve(__dirname, '../build')
 };
 
-const plugins = [
+const plugins = [ 
   // Shared code
   new webpack.optimize.CommonsChunkPlugin({ name:'vendor', filename: 'js/vendor.bundle.js' }),
   // Avoid publishing files when compilation fails
@@ -21,22 +21,26 @@ const plugins = [
     'process.env.DATA_PROTECTION_CONSENT_URL': JSON.stringify('https://www.kiwi.fi/download/attachments/93205241/melinda-verkkok%C3%A4ytt%C3%B6liittym%C3%A4t%20asiantuntijoille.pdf?api=v2'),
     __DEV__: JSON.stringify(JSON.parse(process.env.DEBUG || 'false'))
   }),
-  new webpack.optimize.OccurrenceOrderPlugin()
+  new webpack.optimize.OccurrenceOrderPlugin(),
+  new webpack.ProvidePlugin({
+    $: 'jquery',
+    jQuery: 'jquery'
+  })  
 ];
 
 module.exports = {
   // env : process.env.NODE_ENV,
   entry: {
-    app: [
+    'js/app': [
       'babel-polyfill',
-      'react-hot-loader/patch',
+      'react-hot-loader/patch', 
       path.resolve(PATHS.app, 'main.js')
     ],
     vendor: ['react']
   },
   output: {
     path: PATHS.build,
-    filename: 'js/[name].js',
+    filename: '[name].js',
     publicPath: '/'
   },
   stats: {
@@ -73,13 +77,39 @@ module.exports = {
         use: [
           'style-loader',
           'css-loader',
-          { loader: 'postcss-loader', options: { config: { path: 'postcss.config' } } }
+          { 
+            loader: 'postcss-loader',
+            options: { 
+              config: { 
+                path: 'postcss.config' 
+              } 
+            } 
+          }
         ]
       },
-      // Inline base64 URLs for <=8k images, direct URLs for the rest
       {
-        test: /\.(png|jpg|jpeg|gif|svg|woff|woff2|eot|ttf)$/,
-        loader: 'url-loader?limit=8192'
+        test: /\.(woff|woff2|eot|ttf|svg)$/, // font-face imports
+        use: [
+          { 
+            loader: 'file-loader',
+            options: {
+              name: '[name].[ext]',
+              outputPath: 'fonts/'
+            }
+          }
+        ]
+      },
+      {
+        test: /\.(jpg|gif|png)$/, // images
+        use: [
+          {
+            loader: 'file-loader',
+            options: {
+              name: 'images/[name]-[hash:8].[ext]',
+              outputPath: 'images/'
+            }
+          }
+        ]
       }
     ]
   },
@@ -87,7 +117,8 @@ module.exports = {
   devServer: {
     contentBase: path.resolve(__dirname, '../frontend'),
     port: 3000,
-    historyApiFallback: true
+    historyApiFallback: true,
+    overlay: true
   },
   devtool: 'eval'
 };

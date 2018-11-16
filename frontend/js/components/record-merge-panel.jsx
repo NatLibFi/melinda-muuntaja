@@ -85,9 +85,7 @@ export class RecordMergePanel extends React.Component {
         title="Lähdetietue"
         record={record}
         onFieldClick={(field) => this.toggleSourceRecordField(field)}>
-        
         { recordState === 'LOADING' ? <div className="card-content"><Preloader /></div> : null }
-
       </RecordPanel>
     );
   }
@@ -102,9 +100,7 @@ export class RecordMergePanel extends React.Component {
         showHeader
         title="Pohjatietue"
         record={record}>
-
         { recordState === 'LOADING' ? <div className="card-content"><Preloader /></div> : null }
-        
       </RecordPanel>
     );
   }
@@ -122,15 +118,11 @@ export class RecordMergePanel extends React.Component {
         record={record} 
         onFieldClick={(field) => this.toggleMergedRecordField(field)}
         onRecordUpdate={(record) => this.props.editMergedRecord(record)}>
-
         { recordState === 'LOADING' ? <div className="card-content"><Preloader /></div> : null }
-
         { this.props.saveButtonVisible ? this.renderSaveButton() : null }
-        
       </RecordPanel>
     );
   }
-
   renderSaveButton() {
     const statuses = {
       'SAVED': 'UPDATE_SUCCESS',
@@ -155,7 +147,11 @@ export class RecordMergePanel extends React.Component {
   }
   
   handleRecordSave() {
-    const mergedRecordId = _.chain(this.props.mergedRecord.fields).filter(field => field.tag === '001').map('value').head().value();
+    const mergedRecordId = _.chain(this.props.mergedRecord.fields)
+      .filter(field => field.tag === '001')
+      .map('value')
+      .head()
+      .value();
     this.props.saveRecord(mergedRecordId, this.props.mergedRecord);
   }
 
@@ -178,7 +174,6 @@ export class RecordMergePanel extends React.Component {
             {this.renderMergedRecordPanel(this.props.mergedRecordState, this.props.mergedRecordError, this.props.mergedRecord)}
           </div>
         </div>
-
       </div>
     );
   }

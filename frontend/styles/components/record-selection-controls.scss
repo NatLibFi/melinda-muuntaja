@@ -1,3 +1,26 @@
+.container {
+  margin-top: 20px;
+  width: 90%;
+  max-width: 2000px;
+  font-family: "Roboto", sans-serif;
+}
+
+.mt-card-1 {
+  .prefix {
+    top: 11px;
+    color: #888888;
+  }
+  .mt-submit-btn-1 {
+    padding: 10px 0;
+  }
+  .mt-submit-btn-2 {
+    padding-left: 0; 
+  }
+}
+
+.mt-card-padding {
+  padding: 20px;
+}
 
 .record-selection-controls input {
   font-size: 2rem;

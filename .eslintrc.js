@@ -6,6 +6,9 @@ module.exports = {
         "es6": true,
         "node": true
     },
+    "globals": {
+        "__DEV__": true
+    },
     "extends": ["eslint:recommended", "plugin:react/recommended"],
 
     "parserOptions": {
@@ -19,6 +22,7 @@ module.exports = {
         "react", "mocha"
     ],
     "rules": {
+        "no-console": "warn",
         "indent": ["error", 2, { "SwitchCase": 1 }],
         "linebreak-style": [
             "error",
