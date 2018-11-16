@@ -21,11 +21,11 @@
   "scripts": {
     "clean:build": "node ./bin/clean.js createdir",
     "build:html": "node ./bin/buildHtml.js",
-    "start": "node build/index.js",
+    "start": "node dist/index.js",
     "prebuild": "npm run clean:build && npm run build:html",
     "build": "npm run build:server && npm run build:frontend",
     "build:frontend": "export NODE_ENV=production & NODE_ENV=production & webpack --config ./config/webpack.config.prod.js --progress",
-    "build:server": "cd server && BABEL_ENV=production babel . --out-dir ../build --source-maps",
+    "build:server": "cd server && BABEL_ENV=production babel . --out-dir ../dist --source-maps",
     "test": "npm run lint && npm run test:frontend && npm run test:server",
     "test:frontend": "BABEL_ENV=test mocha --require mock-local-storage --compilers js:babel-core/register --require ./frontend/test/test_bootstrap.js \"frontend/**/*@(.spec.js|.spec.jsx)\"",
     "test:frontend:watch": "npm run test:frontend -- --watch --watch-extensions story,stories",

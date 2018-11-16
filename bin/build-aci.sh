@@ -16,7 +16,7 @@ ACI_VERSION="1.0.0"
 
 rm -rf aci-build
 mkdir aci-build
-cp -rp build aci-build/app
+cp -rp dist aci-build/app
 cp package.json aci-build/app/
 
 cat <<EOF > aci-build/nodesource.list
