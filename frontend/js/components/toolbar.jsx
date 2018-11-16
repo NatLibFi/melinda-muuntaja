@@ -101,7 +101,7 @@ export class ToolBar extends React.Component {
     this.props.openSearchDialog();
   }
 
-  setDefaultProfile(profile) {
+  setDefaultProfile() {
     this.props.switchMergeConfig('default');
     return null;
   }

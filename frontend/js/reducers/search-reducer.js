@@ -58,7 +58,6 @@ export default function location(state = INITIAL_STATE, action) {
       return state
         .set('index', action.index === 'default' ? null : action.index);
     case SET_SEARCH_QUERY:
-      console.log('action.query: ', action.query);
       return state
         .set('query', action.query);
     case CLEAR_SEARCH_RESULTS: 
