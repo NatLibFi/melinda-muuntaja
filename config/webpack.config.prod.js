@@ -1,7 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-// const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 // App files location
@@ -17,6 +18,14 @@ const PATHS = {
 };
 
 const plugins = [
+  new HtmlWebpackPlugin(
+    {
+      title: 'Muuntaja',
+      template: './frontend/index.html',
+      favicon: './frontend/favicon.png',
+      filename: 'index.html'
+    }
+  ),
   new CopyWebpackPlugin([
     {
       from: PATHS.commons_images,
@@ -42,9 +51,9 @@ const plugins = [
     compress: {
       warnings: false
     }
-  })
+  }),
   // This plugin moves all the CSS into a separate stylesheet
-  //new ExtractTextPlugin('css/app.css', { allChunks: true })
+  new ExtractTextPlugin('css/app.css', { allChunks: true })
 ];
 
 module.exports = {
