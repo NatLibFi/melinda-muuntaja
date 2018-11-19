@@ -1,7 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+// const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 // App files location
@@ -42,9 +42,9 @@ const plugins = [
     compress: {
       warnings: false
     }
-  }),
+  })
   // This plugin moves all the CSS into a separate stylesheet
-  new ExtractTextPlugin('css/app.css', { allChunks: true })
+  //new ExtractTextPlugin('css/app.css', { allChunks: true })
 ];
 
 module.exports = {
