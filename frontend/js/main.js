@@ -44,8 +44,8 @@ import history from './history';
 import 'material-design-icons-iconfont';
 
 // const loggerMiddleware = createLogger();
-// import 'jquery';
-// window.jQuery = window.$ = require('jquery');
+import 'jquery';
+window.jQuery = window.$ = require('jquery');
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(
