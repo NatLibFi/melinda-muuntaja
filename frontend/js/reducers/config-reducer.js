@@ -46,7 +46,7 @@ export default function ui(state = INITIAL_STATE, action) {
     case SWITCH_MERGE_TYPE:
       return setConfiguration(state, userinfo, action.config);
     case SWITCH_MERGE_CONFIG:
-      window.localStorage.setItem('muuntajaConfig', action.config);
+      // window.localStorage.setItem('muuntajaConfig', action.config);
       return state.set('selectedMergeProfile', action.config);
 
     case CREATE_SESSION_SUCCESS:
