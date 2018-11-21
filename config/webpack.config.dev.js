@@ -1,5 +1,6 @@
 const path = require('path');
 const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 // App files location
 const PATHS = {
@@ -11,7 +12,15 @@ const PATHS = {
   build: path.resolve(__dirname, '../dist')
 };
 
-const plugins = [ 
+const plugins = [
+  new HtmlWebpackPlugin(
+    {
+      title: 'Muuntaja',
+      template: './frontend/index.html',
+      favicon: './frontend/favicon.png',
+      filename: 'index.html'
+    }
+  ),
   // Shared code
   new webpack.optimize.CommonsChunkPlugin({ name:'vendor', filename: 'js/vendor.bundle.js' }),
   // Avoid publishing files when compilation fails
@@ -36,6 +45,8 @@ module.exports = {
       'react-hot-loader/patch', 
       path.resolve(PATHS.app, 'main.js')
     ],
+    'utils/jquery.min': path.resolve(__dirname, '../frontend/utils/jquery.min.js'),
+    'utils/materialize.min': path.resolve(__dirname, '../frontend/utils/materialize.min.js'),
     vendor: ['react']
   },
   output: {
