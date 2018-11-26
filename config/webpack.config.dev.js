@@ -6,7 +6,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const PATHS = {
   app: path.resolve(__dirname, '../frontend/js'),
   commons_frontend: path.resolve(__dirname, '../node_modules/@natlibfi/melinda-ui-commons/dist/frontend'),
-  commons_styles: path.resolve(__dirname, '../node_modules/@natlibfi/melinda-ui-commons/dist/frontend/styles'),
   commons_server: path.resolve(__dirname, '../node_modules/@natlibfi/melinda-ui-commons/dist/server'),
   styles: path.resolve(__dirname, '../frontend/styles'),
   build: path.resolve(__dirname, '../dist')
@@ -61,7 +60,7 @@ module.exports = {
   resolve: {
     alias: {
       commons: path.resolve(PATHS.commons_frontend, 'js'),
-      styles: PATHS.commons_styles,
+      styles: path.resolve(__dirname, '../node_modules/@natlibfi/melinda-ui-commons/dist/frontend/styles'),
       transformations: path.resolve(PATHS.commons_server, 'record-transformations'),
     },
     // We can now require('file') instead of require('file.jsx')

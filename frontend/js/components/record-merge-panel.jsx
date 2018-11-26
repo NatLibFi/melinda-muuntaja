@@ -41,8 +41,6 @@ import { isControlField } from '../utils';
 import { SaveButtonPanel } from 'commons/components/save-button-panel';
 import { recordSaveActionAvailable } from '../selectors/merge-status-selector';
 
-import 'styles/components/record-merge-panel.scss';
-
 export class RecordMergePanel extends React.Component {
 
   static propTypes = {
