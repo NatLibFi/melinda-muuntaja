@@ -42,6 +42,9 @@ import { validateSession } from 'commons/action-creators/session-actions';
 import { initKeyboardListener } from './keyboard-commands';
 import history from './history';
 import 'material-design-icons-iconfont';
+import '../styles/main.scss';
+import 'styles/components/record-merge-panel.scss'; // alias in Webpack resolve property
+import '../fonts/index.css';
 
 // const loggerMiddleware = createLogger();
 import 'jquery';
