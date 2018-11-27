@@ -9,7 +9,8 @@ export const eToPrintPreset = [
   eToPrintSelect020,
   eToPrintSelect300,
   eToPrintSelect655,
-  eToPrintSelect776
+  eToPrintSelect776,
+  replaceFieldsFromSource
 ];
 
 // helper functions ->
@@ -45,7 +46,23 @@ function addTag(mergedRecordParam, tag) {
   };
 }
 
-// eToPrint Postmerge functions ->
+// eToPrint postmerge functions ->
+export function replaceFieldsFromSource(targetRecord, sourcerecord, mergedRecordParam) {
+  const mergeConfigurationFields = /^(1..|041|080|084|240|245|246|250|260|263|264|490|500|502|505|509|520|567|588|6[^5].|65[^5]|700|710|711|800|810|811|830)$/;
+
+  const fieldsFromSourceRecord = sourcerecord.fields.filter(field => mergeConfigurationFields.test(field.tag));
+  
+  const filteredMergedRecordParam = {
+    ...mergedRecordParam, 
+    fields: mergedRecordParam.fields.filter(field => !mergeConfigurationFields.test(field.tag))
+      .concat(fieldsFromSourceRecord)
+  };
+
+  return { mergedRecord: new MarcRecord({ 
+    ...filteredMergedRecordParam,
+    fields: orderBy([ ...filteredMergedRecordParam.fields], 'tag')}) 
+  };
+}
 
 // removes specified tags from record (mergedRecordParam)
 export function eToPrintRemoveTags(preferredRecord, otherRecord, mergedRecordParam) {
