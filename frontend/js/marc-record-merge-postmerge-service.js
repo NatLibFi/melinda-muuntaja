@@ -425,7 +425,6 @@ function updateLinks(linkIndex, field, linkedFieldList) {
 
 export function sortMergedRecordFields(preferredRecord, otherRecord, mergedRecordParam) {
   const mergedRecord = new MarcRecord(mergedRecordParam);
-
   mergedRecord.fields.sort(fieldOrderComparator);
 
   return { mergedRecord };
