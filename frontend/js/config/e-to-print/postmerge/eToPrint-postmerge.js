@@ -291,6 +291,9 @@ function eToPrintSelect776(targetRecord, sourceRecord, mergedRecordParam) {
     const tag020a = tag020Field.subfields.find(field => field.code == 'a');
     const tag020q = tag020Field.subfields.find(field => field.code == 'q');
     const fieldIndex = findIndex(mergedRecordParam, fieldTag);
+
+    console.log('tag020q: ', tag020q);
+    console.log('tag020a: ', tag020a);
     
     const base776tag = {
       tag: '776',
@@ -299,7 +302,7 @@ function eToPrintSelect776(targetRecord, sourceRecord, mergedRecordParam) {
       subfields: [
         {
           code: 'i',
-          value: tag020q !== undefined ? `Verkkoaineisto (${tag020q.value}):` : 'Verkkoaineisto:'
+          value: tag020q !== undefined ? `Verkkoaineisto (${tag020q.value}):` : 'Verkkoaineisto:' 
         },
         {
           code: 'z',
@@ -323,9 +326,6 @@ function eToPrintSelect776(targetRecord, sourceRecord, mergedRecordParam) {
     mergedRecord: new MarcRecord(mergedRecordParam)
   };
   
-  function check020q(value){
-    return value ? `Verkkoaineisto (${value}):` : 'Verkkoaineisto:';
-  }
 
   function trim020a(fieldA){
     return fieldA ?  fieldA.replace(/-/g, '') : '';
