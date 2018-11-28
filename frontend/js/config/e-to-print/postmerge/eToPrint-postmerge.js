@@ -299,7 +299,7 @@ function eToPrintSelect776(targetRecord, sourceRecord, mergedRecordParam) {
       subfields: [
         {
           code: 'i',
-          value: check020q(tag020q.value)
+          value: tag020q !== undefined ? `Verkkoaineisto (${tag020q.value}):` : 'Verkkoaineisto:'
         },
         {
           code: 'z',
