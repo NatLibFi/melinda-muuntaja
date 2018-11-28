@@ -322,10 +322,6 @@ function eToPrintSelect776(targetRecord, sourceRecord, mergedRecordParam) {
   return { 
     mergedRecord: new MarcRecord(mergedRecordParam)
   };
-  
-  function check020q(value){
-    return value ? `Verkkoaineisto (${value}):` : 'Verkkoaineisto:';
-  }
 
   function trim020a(fieldA){
     return fieldA ?  fieldA.replace(/-/g, '') : '';
