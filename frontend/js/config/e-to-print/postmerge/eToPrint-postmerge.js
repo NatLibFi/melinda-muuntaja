@@ -52,6 +52,7 @@ export function replaceFieldsFromSource(targetRecord, sourcerecord, mergedRecord
 
   const fieldsFromSourceRecord = sourcerecord.fields.filter(field => mergeConfigurationFields.test(field.tag));
   
+
   const filteredMergedRecordParam = {
     ...mergedRecordParam, 
     fields: mergedRecordParam.fields.filter(field => !mergeConfigurationFields.test(field.tag))
@@ -133,13 +134,13 @@ export function eToPrintSelect040(targetRecord, sourceRecord, mergedRecordParam)
       ...sourceRecord.fields[index]
     };
     
-    updated040Field.subfields = postMergeContent; 
+    updated040Field.subfields = postMergeContent;
 
-    const fields = [ ...sourceRecord.fields ];
-    fields[index] = updated040Field;
+    const fieldIndex = findIndex(mergedRecordParam, fieldTag);
+    const updatedMergedRecordParam = fieldIndex > -1 ? updateParamsfield(mergedRecordParam, updated040Field.subfields, fieldIndex) : addTag(mergedRecordParam, updated040Field);
     
     return { 
-      mergedRecord: new MarcRecord({ ...mergedRecordParam, fields })
+      mergedRecord: new MarcRecord(updatedMergedRecordParam)
     };
   }
 
