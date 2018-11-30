@@ -48,6 +48,8 @@ import '../fonts/index.css';
 
 // const loggerMiddleware = createLogger();
 import 'jquery';
+import 'materialize-css';
+
 window.jQuery = window.$ = require('jquery');
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

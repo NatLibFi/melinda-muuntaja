@@ -1,6 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
+  .BundleAnalyzerPlugin;
 
 // App files location
 const PATHS = {
@@ -12,6 +14,9 @@ const PATHS = {
 };
 
 const plugins = [
+  new BundleAnalyzerPlugin({
+    generateStatsFile: true
+  }),
   new HtmlWebpackPlugin(
     {
       title: 'Muuntaja',
@@ -21,7 +26,7 @@ const plugins = [
     }
   ),
   // Shared code
-  new webpack.optimize.CommonsChunkPlugin({ name:'vendor', filename: 'js/vendor.bundle.js' }),
+  //new webpack.optimize.CommonsChunkPlugin({ name:'vendor', filename: 'js/vendor.bundle.js' }),
   // Avoid publishing files when compilation fails
   new webpack.NoEmitOnErrorsPlugin(),
   new webpack.DefinePlugin({
@@ -38,14 +43,20 @@ const plugins = [
 
 module.exports = {
   // env : process.env.NODE_ENV,
+  mode: 'development',
+  optimization: {
+    splitChunks: {
+      chunks: 'all'
+    }
+  },
   entry: {
-    'js/app': [
+    'main': [
       'babel-polyfill',
       'react-hot-loader/patch', 
       path.resolve(PATHS.app, 'main.js')
     ],
-    'utils/jquery.min': path.resolve(__dirname, '../frontend/utils/jquery.min.js'),
-    'utils/materialize.min': path.resolve(__dirname, '../frontend/utils/materialize.min.js'),
+    // 'utils/jquery.min': path.resolve(__dirname, '../frontend/utils/jquery.min.js'),
+    // 'utils/materialize.min': path.resolve(__dirname, '../frontend/utils/materialize.min.js'),
     vendor: ['react']
   },
   output: {
@@ -67,7 +78,7 @@ module.exports = {
     extensions: ['.js', '.jsx', '.scss']
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.jsx?$/,
         loaders: ['babel-loader'],

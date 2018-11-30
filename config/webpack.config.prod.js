@@ -33,12 +33,12 @@ const plugins = [
     }
   ]),
   // Shared code
-  new webpack.optimize.CommonsChunkPlugin(
-    { 
-      name:'vendor', 
-      filename: 'js/vendor.bundle.js'
-    }
-  ),
+  // new webpack.optimize.CommonsChunkPlugin(
+  //   { 
+  //     name:'vendor', 
+  //     filename: 'js/vendor.bundle.js'
+  //   }
+  // ),
   // Avoid publishing files when compilation fails
   new webpack.NoEmitOnErrorsPlugin(),
   new webpack.DefinePlugin({
@@ -57,6 +57,7 @@ const plugins = [
 ];
 
 module.exports = {
+  mode: 'production',
   entry: {
     'js/app': path.resolve(PATHS.app, 'main.js'),
     vendor: ['react'],
