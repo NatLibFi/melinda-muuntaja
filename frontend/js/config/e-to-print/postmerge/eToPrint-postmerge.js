@@ -83,10 +83,10 @@ export function eToPrintRemoveTags(preferredRecord, otherRecord, mergedRecordPar
 export function eToPrintSelect008(preferredRecord, otherRecord, mergedRecordParam) {
   const fieldTag = '008';
   const indexList = [23, 39];
-  const mergedRecordParamCopy = { ...mergedRecordParam};
+  const mergedRecordParamCopy = { ...mergedRecordParam };
   const sourceRecordTag = filterTag(otherRecord, fieldTag);
   const targetRecordTag = filterTag(preferredRecord, fieldTag);
-  const sourceTag = { ...sourceRecordTag};
+  const sourceTag = { ...sourceRecordTag };
   let updated008record;
 
   indexList.forEach(index => {
@@ -292,9 +292,6 @@ function eToPrintSelect776(targetRecord, sourceRecord, mergedRecordParam) {
     const tag020a = tag020Field.subfields.find(field => field.code == 'a');
     const tag020q = tag020Field.subfields.find(field => field.code == 'q');
     const fieldIndex = findIndex(mergedRecordParam, fieldTag);
-
-    console.log('tag020q: ', tag020q);
-    console.log('tag020a: ', tag020a);
     
     const base776tag = {
       tag: '776',

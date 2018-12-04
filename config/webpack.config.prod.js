@@ -2,7 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+//const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 // App files location
@@ -12,7 +12,7 @@ const PATHS = {
   commons_styles: path.resolve(__dirname, '../node_modules/@natlibfi/melinda-ui-commons/dist/frontend/styles'),
   commons_server: path.resolve(__dirname, '../node_modules/@natlibfi/melinda-ui-commons/dist/server'),
   commons_images: path.resolve(__dirname, '../node_modules/@natlibfi/melinda-ui-commons/dist/frontend/images'),
-  styles: path.resolve(__dirname, '../frontend/styles'),
+  //styles: path.resolve(__dirname, '../frontend/styles'),
   images: path.resolve(__dirname, '../frontend/images'),
   build: path.resolve(__dirname, '../dist/public')
 };
@@ -46,23 +46,23 @@ const plugins = [
     'process.env.DATA_PROTECTION_CONSENT_URL': JSON.stringify('https://www.kiwi.fi/download/attachments/93205241/melinda-verkkok%C3%A4ytt%C3%B6liittym%C3%A4t%20asiantuntijoille.pdf?api=v2'),
     __DEV__: JSON.stringify(JSON.parse(process.env.DEBUG || 'false'))
   }),
-  new webpack.optimize.OccurrenceOrderPlugin(),
-  new webpack.optimize.UglifyJsPlugin({
-    compress: {
-      warnings: false
-    }
-  }),
+  new webpack.optimize.OccurrenceOrderPlugin()
   // This plugin moves all the CSS into a separate stylesheet
-  new ExtractTextPlugin('css/app.css', { allChunks: true })
+  // new ExtractTextPlugin('css/app.css', { allChunks: true })
 ];
 
 module.exports = {
   mode: 'production',
+  optimization: {
+    splitChunks: {
+      chunks: 'all'
+    }
+  },
   entry: {
-    'js/app': path.resolve(PATHS.app, 'main.js'),
-    vendor: ['react'],
-    'utils/jquery.min': path.resolve(__dirname, '../frontend/utils/jquery.min.js'),
-    'utils/materialize.min': path.resolve(__dirname, '../frontend/utils/materialize.min.js')
+    'js/app': path.resolve(PATHS.app, 'main.js')
+    // vendor: ['react'],
+    //'utils/jquery.min': path.resolve(__dirname, '../frontend/utils/jquery.min.js'),
+    //'utils/materialize.min': path.resolve(__dirname, '../frontend/utils/materialize.min.js')
   },
   output: {
     path: PATHS.build,
@@ -82,7 +82,7 @@ module.exports = {
     extensions: ['.js', '.jsx', '.scss']
   },
   module: { 
-    loaders: [
+    rules: [
       {
         test: /\.jsx?$/,
         loaders: ['babel-loader'],

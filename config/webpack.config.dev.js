@@ -3,13 +3,14 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
   .BundleAnalyzerPlugin;
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 // App files location
 const PATHS = {
   app: path.resolve(__dirname, '../frontend/js'),
   commons_frontend: path.resolve(__dirname, '../node_modules/@natlibfi/melinda-ui-commons/dist/frontend'),
   commons_server: path.resolve(__dirname, '../node_modules/@natlibfi/melinda-ui-commons/dist/server'),
-  styles: path.resolve(__dirname, '../frontend/styles'),
+  //styles: path.resolve(__dirname, '../frontend/styles'),
   build: path.resolve(__dirname, '../dist')
 };
 
@@ -25,6 +26,9 @@ const plugins = [
       filename: 'index.html'
     }
   ),
+  new MiniCssExtractPlugin({
+    filename: 'styles.[hash].css'
+  }),
   // Shared code
   //new webpack.optimize.CommonsChunkPlugin({ name:'vendor', filename: 'js/vendor.bundle.js' }),
   // Avoid publishing files when compilation fails
@@ -57,7 +61,7 @@ module.exports = {
     ],
     // 'utils/jquery.min': path.resolve(__dirname, '../frontend/utils/jquery.min.js'),
     // 'utils/materialize.min': path.resolve(__dirname, '../frontend/utils/materialize.min.js'),
-    vendor: ['react']
+    //vendor: ['react']
   },
   output: {
     path: PATHS.build,
@@ -84,30 +88,45 @@ module.exports = {
         loaders: ['babel-loader'],
         include: [PATHS.app, PATHS.commons_frontend, PATHS.commons_server]
       },
-      {
-        test: /\.scss$/,
-        use: [
-          'style-loader',
-          'css-loader?sourceMap',
-          { loader: 'postcss-loader', options: { config: { path: 'postcss.config' } } },
-          'sass-loader?outputStyle=compressed'
-        ]
-      },
+      // css files
       {
         test: /\.css$/,
         use: [
-          'style-loader',
-          'css-loader',
-          { 
-            loader: 'postcss-loader',
-            options: { 
-              config: { 
-                path: 'postcss.config' 
-              } 
-            } 
-          }
+          MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader'
         ]
       },
+      // scss files
+      {
+        test: /\.scss$/,
+        use: [
+          MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader'
+        ]
+      },
+      // {
+      //   test: /\.scss$/,
+      //   use: [
+      //     'style-loader',
+      //     MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader',
+      //     'css-loader?sourceMap',
+      //     { loader: 'postcss-loader', options: { config: { path: 'postcss.config' } } },
+      //     'sass-loader?outputStyle=compressed'
+      //   ]
+      // },
+      // {
+      //   test: /\.css$/,
+      //   use: [
+      //     'style-loader',
+      //     MiniCssExtractPlugin.loader, 'css-loader',
+      //     { 
+      //       loader: 'postcss-loader',
+      //       options: { 
+      //         config: { 
+      //           path: 'postcss.config' 
+      //         } 
+      //       } 
+      //     }
+      //   ]
+      // },
       {
         test: /\.(woff|woff2|eot|ttf|svg)$/, // font-face imports
         use: [
