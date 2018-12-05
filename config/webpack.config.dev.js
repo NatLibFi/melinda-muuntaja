@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
   .BundleAnalyzerPlugin;
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 // App files location
 const PATHS = {
@@ -17,6 +18,7 @@ const plugins = [
   new BundleAnalyzerPlugin({
     generateStatsFile: true
   }),
+  new CleanWebpackPlugin(['dist']), // removes folder and content.
   new HtmlWebpackPlugin(
     {
       title: 'Muuntaja',

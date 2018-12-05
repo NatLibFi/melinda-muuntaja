@@ -19,9 +19,7 @@
   },
   "main": "index.js",
   "scripts": {
-    "clean:build": "node ./bin/clean.js createdir",
     "start": "node dist/index.js",
-    "prebuild": "npm run clean:build",
     "build": "npm run build:server && npm run build:frontend",
     "build:frontend": "export NODE_ENV=production & NODE_ENV=production & webpack --config ./config/webpack.config.prod.js --progress",
     "build:server": "cd server && BABEL_ENV=production babel . --out-dir ../dist --source-maps",
@@ -31,12 +29,11 @@
     "test:server": "BABEL_ENV=test mocha --compilers js:babel-core/register --require ./server/tests/test_bootstrap.js --require @natlibfi/melinda-ui-commons/dist/server/test_helpers/test_bootstrap.js \"./server/tests\"",
     "test:server:watch": "npm run test:server -- --watch",
     "lint": "eslint --ext .jsx,.js .",
-    "dev": "node ./bin/clean.js && npm run watch concurrently --kill-others",
+    "dev": "npm run watch concurrently",
     "watch": "npm run watch:ui & npm run watch:server",
     "watch:ui": "DEBUG=1 webpack-dev-server --open --config ./config/webpack.config.dev.js --hot --inline --progress",
     "watch:server": "NODE_ENV=debug nodemon --watch server --exec babel-node --presets=es2015 server/index.js",
-    "cli": "babel-node ./bin/cli.js",
-    "publish-to-npm": "npm publish --access=public"
+    "cli": "babel-node ./bin/cli.js"
   },
   "license": "AGPL-3.0+",
   "dependencies": {
@@ -86,6 +83,7 @@
     "chai": "^4.2.0",
     "chai-immutable": "^1.6.0",
     "cheerio": "^1.0.0-rc.2",
+    "clean-webpack-plugin": "^1.0.0",
     "colors": "^1.1.2",
     "columnify": "^1.5.4",
     "copy-webpack-plugin": "^4.2.3",

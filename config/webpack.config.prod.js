@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 
 // App files location
 const PATHS = {
@@ -16,6 +17,7 @@ const PATHS = {
 };
 
 const plugins = [
+  new CleanWebpackPlugin(['dist']), // removes folder and content.
   new HtmlWebpackPlugin(
     {
       title: 'Muuntaja',
