@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 // App files location
 const PATHS = {
@@ -28,6 +29,11 @@ const plugins = [
   ),
   new MiniCssExtractPlugin({
     filename: 'styles.[hash].css'
+  }),
+  new OptimizeCssAssetsPlugin({
+    cssProcessorOptions: { 
+      preset: 'advanced' 
+    }
   }),
   new CopyWebpackPlugin([
     {

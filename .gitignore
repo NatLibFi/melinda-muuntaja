@@ -50,3 +50,6 @@ prepare_env.sh
 .vscode
 
 dist
+
+# webpack bundle-analyzer-plugin 
+stats.json
