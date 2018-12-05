@@ -10,7 +10,6 @@ const PATHS = {
   app: path.resolve(__dirname, '../frontend/js'),
   commons_frontend: path.resolve(__dirname, '../node_modules/@natlibfi/melinda-ui-commons/dist/frontend'),
   commons_server: path.resolve(__dirname, '../node_modules/@natlibfi/melinda-ui-commons/dist/server'),
-  //styles: path.resolve(__dirname, '../frontend/styles'),
   build: path.resolve(__dirname, '../dist')
 };
 
@@ -29,9 +28,6 @@ const plugins = [
   new MiniCssExtractPlugin({
     filename: 'styles.[hash].css'
   }),
-  // Shared code
-  //new webpack.optimize.CommonsChunkPlugin({ name:'vendor', filename: 'js/vendor.bundle.js' }),
-  // Avoid publishing files when compilation fails
   new webpack.NoEmitOnErrorsPlugin(),
   new webpack.DefinePlugin({
     'process.§.NODE_ENV': JSON.stringify('development'),
@@ -46,7 +42,6 @@ const plugins = [
 ];
 
 module.exports = {
-  // env : process.env.NODE_ENV,
   mode: 'development',
   optimization: {
     splitChunks: {
@@ -59,9 +54,6 @@ module.exports = {
       'react-hot-loader/patch', 
       path.resolve(PATHS.app, 'main.js')
     ],
-    // 'utils/jquery.min': path.resolve(__dirname, '../frontend/utils/jquery.min.js'),
-    // 'utils/materialize.min': path.resolve(__dirname, '../frontend/utils/materialize.min.js'),
-    //vendor: ['react']
   },
   output: {
     path: PATHS.build,
@@ -102,31 +94,6 @@ module.exports = {
           MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader'
         ]
       },
-      // {
-      //   test: /\.scss$/,
-      //   use: [
-      //     'style-loader',
-      //     MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader',
-      //     'css-loader?sourceMap',
-      //     { loader: 'postcss-loader', options: { config: { path: 'postcss.config' } } },
-      //     'sass-loader?outputStyle=compressed'
-      //   ]
-      // },
-      // {
-      //   test: /\.css$/,
-      //   use: [
-      //     'style-loader',
-      //     MiniCssExtractPlugin.loader, 'css-loader',
-      //     { 
-      //       loader: 'postcss-loader',
-      //       options: { 
-      //         config: { 
-      //           path: 'postcss.config' 
-      //         } 
-      //       } 
-      //     }
-      //   ]
-      // },
       {
         test: /\.(woff|woff2|eot|ttf|svg)$/, // font-face imports
         use: [

@@ -1,9 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-
-//const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 // App files location
 const PATHS = {
@@ -12,7 +11,6 @@ const PATHS = {
   commons_styles: path.resolve(__dirname, '../node_modules/@natlibfi/melinda-ui-commons/dist/frontend/styles'),
   commons_server: path.resolve(__dirname, '../node_modules/@natlibfi/melinda-ui-commons/dist/server'),
   commons_images: path.resolve(__dirname, '../node_modules/@natlibfi/melinda-ui-commons/dist/frontend/images'),
-  //styles: path.resolve(__dirname, '../frontend/styles'),
   images: path.resolve(__dirname, '../frontend/images'),
   build: path.resolve(__dirname, '../dist/public')
 };
@@ -26,19 +24,15 @@ const plugins = [
       filename: 'index.html'
     }
   ),
+  new MiniCssExtractPlugin({
+    filename: 'styles.[hash].css'
+  }),
   new CopyWebpackPlugin([
     {
       from: PATHS.commons_images,
       to: 'images'
     }
   ]),
-  // Shared code
-  // new webpack.optimize.CommonsChunkPlugin(
-  //   { 
-  //     name:'vendor', 
-  //     filename: 'js/vendor.bundle.js'
-  //   }
-  // ),
   // Avoid publishing files when compilation fails
   new webpack.NoEmitOnErrorsPlugin(),
   new webpack.DefinePlugin({
@@ -47,8 +41,6 @@ const plugins = [
     __DEV__: JSON.stringify(JSON.parse(process.env.DEBUG || 'false'))
   }),
   new webpack.optimize.OccurrenceOrderPlugin()
-  // This plugin moves all the CSS into a separate stylesheet
-  // new ExtractTextPlugin('css/app.css', { allChunks: true })
 ];
 
 module.exports = {
@@ -60,9 +52,6 @@ module.exports = {
   },
   entry: {
     'js/app': path.resolve(PATHS.app, 'main.js')
-    // vendor: ['react'],
-    //'utils/jquery.min': path.resolve(__dirname, '../frontend/utils/jquery.min.js'),
-    //'utils/materialize.min': path.resolve(__dirname, '../frontend/utils/materialize.min.js')
   },
   output: {
     path: PATHS.build,
@@ -88,21 +77,18 @@ module.exports = {
         loaders: ['babel-loader'],
         include: [PATHS.app, PATHS.commons_frontend, PATHS.commons_server]
       },
-      {
-        test: /\.scss$/,
-        use: [
-          'style-loader',
-          'css-loader?sourceMap',
-          { loader: 'postcss-loader', options: { config: { path: 'postcss.config' } } },
-          'sass-loader?outputStyle=compressed'
-        ]
-      },
+      // css files
       {
         test: /\.css$/,
         use: [
-          'style-loader',
-          'css-loader',
-          { loader: 'postcss-loader', options: { config: { path: 'postcss.config' } } }
+          MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader'
+        ]
+      },
+      // scss files
+      {
+        test: /\.scss$/,
+        use: [
+          MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader'
         ]
       },
       // Inline base64 URLs for <=8k images, direct URLs for the rest
