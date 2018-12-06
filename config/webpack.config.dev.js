@@ -10,46 +10,13 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const PATHS = {
   app: path.resolve(__dirname, '../frontend/js'),
   commons_frontend: path.resolve(__dirname, '../node_modules/@natlibfi/melinda-ui-commons/dist/frontend'),
-  commons_server: path.resolve(__dirname, '../node_modules/@natlibfi/melinda-ui-commons/dist/server'),
-  build: path.resolve(__dirname, '../dist')
+  commons_server: path.resolve(__dirname, '../node_modules/@natlibfi/melinda-ui-commons/dist/server')
 };
 
-const plugins = [
-  new BundleAnalyzerPlugin({
-    generateStatsFile: true
-  }),
-  new CleanWebpackPlugin(['dist']), // removes folder and content.
-  new HtmlWebpackPlugin(
-    {
-      title: 'Muuntaja',
-      template: './frontend/index.html',
-      favicon: './frontend/favicon.png',
-      filename: 'index.html'
-    }
-  ),
-  new MiniCssExtractPlugin({
-    filename: 'styles.[hash].css'
-  }),
-  new webpack.NoEmitOnErrorsPlugin(),
-  new webpack.DefinePlugin({
-    'process.§.NODE_ENV': JSON.stringify('development'),
-    'process.env.DATA_PROTECTION_CONSENT_URL': JSON.stringify('https://www.kiwi.fi/download/attachments/93205241/melinda-verkkok%C3%A4ytt%C3%B6liittym%C3%A4t%20asiantuntijoille.pdf?api=v2'),
-    __DEV__: JSON.stringify(JSON.parse(process.env.DEBUG || 'false'))
-  }),
-  new webpack.optimize.OccurrenceOrderPlugin(),
-  new webpack.ProvidePlugin({
-    $: 'jquery',
-    jQuery: 'jquery'
-  })  
-];
-
 module.exports = {
+  // development or production config
   mode: 'development',
-  optimization: {
-    splitChunks: {
-      chunks: 'all'
-    }
-  },
+  // webpack entry point (frontend/js/main.js)
   entry: {
     'main': [
       'babel-polyfill',
@@ -57,10 +24,23 @@ module.exports = {
       path.resolve(PATHS.app, 'main.js')
     ],
   },
+  // webpack output location after the processing (dist-folder)
   output: {
-    path: PATHS.build,
-    filename: '[name].js',
+    path: path.resolve(__dirname, '../dist'), 
+    filename: '[name]-bundle.js',
     publicPath: '/'
+  },
+  // webpack server config in development
+  devServer: {
+    contentBase: path.resolve(__dirname, '../frontend'), // webpack serves files from frontend folder (index.html)
+    port: 3000,
+    historyApiFallback: true,
+    overlay: true // displays webpack error messages also in browser window
+  },
+  optimization: {
+    splitChunks: {
+      chunks: 'all'
+    }
   },
   stats: {
     colors: true,
@@ -77,6 +57,7 @@ module.exports = {
   },
   module: {
     rules: [
+      // jsx files
       {
         test: /\.jsx?$/,
         loaders: ['babel-loader'],
@@ -96,8 +77,9 @@ module.exports = {
           MiniCssExtractPlugin.loader, 'css-loader', 'postcss-loader', 'sass-loader'
         ]
       },
+      // font-face imports (fonts)
       {
-        test: /\.(woff|woff2|eot|ttf|svg)$/, // font-face imports
+        test: /\.(woff|woff2|eot|ttf|svg)$/,
         use: [
           { 
             loader: 'file-loader',
@@ -108,8 +90,9 @@ module.exports = {
           }
         ]
       },
+      // images
       {
-        test: /\.(jpg|gif|png)$/, // images
+        test: /\.(jpg|gif|png)$/,
         use: [
           {
             loader: 'file-loader',
@@ -122,12 +105,33 @@ module.exports = {
       }
     ]
   },
-  plugins: plugins,
-  devServer: {
-    contentBase: path.resolve(__dirname, '../frontend'),
-    port: 3000,
-    historyApiFallback: true,
-    overlay: true
-  },
-  devtool: 'eval'
+  plugins: [
+    // new BundleAnalyzerPlugin({
+    //   generateStatsFile: true
+    // }),
+    new CleanWebpackPlugin(['dist']), // removes folder and content (dist).
+    new HtmlWebpackPlugin(
+      {
+        title: 'Muuntaja',
+        template: './frontend/index.html',
+        favicon: './frontend/favicon.png',
+        filename: 'index.html'
+      }
+    ),
+    new MiniCssExtractPlugin({
+      filename: 'styles.[hash].css'
+    }),
+    new webpack.NoEmitOnErrorsPlugin(),
+    new webpack.DefinePlugin({
+      'process.§.NODE_ENV': JSON.stringify('development'),
+      'process.env.DATA_PROTECTION_CONSENT_URL': JSON.stringify('https://www.kiwi.fi/download/attachments/93205241/melinda-verkkok%C3%A4ytt%C3%B6liittym%C3%A4t%20asiantuntijoille.pdf?api=v2'),
+      __DEV__: JSON.stringify(JSON.parse(process.env.DEBUG || 'false'))
+    }),
+    new webpack.optimize.OccurrenceOrderPlugin(),
+    new webpack.ProvidePlugin({
+      $: 'jquery',
+      jQuery: 'jquery'
+    })  
+  ],
+  devtool: 'source-map'
 };

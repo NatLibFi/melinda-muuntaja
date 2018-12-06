@@ -5,6 +5,8 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
+  .BundleAnalyzerPlugin;
 
 // App files location
 const PATHS = {
@@ -13,58 +15,23 @@ const PATHS = {
   commons_styles: path.resolve(__dirname, '../node_modules/@natlibfi/melinda-ui-commons/dist/frontend/styles'),
   commons_server: path.resolve(__dirname, '../node_modules/@natlibfi/melinda-ui-commons/dist/server'),
   commons_images: path.resolve(__dirname, '../node_modules/@natlibfi/melinda-ui-commons/dist/frontend/images'),
-  images: path.resolve(__dirname, '../frontend/images'),
-  build: path.resolve(__dirname, '../dist/public')
+  images: path.resolve(__dirname, '../frontend/images')
 };
-
-const plugins = [
-  new CleanWebpackPlugin(['dist']), // removes folder and content.
-  new HtmlWebpackPlugin(
-    {
-      title: 'Muuntaja',
-      template: './frontend/index.html',
-      favicon: './frontend/favicon.png',
-      filename: 'index.html'
-    }
-  ),
-  new MiniCssExtractPlugin({
-    filename: 'styles.[hash].css'
-  }),
-  new OptimizeCssAssetsPlugin({
-    cssProcessorOptions: { 
-      preset: 'advanced' 
-    }
-  }),
-  new CopyWebpackPlugin([
-    {
-      from: PATHS.commons_images,
-      to: 'images'
-    }
-  ]),
-  // Avoid publishing files when compilation fails
-  new webpack.NoEmitOnErrorsPlugin(),
-  new webpack.DefinePlugin({
-    'process.env.NODE_ENV': JSON.stringify('production'),
-    'process.env.DATA_PROTECTION_CONSENT_URL': JSON.stringify('https://www.kiwi.fi/download/attachments/93205241/melinda-verkkok%C3%A4ytt%C3%B6liittym%C3%A4t%20asiantuntijoille.pdf?api=v2'),
-    __DEV__: JSON.stringify(JSON.parse(process.env.DEBUG || 'false'))
-  }),
-  new webpack.optimize.OccurrenceOrderPlugin()
-];
 
 module.exports = {
   mode: 'production',
-  optimization: {
-    splitChunks: {
-      chunks: 'all'
-    }
-  },
   entry: {
     'js/app': path.resolve(PATHS.app, 'main.js')
   },
   output: {
-    path: PATHS.build,
-    filename: '[name].js',
+    path: path.resolve(__dirname, '../dist/public'),
+    filename: '[name]-bundle.js',
     publicPath: '/'
+  },
+  optimization: {
+    splitChunks: {
+      chunks: 'all'
+    }
   },
   stats: {
     colors: true
@@ -110,6 +77,42 @@ module.exports = {
       }
     ]
   },
-  plugins: plugins,
-  devtool: 'source-map'
+  plugins: [
+    new BundleAnalyzerPlugin({
+      generateStatsFile: true
+    }),
+    new CleanWebpackPlugin(['dist']), // removes folder and content.
+    new HtmlWebpackPlugin(
+      {
+        title: 'Muuntaja',
+        template: './frontend/index.html',
+        favicon: './frontend/favicon.png',
+        filename: 'index.html'
+      }
+    ),
+    new MiniCssExtractPlugin({
+      filename: 'styles.[hash].css'
+    }),
+    new OptimizeCssAssetsPlugin({
+      filename: '[name]-[contenthash].css',
+      cssProcessorOptions: { 
+        preset: 'advanced' 
+      }
+    }),
+    new CopyWebpackPlugin([
+      {
+        from: PATHS.commons_images,
+        to: 'images'
+      }
+    ]),
+    // Avoid publishing files when compilation fails
+    new webpack.NoEmitOnErrorsPlugin(),
+    new webpack.DefinePlugin({
+      'process.env.NODE_ENV': JSON.stringify('production'),
+      'process.env.DATA_PROTECTION_CONSENT_URL': JSON.stringify('https://www.kiwi.fi/download/attachments/93205241/melinda-verkkok%C3%A4ytt%C3%B6liittym%C3%A4t%20asiantuntijoille.pdf?api=v2'),
+      __DEV__: JSON.stringify(JSON.parse(process.env.DEBUG || 'false'))
+    }),
+    new webpack.optimize.OccurrenceOrderPlugin()
+  ],
+  devtool: 'false'
 };

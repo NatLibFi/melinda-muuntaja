@@ -29,9 +29,8 @@
     "test:server": "BABEL_ENV=test mocha --compilers js:babel-core/register --require ./server/tests/test_bootstrap.js --require @natlibfi/melinda-ui-commons/dist/server/test_helpers/test_bootstrap.js \"./server/tests\"",
     "test:server:watch": "npm run test:server -- --watch",
     "lint": "eslint --ext .jsx,.js .",
-    "dev": "npm run watch concurrently",
-    "watch": "npm run watch:ui & npm run watch:server",
-    "watch:ui": "DEBUG=1 webpack-dev-server --open --config ./config/webpack.config.dev.js --hot --inline --progress",
+    "dev": "npm run watch:ui & npm run watch:server concurrently",
+    "watch:ui": "DEBUG=1 webpack-dev-server --open --config=./config/webpack.config.dev.js --hot --inline --progress",
     "watch:server": "NODE_ENV=debug nodemon --watch server --exec babel-node --presets=es2015 server/index.js",
     "cli": "babel-node ./bin/cli.js"
   },
