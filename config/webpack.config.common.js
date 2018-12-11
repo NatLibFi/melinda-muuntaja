@@ -3,17 +3,11 @@ const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
-  .BundleAnalyzerPlugin;
 const PATHS = require('./paths');
 
-// App files location
-
-// const PATHS = {
-//   app: path.resolve(__dirname, '../frontend/js'),
-//   commons_frontend: path.resolve(__dirname, '../node_modules/@natlibfi/melinda-ui-commons/dist/frontend'),
-//   commons_server: path.resolve(__dirname, '../node_modules/@natlibfi/melinda-ui-commons/dist/server')
-// };
+// comment out when webpack package size analyzing needed
+// const BundleAnalyzerPlugin = require('webpack-bundle-analyzer')
+//  .BundleAnalyzerPlugin;
 
 module.exports = {
   // separates app.js and vendor files (node_modules)
@@ -56,7 +50,7 @@ module.exports = {
     ]
   },
   plugins: [
-    // visual map of webpack output files, comment off for use
+    // visual map of webpack output files, comment out for use
     
     // new BundleAnalyzerPlugin({
     //   generateStatsFile: true

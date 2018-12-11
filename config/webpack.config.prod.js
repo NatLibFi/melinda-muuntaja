@@ -6,7 +6,6 @@ const merge = require('webpack-merge');
 const common = require('./webpack.config.common');
 const PATHS = require('./paths');
 
-// App files location
 module.exports = merge(common, {
   mode: 'production',
   // webpack entry point (frontend/js/main.js)

@@ -4,13 +4,6 @@ const merge = require('webpack-merge');
 const common = require('./webpack.config.common');
 const PATHS = require('./paths');
 
-// App files location
-// const PATHS = {
-//   app: path.resolve(__dirname, '../frontend/js'),
-//   commons_frontend: path.resolve(__dirname, '../node_modules/@natlibfi/melinda-ui-commons/dist/frontend'),
-//   commons_server: path.resolve(__dirname, '../node_modules/@natlibfi/melinda-ui-commons/dist/server')
-// };
-
 module.exports = merge(common, {
   // development or production config
   mode: 'development',
