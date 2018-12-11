@@ -47,10 +47,8 @@ import 'styles/components/record-merge-panel.scss'; // alias in Webpack resolve 
 import '../fonts/index.css';
 
 // const loggerMiddleware = createLogger();
-import 'jquery';
-import 'materialize-css';
-
 window.jQuery = window.$ = require('jquery');
+import 'materialize-css';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 const store = createStore(

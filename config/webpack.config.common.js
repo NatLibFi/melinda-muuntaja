@@ -31,7 +31,8 @@ module.exports = {
       {
         test: /\.jsx?$/,
         loaders: ['babel-loader'],
-        include: [PATHS.app, PATHS.commons_frontend, PATHS.commons_server]
+        include: [PATHS.app, PATHS.commons_frontend, PATHS.commons_server],
+        exclude: /node_modules/
       },
       // css files
       {
@@ -50,12 +51,6 @@ module.exports = {
     ]
   },
   plugins: [
-    // visual map of webpack output files, comment out for use
-    
-    // new BundleAnalyzerPlugin({
-    //   generateStatsFile: true
-    // }),
-
     // removes folder and content (dist).
     new CleanWebpackPlugin(['dist']),
     // generates index.html
@@ -72,14 +67,14 @@ module.exports = {
       filename: 'styles.[hash].css'
     }),
     new webpack.optimize.OccurrenceOrderPlugin(),
-    // for global jquery use
-    new webpack.ProvidePlugin({
-      $: 'jquery',
-      jQuery: 'jquery'
-    }),
     // only fi locale import instead of all (moment)
     new webpack.ContextReplacementPlugin(
       /moment[/\\]locale$/,/fi/
-    )  
+    )
+    // visual map of webpack output files, comment out for use
+    
+    // new BundleAnalyzerPlugin({
+    //   generateStatsFile: true
+    // }),
   ]
 };
