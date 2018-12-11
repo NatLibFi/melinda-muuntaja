@@ -52,7 +52,6 @@ export function replaceFieldsFromSource(targetRecord, sourcerecord, mergedRecord
 
   const fieldsFromSourceRecord = sourcerecord.fields.filter(field => mergeConfigurationFields.test(field.tag));
   
-
   const filteredMergedRecordParam = {
     ...mergedRecordParam, 
     fields: mergedRecordParam.fields.filter(field => !mergeConfigurationFields.test(field.tag))
@@ -273,7 +272,7 @@ function eToPrintSelect655(targetRecord, sourceRecord, mergedRecordParam) {
   }; 
 
   function checkContent(field) {
-    if (field.code === 'a' && isEqual(field.value, 'e-tietuekirjat')) {
+    if (field.code === 'a' && isEqual(field.value, 'e-kirjat')) {
       return {
         ...field,
         value: ' '
