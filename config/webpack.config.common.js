@@ -67,7 +67,7 @@ module.exports = {
       filename: 'styles.[hash].css'
     }),
     new webpack.optimize.OccurrenceOrderPlugin(),
-    // only fi locale import instead of all (moment)
+    // fi locale import instead of all (moment)
     new webpack.ContextReplacementPlugin(
       /moment[/\\]locale$/,/fi/
     )

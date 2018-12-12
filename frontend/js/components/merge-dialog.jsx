@@ -28,7 +28,7 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import _ from 'lodash';
+import { isEmpty } from 'lodash';
 import classNames from 'classnames';
 import { CommitMergeStates } from '../constants';
 import '../../styles/components/merge-dialog.scss';
@@ -39,7 +39,9 @@ export class MergeDialog extends React.Component {
     onClose: PropTypes.func.isRequired,
     status: PropTypes.string.isRequired,
     message: PropTypes.string.isRequired,
-    response: PropTypes.object
+    response: PropTypes.object,
+    mergeStatus: PropTypes.string,
+    statusInfo: PropTypes.string
   }
 
   close(event) {
@@ -60,7 +62,7 @@ export class MergeDialog extends React.Component {
 
   renderResponseMessages(response) {
     
-    if (_.isEmpty(response)) {
+    if (isEmpty(response)) {
       return <div className="response-container"><div className="red lighten-5">Tuntematon virhe</div></div>;
     }
     
@@ -72,13 +74,15 @@ export class MergeDialog extends React.Component {
     const warnings = response.warnings.filter(usefulMessage).map(this.renderSingleMessage);
     const errors = response.errors.map(this.renderSingleMessage);
     const messages = response.messages.map(this.renderSingleMessage);
-
+    const fi = this.props.mergeStatus === 'COMMIT_MERGE_ERROR' ? 'Tietueiden tallentamisessa tapahtui virhe' : this.props.message;
+    
     return (
       <div className="response-container">
-        {messages.length ? <div className="green lighten-4">{messages}</div> : null}
-        {errors.length   ? <div className="red lighten-5">{errors}</div> : null}
-        {warnings.length ? <div className="lime lighten-4">{warnings}</div> : null}
-        {triggers.length ? <div className="light-blue lighten-5">{triggers}</div> : null}
+        { fi ?  <div className="green lighten-4">{fi}</div> : null}
+        { messages.length ? <div className="green lighten-4">{messages}</div> : null}
+        { errors.length   ? <div className="red lighten-5">{errors}</div> : null}
+        { warnings.length ? <div className="lime lighten-4">{warnings}</div> : null}
+        { triggers.length ? <div className="light-blue lighten-5">{triggers}</div> : null}
       </div>
     );
 
@@ -123,14 +127,13 @@ export class MergeDialog extends React.Component {
   }
 
   render() {
-
     const buttonClasses = classNames({
       disabled: !this.props.closable
     });
 
     return (
       <div className="row modal-merge-dialog">
-        <div className="col offset-s8 s4">
+        <div className="col offset-s4 s4">
           <div className="card">
             <div className="card-content">
               <span className="card-title">{this.title()}</span>

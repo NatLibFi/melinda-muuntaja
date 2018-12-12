@@ -40,7 +40,6 @@ export class NavBar extends React.Component {
   static propTypes = {
     commitMerge: PropTypes.func.isRequired,
     mergeStatus: PropTypes.string,
-    statusInfo: PropTypes.string,
     mergeButtonEnabled: PropTypes.bool.isRequired,
     removeSession: PropTypes.func.isRequired,
   };
@@ -65,10 +64,6 @@ export class NavBar extends React.Component {
 
   disableIfMergeNotPossible() {
     return this.props.mergeButtonEnabled ? '' : 'disabled';
-  }
-
-  statusInfo() {
-    return this.props.mergeStatus === 'COMMIT_MERGE_ERROR' ? 'Tietueiden tallentamisessa tapahtui virhe' : this.props.statusInfo;
   }
 
   endSession() {
@@ -105,16 +100,6 @@ export class NavBar extends React.Component {
               <div className="col s9">
                 <ul id="nav" className="right">
                   <li>
-                    <div className="status-info">{this.props.statusInfo}</div>
-                  </li>
-                  <li>
-                    <button
-                      className="waves-effect waves-light btn"
-                      disabled={this.disableIfMergeNotPossible()}
-                      onClick={this.props.commitMerge}
-                      name="commit_merge">Tallenna muunnos</button>
-                  </li>
-                  <li>
                     <a
                       className="dropdown-navbar dropdown-button-menu"
                       href="#" data-activates="mainmenu">
@@ -145,8 +130,7 @@ export class NavBar extends React.Component {
 function mapStateToProps(state) {
   return {
     mergeButtonEnabled: mergeButtonEnabled(state),
-    mergeStatus: state.getIn(['mergeStatus', 'status']),
-    statusInfo: state.getIn(['mergeStatus', 'message'])
+    mergeStatus: state.getIn(['mergeStatus', 'status'])
   };
 }
 
