@@ -117,44 +117,11 @@ export class RecordMergePanel extends React.Component {
         onFieldClick={(field) => this.toggleMergedRecordField(field)}
         onRecordUpdate={(record) => this.props.editMergedRecord(record)}>
         { recordState === 'LOADING' ? <div className="card-content"><Preloader /></div> : null }
-        { this.props.saveButtonVisible ? this.renderSaveButton() : null }
       </RecordPanel>
     );
   }
-  renderSaveButton() {
-    const statuses = {
-      'SAVED': 'UPDATE_SUCCESS',
-      'SAVE_ONGOING': 'UPDATE_ONGOING',
-      'SAVE_FAILED': 'UPDATE_FAILED'
-    };
-
-    const status = statuses[this.props.mergedRecordState];
-
-    const enabled = status !== 'UPDATE_ONGOING';
-
-    return (
-      <div className="card-action">
-        <SaveButtonPanel 
-          enabled={enabled}
-          error={this.props.mergedRecordSaveError}
-          status={status}
-          onSubmit={() => this.handleRecordSave()}
-        />
-      </div>
-    );
-  }
-  
-  handleRecordSave() {
-    const mergedRecordId = _.chain(this.props.mergedRecord.fields)
-      .filter(field => field.tag === '001')
-      .map('value')
-      .head()
-      .value();
-    this.props.saveRecord(mergedRecordId, this.props.mergedRecord);
-  }
 
   render() {
-
     return (
       <div className="row record-merge-panel">
         <div className="col s4">
