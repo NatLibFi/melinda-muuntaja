@@ -29,7 +29,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import _ from 'lodash';
 
 import { editMergedRecord, toggleSourceRecordFieldSelection } from '../ui-actions';
 import { saveRecord } from '../action-creators/record-actions';
@@ -38,7 +37,6 @@ import { Preloader } from 'commons/components/preloader';
 import { ErrorMessagePanel } from 'commons/components/error-message-panel';
 import { MergeValidationErrorMessagePanel} from 'commons/components/merge-validation-error-message-panel';
 import { isControlField } from '../utils';
-import { SaveButtonPanel } from 'commons/components/save-button-panel';
 import { recordSaveActionAvailable } from '../selectors/merge-status-selector';
 
 export class RecordMergePanel extends React.Component {

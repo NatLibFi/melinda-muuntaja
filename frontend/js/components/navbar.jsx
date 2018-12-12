@@ -42,6 +42,7 @@ export class NavBar extends React.Component {
     mergeStatus: PropTypes.string,
     mergeButtonEnabled: PropTypes.bool.isRequired,
     removeSession: PropTypes.func.isRequired,
+    config: PropTypes.object
   };
 
   constructor() {
@@ -59,7 +60,6 @@ export class NavBar extends React.Component {
       belowOrigin: true,
       alignment: 'right'
     });
-
   }
 
   disableIfMergeNotPossible() {
@@ -103,7 +103,7 @@ export class NavBar extends React.Component {
                     <a
                       className="dropdown-navbar dropdown-button-menu"
                       href="#" data-activates="mainmenu">
-                      <i className="material-icons">more_vert</i>
+                      <i className="material-icons">account_circle</i>
                     </a>
                   </li>
                 </ul>
@@ -120,6 +120,9 @@ export class NavBar extends React.Component {
               href="#"
               onClick={() => {this.endSession(); this.clearLocalStorage();}}>Kirjaudu ulos
             </a>
+            <a>
+              {this.props.config.userInfo.name}
+            </a>
           </li>
         </ul>
       </div>
@@ -130,7 +133,8 @@ export class NavBar extends React.Component {
 function mapStateToProps(state) {
   return {
     mergeButtonEnabled: mergeButtonEnabled(state),
-    mergeStatus: state.getIn(['mergeStatus', 'status'])
+    mergeStatus: state.getIn(['mergeStatus', 'status']),
+    config: state.getIn(['config']).toJS()
   };
 }
 
