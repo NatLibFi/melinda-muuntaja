@@ -114,7 +114,7 @@ export class NavBar extends React.Component {
         <ul
           id='mainmenu'
           className='dropdown-content'>
-          <li className="divider" />
+          <li className="divider"/>
           <li>
             <a
               href="#"

@@ -16,12 +16,13 @@ const SaveButton = (props) => {
     }
   );
   return(
-    <div className="fixed-action-btn">
+    <div className="fixed-action-btn mt-btn-position">
       <a 
         className={btnGroupClasses}
         onClick={props.commitMerge}
         name="commit_merge">
         <i className="large material-icons">save</i>
+        Tallenna
       </a>
     </div>
   );

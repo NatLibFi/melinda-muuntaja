@@ -21,6 +21,11 @@ html.modal-open {
   overflow-y: hidden; 
 }
 
+.brand-logo {
+  &:hover {
+    background-color: transparent;
+  }
+}
 //util component overrides
 .marc-record-container {
   .row{
@@ -33,11 +38,20 @@ html.modal-open {
   }
 }
 
-.fixed-action-btn{
+.fixed-action-btn {
   .btn-floating {
     &:hover{
       background-color: $theme-green-hover;
     }
+  }
+  .btn-large {
+    padding-top: 4px;
+    width: 96.5px;
+    height: 96.5px;
+    line-height: 0;
+  }
+  .btn-large.disabled {
+    color: white !important;
   }
 }
 
@@ -49,12 +63,18 @@ html.modal-open {
   display: inline;
 }
 
-.mt-btn{
+.mt-btn {
   background-color: $theme-blue;
   &:hover{
     background-color: #0379b3;
   }
 }
+
+.mt-btn-position {
+  right: 45px;
+  bottom: 45px;
+}
+
 
 // self-hosted material design icon rules
 .material-icons {
