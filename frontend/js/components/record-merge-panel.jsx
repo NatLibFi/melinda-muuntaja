@@ -81,7 +81,14 @@ export class RecordMergePanel extends React.Component {
         title="Lähdetietue"
         record={record}
         onFieldClick={(field) => this.toggleSourceRecordField(field)}>
-        { recordState === 'LOADING' ? <div className="card-content"><Preloader /></div> : null }
+        { recordState === 'LOADING' ? 
+          <div className="card-content mt-loader-container">
+            <div className="row">
+              <div className="col s12 offset-s5">
+                <Preloader/>
+              </div>
+            </div>
+          </div> : null }
       </RecordPanel>
     );
   }
@@ -96,7 +103,14 @@ export class RecordMergePanel extends React.Component {
         showHeader
         title="Pohjatietue"
         record={record}>
-        { recordState === 'LOADING' ? <div className="card-content"><Preloader /></div> : null }
+        { recordState === 'LOADING' ? 
+          <div className="card-content mt-loader-container">
+            <div className="row">
+              <div className="col s12 offset-s5">
+                <Preloader/>
+              </div>
+            </div>
+          </div> : null }
       </RecordPanel>
     );
   }
@@ -114,7 +128,14 @@ export class RecordMergePanel extends React.Component {
         record={record} 
         onFieldClick={(field) => this.toggleMergedRecordField(field)}
         onRecordUpdate={(record) => this.props.editMergedRecord(record)}>
-        { recordState === 'LOADING' ? <div className="card-content"><Preloader /></div> : null }
+        { recordState === 'LOADING' ?
+          <div className="card-content mt-loader-container">
+            <div className="row">
+              <div className="col s12 offset-s5">
+                <Preloader/>
+              </div>
+            </div>
+          </div> : null }
       </RecordPanel>
     );
   }

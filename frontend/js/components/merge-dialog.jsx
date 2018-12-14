@@ -75,7 +75,7 @@ export class MergeDialog extends React.Component {
     const errors = response.errors.map(this.renderSingleMessage);
     const messages = response.messages.map(this.renderSingleMessage);
     const fi = this.props.mergeStatus === 'COMMIT_MERGE_ERROR' ? 'Tietueiden tallentamisessa tapahtui virhe' : this.props.message;
-    
+
     return (
       <div className="response-container">
         { fi ?  <div className="green lighten-4">{fi}</div> : null}
@@ -110,16 +110,20 @@ export class MergeDialog extends React.Component {
 
   renderSpinner() {
     return (
-      <div className="preloader-wrapper small active">
-        <div className="spinner-layer spinner-blue-only">
-          <div className="circle-clipper left">
-            <div className="circle" />
-          </div>
-          <div className="gap-patch">
-            <div className="circle" />
-          </div>
-          <div className="circle-clipper right">
-            <div className="circle" />
+      <div className="row mt-loader-container">
+        <div className="col s12 offset-s5">
+          <div className="preloader-wrapper big active">
+            <div className="spinner-layer spinner-blue-only">
+              <div className="circle-clipper left">
+                <div className="circle" />
+              </div>
+              <div className="gap-patch">
+                <div className="circle" />
+              </div>
+              <div className="circle-clipper right">
+                <div className="circle" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
