@@ -253,7 +253,7 @@ function eToPrintSelect655(targetRecord, sourceRecord, mergedRecordParam) {
   const tag655 = {...filterTag(sourceRecord, fieldTag)};
   
   if(!isEmpty(tag655.subfields)) {
-    const fieldValue = tag655.subfields.some(field => field.code === 'a' && isEqual(field.value, 'e-kirjat'));
+    const fieldValue = tag655.subfields.some(field => field.code === 'a' && isEqual(field.value, 'e-kirjat') || isEqual(field.value, 'e-böcker'));
     const updatedMergedRecordParam = fieldValue ? remove655(mergedRecordParam, tag655) : addTag(mergedRecordParam, tag655);
 
     return { 
