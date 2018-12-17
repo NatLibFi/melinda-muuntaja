@@ -250,17 +250,11 @@ function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
 // removes string a content if 'e-kirjat' match and replaces with an empty content
 function eToPrintSelect655(targetRecord, sourceRecord, mergedRecordParam) {
   const fieldTag = '655';
-  const fieldIndex = findIndex(sourceRecord, fieldTag);
   const tag655 = {...filterTag(sourceRecord, fieldTag)};
   
   if(!isEmpty(tag655.subfields)) {
-    const updatedSubfields = tag655.subfields.map(checkContent);
-    tag655.subfields = updatedSubfields;
-
-    const updatedMergedRecordParam = { 
-      ...mergedRecordParam,
-      fields: mergedRecordParam.fields.map((field, index) => updateField(field, tag655.subfields, fieldIndex, index))
-    };
+    const fieldValue = tag655.subfields.some(field => field.code === 'a' && isEqual(field.value, 'e-kirjat'));
+    const updatedMergedRecordParam = fieldValue ? remove655(mergedRecordParam, tag655) : addTag(mergedRecordParam, tag655);
 
     return { 
       mergedRecord: new MarcRecord(updatedMergedRecordParam)
@@ -271,14 +265,8 @@ function eToPrintSelect655(targetRecord, sourceRecord, mergedRecordParam) {
     mergedRecord: new MarcRecord(mergedRecordParam)
   }; 
 
-  function checkContent(field) {
-    if (field.code === 'a' && isEqual(field.value, 'e-kirjat')) {
-      return {
-        ...field,
-        value: ' '
-      };
-    }
-    return field;
+  function remove655(mergedRecordParam) {
+    return mergedRecordParam.fields.filter(field => field.tag !== '655');
   }
 }
 
