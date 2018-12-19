@@ -110,17 +110,6 @@ module.exports = {
             "dropOriginal": true
           }
         },
-        "041": { 
-          "action": "copy",
-          "options": { 
-            "dropOriginal": true, 
-            "reduce": { 
-              "subfields": ["9"], 
-              "condition": "unless",
-              "value": /[LOWTAG]<(KEEP|DROP)>/ 
-            } 
-          } 
-        },
         "080": { 
           "action": "copy",
           "options": { 
@@ -160,17 +149,6 @@ module.exports = {
               "condition": "unless",
               "value": /[LOWTAG]<(KEEP|DROP)>/ 
             }
-          } 
-        },
-        "245": { 
-          "action": "copy",
-          "options": { 
-            "dropOriginal": true,
-            "reduce": { 
-              "subfields": ["9"],
-              "condition": "unless",
-              "value": /[LOWTAG]<(KEEP|DROP)>/ 
-            } 
           } 
         },
         "246": { 
@@ -296,16 +274,6 @@ module.exports = {
                 "value": "[LOWTAG]<KEEP>" 
               } 
             }, 
-            "reduce": { 
-              "subfields": ["9"], 
-              "condition": "unless", 
-              "value": /[LOWTAG]<(KEEP|DROP)>/ 
-            } 
-          } 
-        },
-        "588": { 
-          "action": "copy", 
-          "options": { 
             "reduce": { 
               "subfields": ["9"], 
               "condition": "unless", 
