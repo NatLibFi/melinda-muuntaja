@@ -242,8 +242,8 @@ function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
   }
 
   function checkMatch(value) {
-    const isMatch =/^1 verkkoaineisto \((.*)\)$/.exec(value);
-    return isMatch ? isMatch[1] : value;
+    const isMatch =/^1 verkkoaineisto \(([0-9]+) .*\)/.exec(value);
+    return isMatch ? isMatch[1] : '';
   }
 }
 
