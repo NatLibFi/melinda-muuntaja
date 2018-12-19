@@ -81,7 +81,7 @@ export function eToPrintRemoveTags(preferredRecord, otherRecord, mergedRecordPar
 // Replaces 008 string content
 export function eToPrintSelect008(preferredRecord, otherRecord, mergedRecordParam) {
   const fieldTag = '008';
-  const indexList = [23, 39];
+  const indexList = [0, 1, 2, 3, 4, 5, 23, 39];
   const mergedRecordParamCopy = { ...mergedRecordParam };
   const sourceRecordTag = filterTag(otherRecord, fieldTag);
   const targetRecordTag = filterTag(preferredRecord, fieldTag);
