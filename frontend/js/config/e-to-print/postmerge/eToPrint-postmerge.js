@@ -279,6 +279,7 @@ function eToPrintSelect776(targetRecord, sourceRecord, mergedRecordParam) {
     const tag020a = tag020Field.subfields.find(field => field.code == 'a');
     const tag020q = tag020Field.subfields.find(field => field.code == 'q');
     const fieldIndex = findIndex(mergedRecordParam, fieldTag);
+    const match = testContent(tag020q.value);
     
     const base776tag = {
       tag: '776',
@@ -287,7 +288,7 @@ function eToPrintSelect776(targetRecord, sourceRecord, mergedRecordParam) {
       subfields: [
         {
           code: 'i',
-          value: tag020q !== undefined ? `Verkkoaineisto (${tag020q.value}):` : 'Verkkoaineisto:' 
+          value: match !== null ? `Verkkoaineisto (${match}):` : 'Verkkoaineisto:'
         },
         {
           code: 'z',
@@ -313,6 +314,11 @@ function eToPrintSelect776(targetRecord, sourceRecord, mergedRecordParam) {
 
   function trim020a(fieldA){
     return fieldA ?  fieldA.replace(/-/g, '') : '';
+  }
+
+  function testContent(tag020q) {
+    const isMatch = tag020q.match(/\b(\w*PDF|EPUB\w*)\b/g);
+    return isMatch ? isMatch[1] : null;
   }
 
   function createBaseMergeParams(mergedRecordParam, base776tag, fieldIndex) {
