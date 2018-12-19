@@ -104,11 +104,299 @@ module.exports = {
     "postMergeFixes": PostMergePreset.eToPrintPreset,
     "mergeConfiguration": {
       "fields": {
-        "1..|041|080|084|240|245|246|250|260|263|264|490|500|502|505|509|520|567|588|6[^5].|65[^5]|700|710|711|800|810|811|830": {
+        "1..|264|504|505|509|6[^5].|65[^5]": {
           "action": "copy", 
           "options": {
             "dropOriginal": true
           }
+        },
+        "041": { 
+          "action": "copy",
+          "options": { 
+            "dropOriginal": true, 
+            "reduce": { 
+              "subfields": ["9"], 
+              "condition": "unless",
+              "value": /[LOWTAG]<(KEEP|DROP)>/ 
+            } 
+          } 
+        },
+        "080": { 
+          "action": "copy",
+          "options": { 
+            "copyIf": { 
+              "9": { 
+                "value": "[LOWTAG]<KEEP>" 
+              } 
+            },
+            "reduce": { 
+              "subfields": ["9"],
+              "condition": "unless",
+              "value": /[LOWTAG]<(KEEP|DROP)>/ 
+            } 
+          } 
+        },
+        "084": { 
+          "action": "copy",
+          "options": { 
+            "copyIf": { 
+              "9": { 
+                "value": "[LOWTAG]<KEEP>"
+              }
+            },
+            "reduce": { 
+              "subfields": ["9"],
+              "condition": "unless",
+              "value": /[LOWTAG]<(KEEP|DROP)>/ 
+            }
+          }
+        },
+        "240": { 
+          "action": "copy",
+          "options": { 
+            "dropOriginal": true,
+            "reduce": { 
+              "subfields": ["9"],
+              "condition": "unless",
+              "value": /[LOWTAG]<(KEEP|DROP)>/ 
+            }
+          } 
+        },
+        "245": { 
+          "action": "copy",
+          "options": { 
+            "dropOriginal": true,
+            "reduce": { 
+              "subfields": ["9"],
+              "condition": "unless",
+              "value": /[LOWTAG]<(KEEP|DROP)>/ 
+            } 
+          } 
+        },
+        "246": { 
+          "action": "copy",
+          "options": { 
+            "reduce": { 
+              "subfields": ["9"],
+              "condition": "unless",
+              "value": /[LOWTAG]<(KEEP|DROP)>/
+            } 
+          } 
+        },
+        "250": { 
+          "action": "copy",
+          "options": { 
+            "reduce": { 
+              "subfields": ["9"],
+              "condition": "unless",
+              "value": /[LOWTAG]<(KEEP|DROP)>/ 
+            }
+          }
+        },
+        "260": { 
+          "action": "copy", 
+          "options": { 
+            "reduce": { 
+              "subfields": ["9"], 
+              "condition": "unless", 
+              "value": /[LOWTAG]<(KEEP|DROP)>/ 
+            } 
+          } 
+        },
+        "263": { 
+          "action": "copy",
+          "options": { 
+            "reduce": { 
+              "subfields": ["9"], 
+              "condition": "unless", 
+              "value": /[LOWTAG]<(KEEP|DROP)>/ 
+            } 
+          } 
+        },
+        "490": { 
+          "action": "copy",
+          "options": { 
+            "dropOriginal": true,
+            "reduce": { 
+              "subfields": ["9"], 
+              "condition": "unless",
+              "value": /[LOWTAG]<(KEEP|DROP)>/ 
+            } 
+          } 
+        },
+        "500": { 
+          "action": "copy", 
+          "options": { 
+            "copyIf": { 
+              "9": { 
+                "value": "[LOWTAG]<KEEP>" 
+              }
+            },
+            "reduce": { 
+              "subfields": ["9"],
+              "condition": "unless",
+              "value": /[LOWTAG]<(KEEP|DROP)>/ 
+            } 
+          } 
+        },
+        "502": { 
+          "action": "copy", 
+          "options": { 
+            "copyIf": { 
+              "9": { 
+                "value": "[LOWTAG]<KEEP>" 
+              } 
+            }, 
+            "reduce": { 
+              "subfields": ["9"], 
+              "condition": "unless", 
+              "value": /[LOWTAG]<(KEEP|DROP)>/ 
+            } 
+          } 
+        },
+        "506": { 
+          "action": "copy", 
+          "options": { 
+            "reduce": { 
+              "subfields": ["9"], 
+              "condition": "unless", 
+              "value": /[LOWTAG]<(KEEP|DROP)>/ 
+            } 
+          } 
+        },
+        "520": { 
+          "action": "copy", 
+          "options": { 
+            "copyIf": { 
+              "9": { 
+                "value": "[LOWTAG]<KEEP>" } 
+            }, 
+            "reduce": { 
+              "subfields": ["9"], 
+              "condition": "unless", 
+              "value": /[LOWTAG]<(KEEP|DROP)>/ 
+            } 
+          } 
+        },
+        "540": { 
+          "action": "copy", 
+          "options": { 
+            "reduce": { 
+              "subfields": ["9"], 
+              "condition": "unless", 
+              "value": /[LOWTAG]<(KEEP|DROP)>/ 
+            } 
+          } 
+        },
+        "567": { 
+          "action": "copy", 
+          "options": { 
+            "copyIf": { 
+              "9": { 
+                "value": "[LOWTAG]<KEEP>" 
+              } 
+            }, 
+            "reduce": { 
+              "subfields": ["9"], 
+              "condition": "unless", 
+              "value": /[LOWTAG]<(KEEP|DROP)>/ 
+            } 
+          } 
+        },
+        "588": { 
+          "action": "copy", 
+          "options": { 
+            "reduce": { 
+              "subfields": ["9"], 
+              "condition": "unless", 
+              "value": /[LOWTAG]<(KEEP|DROP)>/ 
+            } 
+          } 
+        },
+        "700": { 
+          "action": "copy", 
+          "options": { 
+            "copyUnless": { 
+              "9": { 
+                "value": "[LOWTAG]<DROP>" 
+              } 
+            }, 
+            "reduce": { 
+              "subfields": ["9"], 
+              "condition": "unless", 
+              "value": /[LOWTAG]<(KEEP|DROP)>/ 
+            } 
+          } 
+        },
+        "710": { 
+          "action": "copy", 
+          "options": { 
+            "copyUnless": { 
+              "9": { 
+                "value": "[LOWTAG]<DROP>" 
+              } 
+            }, 
+            "reduce": { 
+              "subfields": ["9"], 
+              "condition": "unless", 
+              "value": /[LOWTAG]<(KEEP|DROP)>/ 
+            } 
+          } 
+        },
+        "711": { 
+          "action": "copy", 
+          "options": { 
+            "copyUnless": { 
+              "9": { 
+                "value": "[LOWTAG]<DROP>" 
+              } 
+            }, 
+            "reduce": { 
+              "subfields": ["9"], 
+              "condition": "unless", 
+              "value": /[LOWTAG]<(KEEP|DROP)>/ 
+            } 
+          } 
+        },
+        "800": { 
+          "action": "copy", 
+          "options": { 
+            "reduce": { 
+              "subfields": ["9"], 
+              "condition": "unless", 
+              "value": /[LOWTAG]<(KEEP|DROP)>/ 
+            } 
+          } 
+        },
+        "810": { 
+          "action": "copy",
+          "options": { 
+            "reduce": { 
+              "subfields": ["9"],
+              "condition": "unless", 
+              "value": /[LOWTAG]<(KEEP|DROP)>/ 
+            } 
+          } 
+        },
+        "811": { 
+          "action": "copy", 
+          "options": { 
+            "reduce": { 
+              "subfields": ["9"], 
+              "condition": "unless", 
+              "value": /[LOWTAG]<(KEEP|DROP)>/ 
+            } 
+          } 
+        },
+        "830": { 
+          "action": "copy", 
+          "options": { 
+            "reduce": { 
+              "subfields": ["9"], 
+              "condition": "unless", 
+              "value": /[LOWTAG]<(KEEP|DROP)>/ 
+            } 
+          } 
         }
       }
     }
