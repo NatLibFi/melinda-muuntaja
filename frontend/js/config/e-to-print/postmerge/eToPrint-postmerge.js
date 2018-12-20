@@ -235,7 +235,7 @@ function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
     if (field.code === 'a') {
       return {
         ...field,
-        value: checkMatch(field.value)
+        value: `${checkMatch(field.value)} sivua`
       };
     }
     return field;
