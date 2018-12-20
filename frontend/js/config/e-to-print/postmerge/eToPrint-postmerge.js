@@ -232,10 +232,12 @@ function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
   };
 
   function updateA(field) {
+    const match = checkMatch(field.value);
+    console.log('match: ', match);
     if (field.code === 'a') {
       return {
         ...field,
-        value: `${checkMatch(field.value)} sivua`
+        value: match !== null ? `${match} sivua:` : ':'
       };
     }
     return field;
@@ -243,7 +245,7 @@ function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
 
   function checkMatch(value) {
     const isMatch =/^1 verkkoaineisto \(([0-9]+) .*\)/.exec(value);
-    return isMatch ? isMatch[1] : '';
+    return isMatch ? isMatch[1] : null;
   }
 }
 
@@ -317,7 +319,7 @@ function eToPrintSelect776(targetRecord, sourceRecord, mergedRecordParam) {
   }
 
   function testContent(tag020q) {
-    const isMatch = tag020q.match(/\b(\w*PDF|EPUB\w*)\b/g);
+    const isMatch = tag020q.match(/\b(\w*pdf|epub\w*)\b/i);
     return isMatch ? isMatch[1] : null;
   }
 
