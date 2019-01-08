@@ -90,9 +90,6 @@ import { preset as PostMergePreset } from '../../marc-record-merge-postmerge-ser
 import * as subrecordMergeTypes from '../subrecord-merge-types';
 import TargetRecord from './target-record';
 // import * as subrecordMergeTypes from '../subrecord-merge-types';
-// const hyphenate = require('isbn-utils')
-
-// tuodaan lähdetietueesta
 
 module.exports = {
   "name": "Oletus",

@@ -1,6 +1,7 @@
 // preferredRecord(pohjatietue), otherRecord(lähdetietue), result.mergedRecord
 import MarcRecord from 'marc-record-js';
 import { isEmpty, isEqual, orderBy} from 'lodash';
+import { hyphenate } from 'isbn-utils';
 
 export const eToPrintPreset = [
   eToPrintRemoveTags,
@@ -10,7 +11,8 @@ export const eToPrintPreset = [
   eToPrintSelect300,
   eToPrintSelect655,
   eToPrintSelect776,
-  replaceFieldsFromSource
+  replaceFieldsFromSource,
+  ISBNhyphenate
 ];
 
 // helper functions ->
@@ -233,7 +235,6 @@ function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
 
   function updateA(field) {
     const match = checkMatch(field.value);
-    console.log('match: ', match);
     if (field.code === 'a') {
       return {
         ...field,
@@ -346,5 +347,37 @@ function eToPrintSelect776(targetRecord, sourceRecord, mergedRecordParam) {
       return field = updated776tag;
     }
     return field;
+  }
+}
+
+// Hyphenates 020 a value (ISBN)
+export function ISBNhyphenate(targetRecord, sourceRecord, mergedRecordParam) {
+  const updatedMergedRecordParam = {
+    ...mergedRecordParam,
+    fields: mergedRecordParam.fields.map(findTag)
+  };
+
+  return { 
+    mergedRecord: new MarcRecord(updatedMergedRecordParam)
+  };
+
+  function findTag(field) {
+    if (field.tag === '020') {
+      return {
+        ...field,
+        subfields: field.subfields.map(subfield => hyphenateValue(subfield))
+      };
+    }
+    return field;
+  }
+
+  function hyphenateValue(subfield) {
+    if (subfield.code === 'a') {
+      return {
+        ...subfield,
+        value: hyphenate(subfield.value)
+      };
+    }
+    return subfield;
   }
 }
