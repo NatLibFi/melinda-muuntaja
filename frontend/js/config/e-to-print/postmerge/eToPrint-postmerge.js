@@ -1,6 +1,6 @@
 // preferredRecord(pohjatietue), otherRecord(lähdetietue), result.mergedRecord
 import MarcRecord from 'marc-record-js';
-import { isEmpty, isEqual, orderBy} from 'lodash';
+import { isEmpty, isEqual, orderBy, isUndefined} from 'lodash';
 import { hyphenate } from 'isbn-utils';
 
 export const eToPrintPreset = [
@@ -10,7 +10,7 @@ export const eToPrintPreset = [
   eToPrintSelect020,
   eToPrintSelect300,
   eToPrintSelect655,
-  eToPrintSelect776,
+  eToPrintSelect776, // TODO: Fix React unique "key" prop console warning
   replaceFieldsFromSource,
   ISBNhyphenate
 ];
@@ -250,14 +250,18 @@ function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
   }
 }
 
-// removes string a content if 'e-kirjat' match and replaces with an empty content
+// removes tag 655 if match 'e-kirjat' or 'e-böcker' in a-field
 function eToPrintSelect655(targetRecord, sourceRecord, mergedRecordParam) {
   const fieldTag = '655';
   const tag655 = {...filterTag(sourceRecord, fieldTag)};
   
   if(!isEmpty(tag655.subfields)) {
     const fieldValue = tag655.subfields.some(field => field.code === 'a' && isEqual(field.value, 'e-kirjat') || isEqual(field.value, 'e-böcker'));
-    const updatedMergedRecordParam = fieldValue ? remove655(mergedRecordParam, tag655) : addTag(mergedRecordParam, tag655);
+
+    const updatedMergedRecordParam = {
+      ...mergedRecordParam,
+      fields: fieldValue ? remove655(mergedRecordParam, fieldTag) : mergedRecordParam.fields
+    };
 
     return { 
       mergedRecord: new MarcRecord(updatedMergedRecordParam)
@@ -268,8 +272,8 @@ function eToPrintSelect655(targetRecord, sourceRecord, mergedRecordParam) {
     mergedRecord: new MarcRecord(mergedRecordParam)
   }; 
 
-  function remove655(mergedRecordParam) {
-    return mergedRecordParam.fields.filter(field => field.tag !== '655');
+  function remove655(mergedRecordParam, fieldTag) {
+    return mergedRecordParam.fields.filter(field => field.tag !== fieldTag);
   }
 }
 
@@ -282,7 +286,7 @@ function eToPrintSelect776(targetRecord, sourceRecord, mergedRecordParam) {
     const tag020a = tag020Field.subfields.find(field => field.code == 'a');
     const tag020q = tag020Field.subfields.find(field => field.code == 'q');
     const fieldIndex = findIndex(mergedRecordParam, fieldTag);
-    const match = testContent(tag020q.value);
+    const match = !isUndefined(tag020q) ? testContent(tag020q.value) : null;
     
     const base776tag = {
       tag: '776',
@@ -302,13 +306,11 @@ function eToPrintSelect776(targetRecord, sourceRecord, mergedRecordParam) {
 
     const baseMergedRecordParam = createBaseMergeParams(mergedRecordParam, base776tag, fieldIndex);
     const removedSubfieldMergeParams = removeEmptySubfield(base776tag, fieldIndex);
-    
+
     const updatedMergedRecordParam = isEmpty(removedSubfieldMergeParams) ? baseMergedRecordParam : removedSubfieldMergeParams;
 
-    const mergedRecord = new MarcRecord({...updatedMergedRecordParam});
-    
     return { 
-      mergedRecord 
+      mergedRecord: new MarcRecord({...updatedMergedRecordParam})
     };
   }
   return { 
@@ -316,7 +318,7 @@ function eToPrintSelect776(targetRecord, sourceRecord, mergedRecordParam) {
   };
 
   function trim020a(fieldA){
-    return fieldA ?  fieldA.replace(/-/g, '') : '';
+    return fieldA ? fieldA.replace(/-/g, '') : '';
   }
 
   function testContent(tag020q) {
