@@ -234,18 +234,18 @@ function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
   };
 
   function updateA(field) {
-    const match = checkMatch(field.value);
     if (field.code === 'a') {
+      const match = checkMatch(field.value);
       return {
         ...field,
-        value: match !== null ? `${match} sivua:` : ':'
+        value: match !== null ? `(${match})` : ''
       };
     }
     return field;
   }
 
   function checkMatch(value) {
-    const isMatch =/^1 verkkoaineisto \(([0-9]+) .*\)/.exec(value);
+    const isMatch =/\((.*?)\)/.exec(value);
     return isMatch ? isMatch[1] : null;
   }
 }
@@ -295,7 +295,7 @@ function eToPrintSelect776(targetRecord, sourceRecord, mergedRecordParam) {
       subfields: [
         {
           code: 'i',
-          value: match !== null ? `Verkkoaineisto (${match}):` : 'Verkkoaineisto:'
+          value: match !== null ? `Verkkoaineisto (${match.toUpperCase()}):` : 'Verkkoaineisto:'
         },
         {
           code: 'z',
