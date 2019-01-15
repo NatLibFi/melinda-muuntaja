@@ -473,7 +473,9 @@ export function swapRecords() {
 
   return function(dispatch, getState) {
     const sourceRecordId = getState().getIn(['sourceRecord', 'id']);
+    console.log('sourceRecordId: ', sourceRecordId);
     const targetRecordId = getState().getIn(['targetRecord', 'id']);
+    console.log('targetRecordId: ', targetRecordId);
     dispatch(setSourceRecordId(targetRecordId));
     dispatch(setTargetRecordId(sourceRecordId));
 
@@ -500,7 +502,6 @@ export function setTargetRecordId(recordId) {
 export function updateMergedRecord() {
 
   return function(dispatch, getState) {
-
     const getMergeProfile = getState().getIn(['config', 'mergeProfiles', getState().getIn(['config', 'selectedMergeProfile']), 'record']);
     const defaultProfile = getState().getIn(['config', 'mergeProfiles']);
     const mergeProfile = getMergeProfile === undefined ? defaultProfile.first() : getMergeProfile;

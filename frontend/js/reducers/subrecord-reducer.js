@@ -189,6 +189,7 @@ function compactItemsWithActionSelected(state) {
 }
 
 export function setSourceSubrecords(state, record, subrecords) {
+  console.log('setSourceSubrecords');
   state = state.get('index').reduce((state, key) => {
     return state.update(key, row => row.set('sourceRecord', undefined));
   }, state);
@@ -218,6 +219,7 @@ function pruneEmptyRows(state) {
 }
 
 export function setTargetSubrecords(state, record, subrecords) {
+  console.log('setTargetSubrecords');
   state = state.get('index').reduce((state, key) => {
     return state.update(key, row => row.set('targetRecord', undefined));
   }, state);

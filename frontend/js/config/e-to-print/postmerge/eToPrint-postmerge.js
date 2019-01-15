@@ -253,28 +253,28 @@ function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
 // removes tag 655 if match 'e-kirjat' or 'e-böcker' in a-field
 function eToPrintSelect655(targetRecord, sourceRecord, mergedRecordParam) {
   const fieldTag = '655';
-  const tag655 = {...filterTag(sourceRecord, fieldTag)};
-  
-  if(!isEmpty(tag655.subfields)) {
-    const fieldValue = tag655.subfields.some(field => field.code === 'a' && isEqual(field.value, 'e-kirjat') || isEqual(field.value, 'e-böcker'));
+  const tags655 = [...sourceRecord.fields
+    .filter(field => field.tag === fieldTag)]
+    .filter(tag => !tag.subfields.some(field => field.code === 'a' && isEqual(field.value, 'e-kirjat') || isEqual(field.value, 'e-böcker')));
 
+  if (!isEmpty(tags655)) {
+    const filtered655 = {
+      ...mergedRecordParam,
+      fields: mergedRecordParam.fields.filter(field => field.tag !== '655')
+    };
+  
     const updatedMergedRecordParam = {
       ...mergedRecordParam,
-      fields: fieldValue ? remove655(mergedRecordParam, fieldTag) : mergedRecordParam.fields
+      fields: filtered655.fields.concat(tags655)
     };
-
+  
     return { 
       mergedRecord: new MarcRecord(updatedMergedRecordParam)
     };
   }
-
   return { 
     mergedRecord: new MarcRecord(mergedRecordParam)
-  }; 
-
-  function remove655(mergedRecordParam, fieldTag) {
-    return mergedRecordParam.fields.filter(field => field.tag !== fieldTag);
-  }
+  };
 }
 
 function eToPrintSelect776(targetRecord, sourceRecord, mergedRecordParam) {
