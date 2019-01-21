@@ -473,16 +473,22 @@ export function swapRecords() {
 
   return function(dispatch, getState) {
     const sourceRecordId = getState().getIn(['sourceRecord', 'id']);
-    console.log('sourceRecordId: ', sourceRecordId);
     const targetRecordId = getState().getIn(['targetRecord', 'id']);
-    console.log('targetRecordId: ', targetRecordId);
     dispatch(setSourceRecordId(targetRecordId));
     dispatch(setTargetRecordId(sourceRecordId));
 
-    if (targetRecordId) dispatch(fetchRecord(targetRecordId, 'SOURCE'));
-    else dispatch(resetSourceRecord());
-    if (sourceRecordId) dispatch(fetchRecord(sourceRecordId, 'TARGET'));
-    else dispatch(resetTargetRecord());
+    if (targetRecordId) {
+      dispatch(fetchRecord(targetRecordId, 'SOURCE'));
+    } else {
+      dispatch(resetSourceRecord());
+    }
+
+    if (sourceRecordId) {
+      dispatch(fetchRecord(sourceRecordId, 'TARGET'));
+    } else {
+      dispatch(resetTargetRecord());
+    }
+
   };
 
 }
@@ -626,7 +632,6 @@ function recordFetch(APIBasePath, loadRecordAction, setRecordAction, setRecordEr
   let currentRecordId;
   return function(recordId, dispatch) {
     currentRecordId = recordId;
-
     // sets state to loading
     dispatch(loadRecordAction(recordId));
 

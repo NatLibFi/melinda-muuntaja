@@ -238,7 +238,7 @@ function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
       const match = checkMatch(field.value);
       return {
         ...field,
-        value: match !== null ? `(${match})` : ''
+        value: match !== null ? `${match} :` : ''
       };
     }
     return field;
@@ -250,12 +250,18 @@ function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
   }
 }
 
-// removes tag 655 if match 'e-kirjat' or 'e-böcker' in a-field
+// removes tag 655 if match in a-field
+// 'e-kirjat', 
+// 'e-böcker', 
+// 'sähköiset julkaisut', 
+// 'elektroniska publikationer', 
+// 'Electronic books.'
+
 function eToPrintSelect655(targetRecord, sourceRecord, mergedRecordParam) {
   const fieldTag = '655';
   const tags655 = [...sourceRecord.fields
     .filter(field => field.tag === fieldTag)]
-    .filter(tag => !tag.subfields.some(field => field.code === 'a' && isEqual(field.value, 'e-kirjat') || isEqual(field.value, 'e-böcker')));
+    .filter(tag => !filterStrigs(tag.subfields));
 
   if (!isEmpty(tags655)) {
     const filtered655 = {
@@ -275,6 +281,23 @@ function eToPrintSelect655(targetRecord, sourceRecord, mergedRecordParam) {
   return { 
     mergedRecord: new MarcRecord(mergedRecordParam)
   };
+
+  function filterStrigs(field) {
+    const strings = [
+      'e-kirjat', 
+      'e-böcker', 
+      'sähköiset julkaisut', 
+      'elektroniska publikationer', 
+      'Electronic books.'
+    ];
+    const testField = field.map(obj => {
+      if (obj.code === 'a') {
+        return strings.some(string => isEqual(obj.value, string));
+      }
+      return false;
+    });
+    return testField.includes(true);
+  }
 }
 
 function eToPrintSelect776(targetRecord, sourceRecord, mergedRecordParam) {
