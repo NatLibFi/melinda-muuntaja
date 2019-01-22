@@ -31,7 +31,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { BaseComponentContainer } from './components/base-component';
 import thunkMiddleware from 'redux-thunk';
-// import { createLogger } from 'redux-logger';
+import { createLogger } from 'redux-logger';
 import { createStore, applyMiddleware, compose } from 'redux';
 import rootReducer from './root-reducer';
 import {Provider} from 'react-redux';
@@ -46,7 +46,7 @@ import '../styles/main.scss';
 import 'styles/components/record-merge-panel.scss'; // alias in Webpack resolve property
 import '../fonts/index.css';
 
-// const loggerMiddleware = createLogger();
+const loggerMiddleware = createLogger();
 window.jQuery = window.$ = require('jquery');
 import 'materialize-css';
 
@@ -55,7 +55,8 @@ const store = createStore(
   rootReducer,
   composeEnhancers(
     applyMiddleware(
-      thunkMiddleware
+      thunkMiddleware,
+      loggerMiddleware
     )
   )
 );

@@ -36,6 +36,7 @@ import { withRouter } from 'react-router';
 import { hostRecordActionsEnabled } from '../selectors/merge-status-selector';
 import classNames from 'classnames';
 
+const RECORD_LOADING_DELAY = 500;
 export class RecordSelectionControls extends React.Component {
 
   static propTypes = {
@@ -58,13 +59,13 @@ export class RecordSelectionControls extends React.Component {
   constructor() {
     super();
 
-    // this.handleTargetChangeDebounced = _.debounce((event) => {
-    //   if (event.target.value.length > 0) this.props.fetchRecord(event.target.value, 'TARGET');
-    // }, RECORD_LOADING_DELAY);
+    this.handleTargetChangeDebounced = _.debounce((event) => {
+      if (event.target.value.length > 0) this.props.fetchRecord(event.target.value, 'TARGET');
+    }, RECORD_LOADING_DELAY);
 
-    // this.handleSourceChangeDebounced = _.debounce((event) => {
-    //   if (event.target.value.length > 0) this.props.fetchRecord(event.target.value, 'SOURCE');
-    // }, RECORD_LOADING_DELAY);
+    this.handleSourceChangeDebounced = _.debounce((event) => {
+      if (event.target.value.length > 0) this.props.fetchRecord(event.target.value, 'SOURCE');
+    }, RECORD_LOADING_DELAY);
 
     this.handleChange = this.handleChange.bind(this);
     this.fetchData = this.fetchData.bind(this);
@@ -90,21 +91,27 @@ export class RecordSelectionControls extends React.Component {
 
 
   handleChange(event) {
+    const { controlsEnabled } = this.props;
+    if (!controlsEnabled) {
+      return;
+    }
+
     event.persist();
 
     if (event.target.id === 'source_record') {
       if (event.target.value.length > 0) {
         this.props.setSourceRecordId(event.target.value);
-        // this.handleSourceChangeDebounced(event);
+        this.handleSourceChangeDebounced(event);
       }
       else {
         this.props.resetSourceRecord();
       }
+
     }
     if (event.target.id === 'target_record') {
       if (event.target.value.length > 0) {
         this.props.setTargetRecordId(event.target.value);
-        // this.handleTargetChangeDebounced(event);
+        this.handleTargetChangeDebounced(event);
       }
       else {
         this.props.resetTargetRecord();
@@ -142,7 +149,7 @@ export class RecordSelectionControls extends React.Component {
               <div className="row row-margin-swap record-selection-controls">
                 <div
                   className="col s5">
-                  <div className="input-field col s10">
+                  <div className="input-field col s12">
                     <i className="material-icons prefix">arrow_forward</i>
                     <input
                       id="source_record"
@@ -152,13 +159,13 @@ export class RecordSelectionControls extends React.Component {
                     />
                     <label htmlFor="source_record">Lähdetietue</label>
                   </div>
-                  <div className="input-field col s2 mt-submit-btn-1">
+                  {/* <div className="input-field col s2 mt-submit-btn-1">
                     <button
                       type="submit"
                       onClick={(event) => this.fetchData(event, 'SOURCE')}
                       className="btn"
                     >Hae</button>
-                  </div>
+                  </div> */}
                 </div>
                 <div className="col s2 control-swap-horizontal input-field">
                   <div>
@@ -174,7 +181,7 @@ export class RecordSelectionControls extends React.Component {
                 </div>
                 <div
                   className="col s5 input-field">
-                  <div className="col s10">
+                  <div className="col s12">
                     <i className="material-icons prefix">storage</i>
                     <input
                       id="target_record"
@@ -184,12 +191,12 @@ export class RecordSelectionControls extends React.Component {
                       disabled={!controlsEnabled}/>
                     <label htmlFor="target_record">Pohjatietue</label>
                   </div>
-                  <div className="input-field col s2 mt-submit-btn-2">
+                  {/* <div className="input-field col s2 mt-submit-btn-2">
                     <button 
                       className="btn"
                       onClick={(event) => this.fetchData(event, 'TARGET')}
                     >Hae</button>
-                  </div>
+                  </div> */}
                 </div>
               </div>
             </div>
