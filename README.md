@@ -1,4 +1,4 @@
-# UI for transforming MARC records [![NPM Version](https://img.shields.io/npm/v/@natlibfi/melinda-eresource-tool.svg)](https://npmjs.org/package/@natlibfi/melinda-eresource-tool) [![Build Status](https://travis-ci.org/NatLibFi/melinda-eresource-tool.svg?branch=master)](https://travis-ci.org/NatLibFi/melinda-eresource-tool)
+# UI for transforming MARC records [![Build Status](https://travis-ci.org/NatLibFi/melinda-muuntaja.svg?branch=master)](https://travis-ci.org/NatLibFi/melinda-muuntaja)
 ## Building the application
 
 Initialize submodules
@@ -34,6 +34,6 @@ This will start webpack-dev-server for frontend codebase and nodemon for the bac
 
 ## License and copyright
 
-Copyright (c) 2015-2017 **University Of Helsinki (The National Library Of Finland)**
+Copyright (c) 2015-2019 **University Of Helsinki (The National Library Of Finland)**
 
 This project's source code is licensed under the terms of **GNU Affero General Public License Version 3** or any later version.
