@@ -199,14 +199,14 @@ function eToPrintSelect020 (targetRecord, sourceRecord, mergedRecordParam) {
 
 }
 
-// 300 field, imports code a and b from sourcerecord. Subfield a is manipulated with x sivua if regexp matches
+// 300 field, imports code a and b from sourcerecord. Subfield a returns string according to regexp match
 function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
   const fieldTag = '300';
   const tag300 = {...filterTag(sourceRecord, fieldTag)};
   const fieldIndex = findIndex(mergedRecordParam, fieldTag);
   
   if (!isEmpty(tag300)) {
-    const tag300a = tag300.subfields.map(field => updateA(field))
+    const tag300a = tag300.subfields.map(field => updateA(field, tag300.subfields))
       .find(field => field.code === 'a');
     const tag300b = {...filterTag(sourceRecord, fieldTag)}
       .subfields.find(field => field.code === 'b');
@@ -233,20 +233,27 @@ function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
     mergedRecord: new MarcRecord(mergedRecordParam)
   };
 
-  function updateA(field) {
+  function updateA(field, subfields) {
     if (field.code === 'a') {
-      const match = checkMatch(field.value);
+      const match = checkMatch(field, subfields.every(obj => obj.code === 'a'));
       return {
         ...field,
-        value: match !== null ? `${match} :` : ''
+        value: match !== null ? match : ''
       };
     }
     return field;
   }
 
-  function checkMatch(value) {
-    const isMatch =/\((.*?)\)/.exec(value);
-    return isMatch ? isMatch[1] : null;
+  function checkMatch(field, aFields) {
+    const isMatch =/\((.*?)\)/.exec(field.value);   
+    if (isMatch && !aFields) {
+      return `${isMatch[1]} :`;
+    }
+    if (isMatch && aFields) {
+      return isMatch[1];
+    } else {
+      return null;
+    }
   }
 }
 
