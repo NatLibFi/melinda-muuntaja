@@ -319,7 +319,7 @@ function eToPrintSelect776(targetRecord, sourceRecord, mergedRecordParam) {
     const match = !isUndefined(tag020q) ? testContent(tag020q.value) : null;
     
     const base776tag = {
-      tag: '776',
+      ...tag776,
       ind1: '0',
       ind2: '8',
       subfields: [
@@ -340,7 +340,7 @@ function eToPrintSelect776(targetRecord, sourceRecord, mergedRecordParam) {
     const updatedMergedRecordParam = isEmpty(removedSubfieldMergeParams) ? baseMergedRecordParam : removedSubfieldMergeParams;
 
     return { 
-      mergedRecord: new MarcRecord({...updatedMergedRecordParam})
+      mergedRecord: new MarcRecord(updatedMergedRecordParam)
     };
   }
   return { 
