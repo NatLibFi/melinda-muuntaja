@@ -49,7 +49,8 @@ import { CHANGE_MERGE_PROFILE } from './constants/action-type-constants';
 export const SWITCH_MERGE_CONFIG = 'SWITCH_MERGE_CONFIG';
 export const SWITCH_MERGE_TYPE = 'SWITCH_MERGE_TYPE';
 
-export function switchMergeType(config) {
+export function switchMergeType(mergeType) {
+  const config = { mergeType, mergeProfile: 'default' };
   return function(dispatch) {
     dispatch({
       type: SWITCH_MERGE_TYPE,

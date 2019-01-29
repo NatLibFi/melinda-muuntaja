@@ -140,7 +140,7 @@ export class MergeDialog extends React.Component {
         <div className="col offset-s4 s4">
           <div className="card">
             <div className="card-content">
-              <span className="card-title">{this.title()}</span>
+              <p className="card-title center-align">{this.title()}</p>
               {this.renderContent()}
             </div>
             <div className="card-action right-align">

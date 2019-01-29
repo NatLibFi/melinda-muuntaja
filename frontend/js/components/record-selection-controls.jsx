@@ -181,7 +181,7 @@ export class RecordSelectionControls extends React.Component {
                 </div>
                 <div
                   className="col s5 input-field">
-                  <div className="col s12">
+                  <div className="col s12 mt-pl-0">
                     <i className="material-icons prefix">storage</i>
                     <input
                       id="target_record"

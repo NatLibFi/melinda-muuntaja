@@ -44,7 +44,8 @@ export default function ui(state = INITIAL_STATE, action) {
   const userinfo = state.get('userInfo');
   switch (action.type) {
     case SWITCH_MERGE_TYPE:
-      return setConfiguration(state, userinfo, action.config);
+      window.localStorage.setItem('muuntajaConfig', action.config.mergeProfile);
+      return setConfiguration(state, userinfo, action.config.mergeType);
     case SWITCH_MERGE_CONFIG:
       window.localStorage.setItem('muuntajaConfig', action.config);
       return state.set('selectedMergeProfile', action.config);

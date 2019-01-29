@@ -78,6 +78,7 @@ export class BaseComponent extends React.Component {
   
   componentDidUpdate() {
     const userConfig = localStorage.getItem('muuntajaConfig');
+    console.log('userConfig componentDidUpdatessa: ', userConfig);
     if (userConfig !== null) {
       this.context.store.dispatch({ type: 'SWITCH_MERGE_CONFIG', config: userConfig });
     }
