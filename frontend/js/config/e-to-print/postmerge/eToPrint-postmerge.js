@@ -1,6 +1,6 @@
 // preferredRecord(pohjatietue), otherRecord(lähdetietue), result.mergedRecord
 import MarcRecord from 'marc-record-js';
-import { isEmpty, isEqual, orderBy, isUndefined} from 'lodash';
+import { isEmpty, orderBy, isUndefined} from 'lodash';
 import { hyphenate } from 'isbn-utils';
 
 export const eToPrintPreset = [

@@ -18,6 +18,11 @@ module.exports = {
         },
         "sourceType": "module"
     },
+    "settings": {
+        "react": {
+          "version": "latest"
+        }
+    },
     "plugins": [
         "react", "mocha"
     ],
