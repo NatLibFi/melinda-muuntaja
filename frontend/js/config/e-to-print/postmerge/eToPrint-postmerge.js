@@ -268,7 +268,7 @@ function eToPrintSelect655(targetRecord, sourceRecord, mergedRecordParam) {
   const fieldTag = '655';
   const tags655 = [...sourceRecord.fields
     .filter(field => field.tag === fieldTag)]
-    .filter(tag => !filterStrigs(tag.subfields));
+    .filter(tag => filterStrigs(tag.subfields));
 
   if (!isEmpty(tags655)) {
     const filtered655 = {
@@ -290,20 +290,14 @@ function eToPrintSelect655(targetRecord, sourceRecord, mergedRecordParam) {
   };
 
   function filterStrigs(field) {
-    const strings = [
-      'e-kirjat', 
-      'e-böcker', 
-      'sähköiset julkaisut', 
-      'elektroniska publikationer', 
-      'Electronic books.'
-    ];
-    const testField = field.map(obj => {
+    const testField = field.filter(obj => {
       if (obj.code === 'a') {
-        return strings.some(string => isEqual(obj.value, string));
+        const isMatch = obj.value.match(/(e-kirjat|e-böcker|sähköiset julkaisut|elektroniska publikationer|Electronic books)/i);
+        return isMatch ? isMatch[1] : null;
       }
       return false;
     });
-    return testField.includes(true);
+    return isEmpty(testField);
   }
 }
 
