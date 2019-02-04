@@ -56,6 +56,13 @@ html.modal-open {
 }
 
 // custom classes
+.mt-warning-text{
+  font-size: 14px;
+  color: #e4a2b1;
+  font-weight: bold;
+  padding-top: 10px;
+  text-transform: uppercase;
+}
 .mt-theme-blue {
   color: $theme-blue;
 }

@@ -2,6 +2,7 @@
 import MarcRecord from 'marc-record-js';
 import { isEmpty, orderBy, isUndefined} from 'lodash';
 import { hyphenate } from 'isbn-utils';
+import uuid from 'node-uuid';
 
 export const eToPrintPreset = [
   eToPrintRemoveTags,
@@ -303,19 +304,20 @@ function eToPrintSelect655(targetRecord, sourceRecord, mergedRecordParam) {
 
 function eToPrintSelect776(targetRecord, sourceRecord, mergedRecordParam) {
   const fieldTag = '776';
-  const tag776 = {...sourceRecord.fields.find(field => field.tag === fieldTag)};
   const tag020Field = {...filterTag(sourceRecord, '020')};
-  
-  if(!isEmpty(tag776) && !isEmpty(tag020Field)) {
+    
+  if(!isEmpty(tag020Field)) {
     const tag020a = tag020Field.subfields.find(field => field.code == 'a');
     const tag020q = tag020Field.subfields.find(field => field.code == 'q');
     const fieldIndex = findIndex(mergedRecordParam, fieldTag);
     const match = !isUndefined(tag020q) ? testContent(tag020q.value) : null;
     
     const base776tag = {
-      ...tag776,
+      ...tag020Field,
+      tag: '776',
       ind1: '0',
       ind2: '8',
+      uuid: uuid.v4(),
       subfields: [
         {
           code: 'i',
@@ -330,7 +332,6 @@ function eToPrintSelect776(targetRecord, sourceRecord, mergedRecordParam) {
 
     const baseMergedRecordParam = createBaseMergeParams(mergedRecordParam, base776tag, fieldIndex);
     const removedSubfieldMergeParams = removeEmptySubfield(base776tag, fieldIndex);
-
     const updatedMergedRecordParam = isEmpty(removedSubfieldMergeParams) ? baseMergedRecordParam : removedSubfieldMergeParams;
 
     return { 

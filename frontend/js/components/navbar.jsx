@@ -33,7 +33,7 @@ import {connect} from 'react-redux';
 import { mergeButtonEnabled } from '../selectors/merge-status-selector';
 import '../../styles/components/navbar.scss';
 import { removeSession } from 'commons/action-creators/session-actions';
-import melindaLogo from '../../images/melinda-logo.png';
+import melindaLogo from '../../images/melinda-logo-white.png';
 
 export class NavBar extends React.Component {
   
@@ -92,12 +92,14 @@ export class NavBar extends React.Component {
                   </li>
                 </ul>
               </div>
-              <div className="col s2">
+              <div className="col s4">
                 <ul className="left">
-                  <li className="heading">Muuntaja</li>
+                  <li className="mt-warning-text">
+                    (huom: testi-instanssi muuttaa tuotantokantaa)
+                  </li>
                 </ul>
               </div>
-              <div className="col s9">
+              <div className="col s7">
                 <ul id="nav" className="right">
                   <li>
                     <a

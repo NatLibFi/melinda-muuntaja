@@ -11,6 +11,8 @@ LDR    00000_a____
 100    ‡aTest Author
 245    ‡aSome content
 
+Other has subrecords: false
+Expected to be valid: true
 
 
 
