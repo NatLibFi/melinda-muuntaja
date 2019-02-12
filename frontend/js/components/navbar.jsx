@@ -83,7 +83,7 @@ export class NavBar extends React.Component {
               <div className="col s1">
                 <ul>
                   <li>
-                    <a className="brand-logo">
+                    <a className="brand-logo mt-default">
                       <img 
                         className="mt-logo" 
                         src={melindaLogo}

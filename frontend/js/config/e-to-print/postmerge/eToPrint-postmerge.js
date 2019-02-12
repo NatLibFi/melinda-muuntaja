@@ -49,6 +49,10 @@ function addTag(mergedRecordParam, tag) {
   };
 }
 
+function addIntoArray (array, value) {
+  return array.concat(value);
+} 
+
 // eToPrint postmerge functions ->
 export function replaceFieldsFromSource(targetRecord, sourcerecord, mergedRecordParam) {
   const mergeConfigurationFields = /^(1..|041|080|084|240|245|246|250|260|263|264|490|500|502|504|505|509|520|546|567|6[^5].|65[^5]|700|710|711|800|810|811|830)$/;
@@ -200,31 +204,29 @@ function eToPrintSelect020 (targetRecord, sourceRecord, mergedRecordParam) {
 
 }
 
-// 300 field, imports code a and b from sourcerecord. Subfield a returns string according to regexp match
+// 300 field, imports code a and b from sourcerecord. Subfield a returns string according to regexp match and always adds subfield c at the end
 function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
   const fieldTag = '300';
   const tag300 = {...filterTag(sourceRecord, fieldTag)};
   const fieldIndex = findIndex(mergedRecordParam, fieldTag);
   
   if (!isEmpty(tag300)) {
-    const tag300a = tag300.subfields.map(field => updateA(field, tag300.subfields))
-      .find(field => field.code === 'a');
-    const tag300b = {...filterTag(sourceRecord, fieldTag)}
-      .subfields.find(field => field.code === 'b');
-    
-    if (tag300b !== undefined) {
-      tag300.subfields = [tag300a, tag300b];
-      
-      const updatedMergedRecordParam = fieldIndex > -1 ? updateParamsfield(mergedRecordParam, tag300.subfields, fieldIndex) : addTag(mergedRecordParam, tag300);
-        
-      return { 
-        mergedRecord: new MarcRecord(updatedMergedRecordParam)
-      };
+    const tag300C = {
+      ...tag300,
+      subfields: addIntoArray(tag300.subfields, { code: 'c', value: ''})
+    }; 
+
+    // no code a, creates an empty value
+    if (isEmpty(tag300C.subfields.filter(field => field.code === 'a'))) {
+      tag300C.subfields = [...tag300C.subfields, { code: 'a', value: ''}];
     }
-    
-    tag300.subfields = [tag300a];
-    
-    const updatedMergedRecordParam = fieldIndex > -1 ? updateParamsfield(mergedRecordParam, tag300.subfields, fieldIndex) : addTag(mergedRecordParam, tag300);
+
+    const updatedASubfields = tag300C.subfields.map(updateValues(tag300C.subfields.length));
+    const updatedTag300 = {
+      ...tag300C,
+      subfields: updatedASubfields
+    };
+    const updatedMergedRecordParam = fieldIndex > -1 ? updateParamsfield(mergedRecordParam, updatedTag300.subfields, fieldIndex) : addTag(mergedRecordParam, updatedTag300);
     
     return { 
       mergedRecord: new MarcRecord(updatedMergedRecordParam)
@@ -234,27 +236,27 @@ function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
     mergedRecord: new MarcRecord(mergedRecordParam)
   };
 
-  function updateA(field, subfields) {
-    if (field.code === 'a') {
-      const match = checkMatch(field, subfields.every(obj => obj.code === 'a'));
-      return {
-        ...field,
-        value: match !== null ? match : ''
-      };
-    }
-    return field;
+  function updateValues(subfieldsLength) {
+    return function (field) {
+      if (field.code === 'a') {
+        const match = checkMatch(field, subfieldsLength);
+        return { ...field, value: match };
+      }
+      if (field.code === 'b') {
+        return { ...field, value: field.value + ';' };
+      }
+      return field;
+    };
   }
 
-  function checkMatch(field, aFields) {
-    const isMatch =/\((.*?)\)/.exec(field.value);   
-    if (isMatch && !aFields) {
-      return `${isMatch[1]} :`;
-    }
-    if (isMatch && aFields) {
-      return isMatch[1];
-    } else {
-      return null;
-    }
+  function checkMatch(field, subfieldsLength) {
+    const isMatch =/\((.*?)\)/.exec(field.value);
+    const punctuation = createAPunctuation(subfieldsLength);
+    return isMatch ? `${isMatch[1]} ${punctuation}` : '';
+  }
+
+  function createAPunctuation (subfieldsLength) {
+    return subfieldsLength > 2 ? ':' : ';';
   }
 }
 
