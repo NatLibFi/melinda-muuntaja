@@ -48,25 +48,6 @@ const record = new MarcRecord({
       ]
     },
     {
-      tag: '336',
-      ind1: ' ',
-      ind2: ' ',
-      subfields: [
-        {
-          code: 'a',
-          value: 'teksti'
-        },
-        {
-          code: 'b',
-          value: 'txt'
-        },
-        {
-          code: '2',
-          value: 'rdacontent'
-        }
-      ]
-    },
-    {
       tag: '337',
       ind1: ' ',
       ind2: ' ',

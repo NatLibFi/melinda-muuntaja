@@ -55,7 +55,7 @@ function addIntoArray (array, value) {
 
 // eToPrint postmerge functions ->
 export function replaceFieldsFromSource(targetRecord, sourcerecord, mergedRecordParam) {
-  const mergeConfigurationFields = /^(1..|041|080|084|240|245|246|250|260|263|264|490|500|502|504|505|509|520|546|567|6[^5].|65[^5]|700|710|711|800|810|811|830)$/;
+  const mergeConfigurationFields = /^(1..|041|080|084|240|245|246|250|260|263|264|336|490|500|502|504|505|509|520|546|567|6[^5].|65[^5]|700|710|711|800|810|811|830)$/;
 
   const fieldsFromSourceRecord = sourcerecord.fields.filter(field => mergeConfigurationFields.test(field.tag));
   
