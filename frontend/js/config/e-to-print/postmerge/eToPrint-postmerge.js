@@ -3,6 +3,7 @@ import MarcRecord from 'marc-record-js';
 import { isEmpty, orderBy, isUndefined} from 'lodash';
 import { hyphenate } from 'isbn-utils';
 import uuid from 'node-uuid';
+import { curry } from 'ramda';
 
 export const eToPrintPreset = [
   eToPrintRemoveTags,
@@ -221,7 +222,19 @@ function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
       tag300C.subfields = [...tag300C.subfields, { code: 'a', value: ''}];
     }
 
+    const updateValues = curry((length, field) => {
+      if (field.code === 'a') {
+        const match = checkMatch(field, length);
+        return { ...field, value: match };
+      }
+      if (field.code === 'b') {
+        return { ...field, value: field.value + ';' };
+      }
+      return field;
+    });
+
     const updatedASubfields = tag300C.subfields.map(updateValues(tag300C.subfields.length));
+
     const updatedTag300 = {
       ...tag300C,
       subfields: updatedASubfields
@@ -235,19 +248,6 @@ function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
   return { 
     mergedRecord: new MarcRecord(mergedRecordParam)
   };
-
-  function updateValues(subfieldsLength) {
-    return function (field) {
-      if (field.code === 'a') {
-        const match = checkMatch(field, subfieldsLength);
-        return { ...field, value: match };
-      }
-      if (field.code === 'b') {
-        return { ...field, value: field.value + ';' };
-      }
-      return field;
-    };
-  }
 
   function checkMatch(field, subfieldsLength) {
     const isMatch =/\((.*?)\)/.exec(field.value);
