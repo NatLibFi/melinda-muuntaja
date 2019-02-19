@@ -14,7 +14,8 @@ export const eToPrintPreset = [
   eToPrintSelect655,
   eToPrintSelect776, // TODO: Fix React unique "key" prop console warning
   replaceFieldsFromSource,
-  ISBNhyphenate
+  ISBNhyphenate,
+  eToPrintSelect490
 ];
 
 // helper functions ->
@@ -50,6 +51,10 @@ function addTag(mergedRecordParam, tag) {
   };
 }
 
+function updatedMergedRecordParams(mergedRecordParam, updated490subfields, fieldIndex) {
+  return fieldIndex > -1 ? updateParamsfield(mergedRecordParam, updated490subfields.subfields, fieldIndex) : addTag(mergedRecordParam, updated490subfields);
+}
+
 function addIntoArray (array, value) {
   return array.concat(value);
 } 
@@ -59,7 +64,7 @@ export function replaceFieldsFromSource(targetRecord, sourcerecord, mergedRecord
   const mergeConfigurationFields = /^(1..|041|080|084|240|245|246|250|260|263|264|336|490|500|502|504|505|509|520|546|567|6[^5].|65[^5]|700|710|711|800|810|811|830)$/;
 
   const fieldsFromSourceRecord = sourcerecord.fields.filter(field => mergeConfigurationFields.test(field.tag));
-  
+
   const filteredMergedRecordParam = {
     ...mergedRecordParam, 
     fields: mergedRecordParam.fields.filter(field => !mergeConfigurationFields.test(field.tag))
@@ -408,5 +413,35 @@ export function ISBNhyphenate(targetRecord, sourceRecord, mergedRecordParam) {
       };
     }
     return subfield;
+  }
+}
+
+export function eToPrintSelect490 (targetRecord, sourceRecord, mergedRecordParam) {
+  const fieldTag = '490';
+  const field490 = {...filterTag(sourceRecord, fieldTag)};
+  
+  if(!isEmpty(field490)) {
+    const updated490subfields = {
+      ...field490,
+      subfields: field490.subfields.map(fieldPresent)
+    };
+  
+    const fieldIndex = findIndex(mergedRecordParam, fieldTag);    
+    const recordParams = updatedMergedRecordParams(mergedRecordParam, updated490subfields, fieldIndex);
+    
+    return { 
+      mergedRecord: new MarcRecord(recordParams)
+    };
+  }
+  
+  return { 
+    mergedRecord: new MarcRecord(mergedRecordParam)
+  };
+
+  function fieldPresent(field) {
+    if (field.code === 'x' || field.code === 'v') {
+      return {...field, value: ''};
+    }
+    return field;
   }
 }
