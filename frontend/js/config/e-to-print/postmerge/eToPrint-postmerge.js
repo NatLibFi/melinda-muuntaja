@@ -15,7 +15,7 @@ export const eToPrintPreset = [
   eToPrintSelect776, // TODO: Fix React unique "key" prop console warning
   replaceFieldsFromSource,
   ISBNhyphenate,
-  eToPrintSelect490
+  eToPrintSelect490_830
 ];
 
 // helper functions ->
@@ -416,26 +416,26 @@ export function ISBNhyphenate(targetRecord, sourceRecord, mergedRecordParam) {
   }
 }
 
-export function eToPrintSelect490 (targetRecord, sourceRecord, mergedRecordParam) {
-  const fieldTag = '490';
-  const field490 = {...filterTag(sourceRecord, fieldTag)};
-  
-  if(!isEmpty(field490)) {
-    const updated490subfields = {
-      ...field490,
-      subfields: field490.subfields.map(fieldPresent)
-    };
-  
-    const fieldIndex = findIndex(mergedRecordParam, fieldTag);    
-    const recordParams = updatedMergedRecordParams(mergedRecordParam, updated490subfields, fieldIndex);
+// if tags 490/830 subfields x/v have content returns an empty x/v value
+export function eToPrintSelect490_830 (targetRecord, sourceRecord, mergedRecordParam) {
+  const fieldTag = ['490', '830'];
+  const updatedRecord = fieldTag.reduce((record, fieldTag) => {
+    const tag = {...filterTag(sourceRecord, fieldTag)};
     
-    return { 
-      mergedRecord: new MarcRecord(recordParams)
-    };
-  }
+    if(!isEmpty(tag)) {
+      const updatedSubfields = {
+        ...tag,
+        subfields: tag.subfields.map(fieldPresent)
+      };  
+      const recordParams = updatedMergedRecordParams(record, updatedSubfields, findIndex(mergedRecordParam, fieldTag));
+      record = recordParams;
+    }
+
+    return record;
+  }, mergedRecordParam);
   
   return { 
-    mergedRecord: new MarcRecord(mergedRecordParam)
+    mergedRecord: new MarcRecord(updatedRecord)
   };
 
   function fieldPresent(field) {

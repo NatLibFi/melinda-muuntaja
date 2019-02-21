@@ -98,7 +98,7 @@ export function applyPostMergeModifications(postMergeFunctions, preferredRecord,
     mergedRecord,
     notes: []
   };
-  
+
   const result = postMergeFunctions.reduce((result, fn) => {
     const fnResult = fn(preferredRecord, otherRecord, result.mergedRecord); 
     return {
