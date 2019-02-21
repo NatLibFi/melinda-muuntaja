@@ -419,13 +419,23 @@ export function ISBNhyphenate(targetRecord, sourceRecord, mergedRecordParam) {
 // if tags 490/830 subfields x/v have content returns an empty x/v value
 export function eToPrintSelect490_830 (targetRecord, sourceRecord, mergedRecordParam) {
   const fieldTag = ['490', '830'];
+
+  const fieldPresent = curry((length, field) => {
+    if (field.code === 'x') {
+      return xPunctuation(length, field);
+    }
+    if (field.code === 'v') {
+      return { ...field, value: ''};
+    }
+    return field;
+  });
+  
   const updatedRecord = fieldTag.reduce((record, fieldTag) => {
-    const tag = {...filterTag(sourceRecord, fieldTag)};
-    
+    const tag = {...filterTag(sourceRecord, fieldTag)};  
     if(!isEmpty(tag)) {
       const updatedSubfields = {
         ...tag,
-        subfields: tag.subfields.map(fieldPresent)
+        subfields: tag.subfields.map(fieldPresent(tag.subfields.length))
       };  
       const recordParams = updatedMergedRecordParams(record, updatedSubfields, findIndex(mergedRecordParam, fieldTag));
       record = recordParams;
@@ -438,10 +448,7 @@ export function eToPrintSelect490_830 (targetRecord, sourceRecord, mergedRecordP
     mergedRecord: new MarcRecord(updatedRecord)
   };
 
-  function fieldPresent(field) {
-    if (field.code === 'x' || field.code === 'v') {
-      return {...field, value: ''};
-    }
-    return field;
+  function xPunctuation(length, field) {
+    return length > 2 ? { ...field, value:';' } : { ...field, value: ''};
   }
 }
