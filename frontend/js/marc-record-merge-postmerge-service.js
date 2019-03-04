@@ -53,21 +53,75 @@ import moment from 'moment';
 import { selectValues, selectRecordId, selectFieldsByValue, fieldHasSubfield, resetComponentHostLinkSubfield, isLinkedFieldOf } from './record-utils';
 import { fieldOrderComparator } from './marc-field-sort';
 import { eToPrintPreset } from './config/e-to-print/postmerge/eToPrint-postmerge';
+import { isEmpty } from 'lodash';
+import { curry } from 'ramda';
    
 const defaultPreset = [
-  check041aLength, setAllZeroRecordId, sortMergedRecordFields, fix776Order,
+  check041aLength,
+  setAllZeroRecordId,
+  sortMergedRecordFields,
+  fix776Order,
+  addEmptyQField
 ];
 
 
 const allPreset = [
-  check041aLength, addLOWSIDFieldsFromOther, addLOWSIDFieldsFromPreferred, add035zFromOther, add035zFromPreferred, removeExtra035aFromMerged, 
-  setAllZeroRecordId, add583NoteAboutMerge, removeCATHistory, add500ReprintInfo, handle880Fields, sortMergedRecordFields ];
+  check041aLength,
+  addLOWSIDFieldsFromOther,
+  addLOWSIDFieldsFromPreferred,
+  add035zFromOther, 
+  add035zFromPreferred,
+  removeExtra035aFromMerged, 
+  setAllZeroRecordId,
+  add583NoteAboutMerge, 
+  removeCATHistory, 
+  add500ReprintInfo, 
+  handle880Fields, 
+  sortMergedRecordFields
+];
 
 export const preset = {
   defaults: defaultPreset,
   eToPrintPreset,
   all: allPreset
 };
+
+// creates an empty q subfield if q value not present
+export function addEmptyQField(preferredRecord, otherRecord, mergedRecordParam) {
+  const tag = findTag(mergedRecordParam.fields, '020');
+  
+  if (isEmpty(tag.subfields.filter(obj => obj.code === 'q'))) {
+    const updatedSubfields = {
+      ...tag,
+      subfields: [
+        ...tag.subfields,
+        { 
+          code: 'q',
+          value: ' '
+        }
+      ]
+    };
+
+    const update020 = curry((updatedSubfields, field) => {
+      if (field.tag === '020') {    
+        return updatedSubfields;
+      }
+      return field;
+    });
+
+    const updatedRecord = {
+      ...mergedRecordParam,
+      fields: mergedRecordParam.fields.map(update020(updatedSubfields))
+    };
+    return { mergedRecord: new MarcRecord(updatedRecord) };
+  }
+  
+  return { mergedRecord: new MarcRecord(mergedRecordParam) };
+
+  function findTag(fields, value) {
+    return fields.find(obj => obj.tag === value);
+  }
+}
 
 
 export function fix776Order(preferredRecord, otherRecord, mergedRecordParam) {
