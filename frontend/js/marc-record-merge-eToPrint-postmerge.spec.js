@@ -25,14 +25,12 @@
 * for the JavaScript code in this file.
 *
 */
-
-import sinon from 'sinon';
 import _ from 'lodash';
 import { expect } from 'chai';
 import path from 'path';
 import fs from 'fs';
 import * as MarcRecordMergePostmergeService from './marc-record-merge-postmerge-service';
-import { __RewireAPI__ as RewireAPI } from './marc-record-merge-postmerge-service';
+import * as eToPrintPostmerge from './config/e-to-print/postmerge/eToPrint-postmerge.js';
 import { decorateFieldsWithUuid } from './record-utils';
 import uuid from 'uuid';
 
@@ -40,26 +38,9 @@ import MarcRecord from 'marc-record-js';
 
 const TEST_CASE_SEPARATOR = '\n\n\n\n';
 
-const storiesPath = path.resolve(__dirname, '../test/marc-record-merge-postmerge-service');
+const storiesPath = path.resolve(__dirname, '../test/marc-record-merge-eToPrint-postmerge');
 
-describe('marc-record-postmerge-service', () => {
-
-  before(() => {
-  
-    const formatDateStub = sinon.stub();
-
-    formatDateStub.returns('2016-11-29T13:25:21+02:00');
-
-    RewireAPI.__Rewire__('formatDate', formatDateStub);
-
-    // Prepare select773 fields with host record ids. The test runner is used to test the prepared function.
-    MarcRecordMergePostmergeService.preparedSelect773Fields = MarcRecordMergePostmergeService.select773Fields('00001', '00002');
-    
-  });
-  after(() => {
-    RewireAPI.__ResetDependency__('formatDate');
-    delete(MarcRecordMergePostmergeService.preparedSelect773Fields);
-  });
+describe('marc-record-merge-eToPrint-postmerge', () => {
 
   const files = fs.readdirSync(storiesPath);
   const storyFiles = files.filter(filename => filename.substr(-6) === '.story').sort();
@@ -71,10 +52,11 @@ describe('marc-record-postmerge-service', () => {
       testSuite.testCases.forEach(testCase => {
 
         it(testCase.testName, () => {
-          
-          const functionUnderTest = prepareTestFunction(testSuite.functionUnderTest);
+          const {mergedRecord, notes} = testSuite.functionUnderTest.call(null, testCase.preferredRecord, testCase.otherRecord, testCase.mergedRecord);
 
-          const {mergedRecord, notes} = functionUnderTest.call(null, testCase.preferredRecord, testCase.otherRecord, testCase.mergedRecord);
+          // console.log('mergedRecord(2): ', mergedRecord.toString());
+          // console.log('expected: ', testCase.expectedMergedRecord.toString());
+          
           expect(mergedRecord.toString()).to.eql(testCase.expectedMergedRecord.toString());
           expect(notes || []).to.eql(testCase.notes);
           
@@ -86,12 +68,12 @@ describe('marc-record-postmerge-service', () => {
   describe('applyPostMergeModifications', () => {
     const validateStoriesText = fs.readFileSync(path.resolve(storiesPath, 'applyPostMergeModifications.stories'), 'utf8');
     const validateMergeCandidatesTestCases = parseStories(validateStoriesText);
-    
+
     validateMergeCandidatesTestCases.forEach(testCase => {
 
       it(testCase.testName, () => {
 
-        const postMergeFixers = MarcRecordMergePostmergeService.preset.all;
+        const postMergeFixers = MarcRecordMergePostmergeService.preset.eToPrintPreset;
         const {record, notes} = MarcRecordMergePostmergeService.applyPostMergeModifications(postMergeFixers, testCase.preferredRecord, testCase.otherRecord, testCase.mergedRecord);
 
         expect(record.toString()).to.eql(testCase.expectedMergedRecord.toString());
@@ -102,16 +84,11 @@ describe('marc-record-postmerge-service', () => {
   });
 });
 
-function prepareTestFunction(testFn) {
-  return testFn === MarcRecordMergePostmergeService.select773Fields ? MarcRecordMergePostmergeService.select773Fields('00001', '00002') : testFn;
-}
-
 function loadStoriesFromFile(filename) {
-  
   const storyText = fs.readFileSync(path.resolve(storiesPath, filename), 'utf8');
 
   const fnName = filename.slice(0, -6);
-  const functionUnderTest = MarcRecordMergePostmergeService[fnName];
+  const functionUnderTest = eToPrintPostmerge[fnName];
   const suiteName = fnName;
 
   const testCases = parseStories(storyText);
@@ -136,6 +113,7 @@ function parseStories(storyText) {
 
       const mergedRecordStartIndex = lines.indexOf('Merged record before postmerge:') + 1;
       const mergedRecordRaw = lines.slice(mergedRecordStartIndex, lines.indexOf('', mergedRecordStartIndex)).join('\n');
+
       const mergedRecord = MarcRecord.fromString(mergedRecordRaw);
 
       // Mark merged record fields with uuids from preferred,other fields if they are identical.

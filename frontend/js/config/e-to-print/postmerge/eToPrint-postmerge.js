@@ -12,7 +12,7 @@ export const eToPrintPreset = [
   eToPrintSelect020,
   eToPrintSelect300,
   eToPrintSelect655,
-  eToPrintSelect776, // TODO: Fix React unique "key" prop console warning
+  eToPrintSelect776,
   replaceFieldsFromSource,
   ISBNhyphenate,
   eToPrintSelect490_830
@@ -92,40 +92,36 @@ export function eToPrintRemoveTags(preferredRecord, otherRecord, mergedRecordPar
 }
 
 // Replaces 008 string content
-export function eToPrintSelect008(preferredRecord, otherRecord, mergedRecordParam) {
+export function eToPrintSelect008(preferredRecord, otherRecord, mergedRecordParam) {  
   const fieldTag = '008';
   const indexList = [0, 1, 2, 3, 4, 5, 23, 39];
-  const mergedRecordParamCopy = { ...mergedRecordParam };
-  const sourceRecordTag = filterTag(otherRecord, fieldTag);
-  const targetRecordTag = filterTag(preferredRecord, fieldTag);
-  const sourceTag = { ...sourceRecordTag };
-  let updated008record;
+  const sourceTag = { ...filterTag(otherRecord, fieldTag)};
+  const targetRecordTag = { ...filterTag(preferredRecord, fieldTag)};
 
-  indexList.forEach(index => {
+  const updated008field = indexList.reduce((tag, index) => {
     const replaceWith = targetRecordTag.value[index];
-    sourceTag.value = replaceString(sourceTag, index, replaceWith);
-    updated008record = updateProperty(mergedRecordParamCopy, sourceTag, fieldTag);
+    tag.value = replaceString(sourceTag, index, replaceWith);
+    return tag;
+  }, sourceTag);
+
+  const updateTag = curry((updated008field, field) => {
+    if (field.tag === '008') {    
+      return updated008field;
+    }
+    return field;
   });
 
+  const updatedMergeParams = {
+    ...mergedRecordParam,
+    fields: mergedRecordParam.fields.map(updateTag(updated008field))
+  };
+
   return {
-    mergedRecord: new MarcRecord(updated008record)
+    mergedRecord: new MarcRecord(updatedMergeParams)
   };
 
   function replaceString(sourceTag, index, replaceWith) {
     return sourceTag.value.substring(0, index) + replaceWith + sourceTag.value.substring(index+1);
-  }
-  
-  function updateProperty(record, sourceRecordTag, fieldTag) {
-    const tagIndex = findIndex(record, fieldTag);
-    const recordCopy = { ...record };
-    const updatedTag = {
-      ...record.fields[tagIndex]
-    };
-  
-    updatedTag.value = sourceRecordTag.value;
-    recordCopy.fields[tagIndex] = updatedTag;
-  
-    return recordCopy;
   }
 }
 
@@ -422,7 +418,7 @@ export function eToPrintSelect490_830 (targetRecord, sourceRecord, mergedRecordP
 
   const fieldPresent = curry((length, field) => {
     if (field.code === 'x') {
-      return xPunctuation(length, field);
+      return xSubfieldPunctuation(length, field);
     }
     if (field.code === 'v') {
       return { ...field, value: ''};
@@ -448,7 +444,7 @@ export function eToPrintSelect490_830 (targetRecord, sourceRecord, mergedRecordP
     mergedRecord: new MarcRecord(updatedRecord)
   };
 
-  function xPunctuation(length, field) {
+  function xSubfieldPunctuation(length, field) {
     return length > 2 ? { ...field, value:';' } : { ...field, value: ''};
   }
 }
