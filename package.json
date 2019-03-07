@@ -42,7 +42,7 @@
     "@natlibfi/marc-record-validators-melinda": "^5.1.2",
     "@natlibfi/melinda-api-client": "^1.1.6",
     "@natlibfi/melinda-ui-commons": "^2.0.3",
-    "@natlibfi/sru-client": "git+https://github.com/NatLibFi/sru-client.git#9670a2c040e0231033a086b82b9a2f95125d71ab",
+    "@natlibfi/sru-client": "^3.1.0",
     "archiver": "^2.1.0",
     "body-parser": "^1.18.2",
     "classnames": "^2.2.5",
