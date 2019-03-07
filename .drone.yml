@@ -20,3 +20,5 @@ steps:
   when:
     branch: [master, test]
     event: [push, tag]
+trigger:
+  event: [push, tag]
