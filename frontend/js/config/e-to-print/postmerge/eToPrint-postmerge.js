@@ -4,6 +4,7 @@ import { isEmpty, orderBy, isUndefined} from 'lodash';
 import { hyphenate } from 'isbn-utils';
 import uuid from 'node-uuid';
 import { curry } from 'ramda';
+import { filterTag, findIndex, updateParamsfield, addTag, updatedMergedRecordParams, addIntoArray } from '../../../utils';
 
 export const eToPrintPreset = [
   eToPrintRemoveTags,
@@ -18,46 +19,6 @@ export const eToPrintPreset = [
   eToPrintSelect490_830
 ];
 
-// helper functions ->
-function filterTag (record, fieldTag) {
-  return record.fields.find(obj => obj.tag === fieldTag);
-}
-
-function findIndex (record, fieldTag) {
-  return record.fields.findIndex(obj => obj.tag === fieldTag);
-}
-
-function updateField(field, updatedSubfields, fieldIndex, index) {
-  if (index === fieldIndex) {
-    return {
-      ...field,
-      subfields: updatedSubfields
-    };
-  }
-  return field;
-}
-
-function updateParamsfield(mergedRecordParam, subfields, fieldIndex) {
-  return { 
-    ...mergedRecordParam,
-    fields: mergedRecordParam.fields.map((field, index) => updateField(field, subfields, fieldIndex, index))
-  };
-}
-
-function addTag(mergedRecordParam, tag) {
-  return { 
-    ...mergedRecordParam,
-    fields: orderBy([ ...mergedRecordParam.fields, tag], 'tag')
-  };
-}
-
-function updatedMergedRecordParams(mergedRecordParam, updated490subfields, fieldIndex) {
-  return fieldIndex > -1 ? updateParamsfield(mergedRecordParam, updated490subfields.subfields, fieldIndex) : addTag(mergedRecordParam, updated490subfields);
-}
-
-function addIntoArray (array, value) {
-  return array.concat(value);
-} 
 
 // eToPrint postmerge functions ->
 export function replaceFieldsFromSource(targetRecord, sourcerecord, mergedRecordParam) {

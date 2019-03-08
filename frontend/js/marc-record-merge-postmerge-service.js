@@ -55,13 +55,15 @@ import { fieldOrderComparator } from './marc-field-sort';
 import { eToPrintPreset } from './config/e-to-print/postmerge/eToPrint-postmerge';
 import { isEmpty } from 'lodash';
 import { curry } from 'ramda';
+import { findTag, findIndex, updateParamsfield } from './utils';
    
 const defaultPreset = [
   check041aLength,
   setAllZeroRecordId,
   sortMergedRecordFields,
   fix776Order,
-  addEmptyQField
+  printToE200q,
+  prinToE300b
 ];
 
 
@@ -86,8 +88,37 @@ export const preset = {
   all: allPreset
 };
 
-// creates an empty q subfield if q value not present
-export function addEmptyQField(preferredRecord, otherRecord, mergedRecordParam) {
+
+export function prinToE300b(preferredRecord, otherRecord, mergedRecordParam) {
+  const tag = findTag(mergedRecordParam.fields, '300');
+  const fieldB = tag.subfields.find(field => field.code === 'b');
+  const fieldIndex = findIndex(mergedRecordParam, '300');
+
+  if (fieldB) {
+    const semicolon = fieldB.value.substr(-1) === ';';
+    const subfield = semicolon ? removeSemicolon(fieldB) : fieldB;
+    const updatedTag = {
+      ...tag,
+      subfields: tag.subfields.map(field => updatedSubfields(field, subfield.value))
+    };
+    return { mergedRecord: new MarcRecord(updateParamsfield(mergedRecordParam, updatedTag.subfields, fieldIndex)) };
+  }
+  return { mergedRecord: new MarcRecord(mergedRecordParam) };
+
+  function updatedSubfields(field, value) {
+    if (field.code === 'b') {
+      return { ...field, value };
+    }
+    return field;
+  }
+
+  function removeSemicolon(fieldB) {
+    return { ...fieldB, value: fieldB.value.substring(0, fieldB.value.length - 1).trim() };
+  }
+}
+
+// creates an empty q subfield if q value not present, tag 020
+export function printToE200q(preferredRecord, otherRecord, mergedRecordParam) {
   const tag = findTag(mergedRecordParam.fields, '020');
   
   if (isEmpty(tag.subfields.filter(obj => obj.code === 'q'))) {
