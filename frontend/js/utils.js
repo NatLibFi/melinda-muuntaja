@@ -27,6 +27,22 @@
 */
 
 import { orderBy } from 'lodash';
+import MarcRecord from 'marc-record-js';
+
+export function replaceFieldsFromSource(regex, sourcerecord, mergedRecordParam) {
+  const fieldsFromSourceRecord = sourcerecord.fields.filter(field => regex.test(field.tag));
+
+  const filteredMergedRecordParam = {
+    ...mergedRecordParam, 
+    fields: mergedRecordParam.fields.filter(field => !regex.test(field.tag))
+      .concat(fieldsFromSourceRecord)
+  };
+
+  return { mergedRecord: new MarcRecord({ 
+    ...filteredMergedRecordParam,
+    fields: orderBy([ ...filteredMergedRecordParam.fields], 'tag')}) 
+  };
+}
 
 export function addIntoArray (array, value) {
   return array.concat(value);

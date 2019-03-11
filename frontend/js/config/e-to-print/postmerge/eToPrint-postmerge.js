@@ -1,10 +1,10 @@
 // preferredRecord(pohjatietue), otherRecord(lähdetietue), result.mergedRecord
 import MarcRecord from 'marc-record-js';
-import { isEmpty, orderBy, isUndefined} from 'lodash';
+import { isEmpty, isUndefined} from 'lodash';
 import { hyphenate } from 'isbn-utils';
 import uuid from 'node-uuid';
 import { curry } from 'ramda';
-import { filterTag, findIndex, updateParamsfield, addTag, updatedMergedRecordParams, addIntoArray } from '../../../utils';
+import { filterTag, findIndex, updateParamsfield, addTag, updatedMergedRecordParams, addIntoArray, replaceFieldsFromSource } from '../../../utils';
 
 export const eToPrintPreset = [
   eToPrintRemoveTags,
@@ -14,28 +14,17 @@ export const eToPrintPreset = [
   eToPrintSelect300,
   eToPrintSelect655,
   eToPrintSelect776,
-  replaceFieldsFromSource,
+  replaceSourceFields,
   ISBNhyphenate,
   eToPrintSelect490_830
 ];
 
 
 // eToPrint postmerge functions ->
-export function replaceFieldsFromSource(targetRecord, sourcerecord, mergedRecordParam) {
+export function replaceSourceFields(targetRecord, sourcerecord, mergedRecordParam) {
   const mergeConfigurationFields = /^(1..|041|080|084|240|245|246|250|260|263|264|336|490|500|502|504|505|509|520|546|567|6[^5].|65[^5]|700|710|711|800|810|811|830)$/;
-
-  const fieldsFromSourceRecord = sourcerecord.fields.filter(field => mergeConfigurationFields.test(field.tag));
-
-  const filteredMergedRecordParam = {
-    ...mergedRecordParam, 
-    fields: mergedRecordParam.fields.filter(field => !mergeConfigurationFields.test(field.tag))
-      .concat(fieldsFromSourceRecord)
-  };
-
-  return { mergedRecord: new MarcRecord({ 
-    ...filteredMergedRecordParam,
-    fields: orderBy([ ...filteredMergedRecordParam.fields], 'tag')}) 
-  };
+  
+  return replaceFieldsFromSource(mergeConfigurationFields, sourcerecord, mergedRecordParam);
 }
 
 // removes specified tags from record (mergedRecordParam)

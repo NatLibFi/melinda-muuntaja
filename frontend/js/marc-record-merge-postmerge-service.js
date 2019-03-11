@@ -55,7 +55,7 @@ import { fieldOrderComparator } from './marc-field-sort';
 import { eToPrintPreset } from './config/e-to-print/postmerge/eToPrint-postmerge';
 import { isEmpty } from 'lodash';
 import { curry } from 'ramda';
-import { findTag, findIndex, updateParamsfield } from './utils';
+import { findTag, findIndex, updateParamsfield, replaceFieldsFromSource } from './utils';
    
 const defaultPreset = [
   check041aLength,
@@ -63,7 +63,8 @@ const defaultPreset = [
   sortMergedRecordFields,
   fix776Order,
   printToE200q,
-  prinToE300b
+  prinToE300b,
+  printToE336
 ];
 
 
@@ -88,6 +89,11 @@ export const preset = {
   all: allPreset
 };
 
+export function printToE336(targetRecord, sourcerecord, mergedRecordParam) {
+  const mergeConfigurationFields = /^(336)$/;
+  
+  return replaceFieldsFromSource(mergeConfigurationFields, sourcerecord, mergedRecordParam);
+}
 
 export function prinToE300b(preferredRecord, otherRecord, mergedRecordParam) {
   const tag = findTag(mergedRecordParam.fields, '300');
