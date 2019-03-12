@@ -53,7 +53,7 @@ import moment from 'moment';
 import { selectValues, selectRecordId, selectFieldsByValue, fieldHasSubfield, resetComponentHostLinkSubfield, isLinkedFieldOf } from './record-utils';
 import { fieldOrderComparator } from './marc-field-sort';
 import { eToPrintPreset } from './config/e-to-print/postmerge/eToPrint-postmerge';
-import { isEmpty } from 'lodash';
+import { isEmpty, orderBy } from 'lodash';
 import { curry } from 'ramda';
 import { findTag, findIndex, updateParamsfield, replaceFieldsFromSource } from './utils';
    
@@ -64,7 +64,8 @@ const defaultPreset = [
   fix776Order,
   printToE200q,
   prinToE300b,
-  printToE336
+  printToE336,
+  printToE264
 ];
 
 
@@ -89,10 +90,30 @@ export const preset = {
   all: allPreset
 };
 
-export function printToE336(targetRecord, sourcerecord, mergedRecordParam) {
+export function printToE264(targetRecord, sourceRecord, mergedRecordParam) {
+  const tags = sourceRecord.fields.filter(field => field.tag === '264');
+  
+  if (!isEmpty(tags)) {
+    const filteredTags = tags.reduce((collection, tag) => {
+      if (tag.ind2 === '1' || tag.ind2 === '4') {
+        collection.push(tag);
+      }
+      return collection;
+    }, []);
+
+    const filteredMergedRecordParamFields = mergedRecordParam.fields.filter(field => field.tag !== '264');
+    const updatedFields = orderBy(filteredMergedRecordParamFields.concat(filteredTags), 'tag');    
+    
+    return { mergedRecord: new MarcRecord({ ...mergedRecordParam, fields: updatedFields })};
+  }
+
+  return { mergedRecord: new MarcRecord({ ...mergedRecordParam, fields:  mergedRecordParam.fields.filter(field => field.tag !== '264') }) };
+}
+
+export function printToE336(targetRecord, sourceRecord, mergedRecordParam) {
   const mergeConfigurationFields = /^(336)$/;
   
-  return replaceFieldsFromSource(mergeConfigurationFields, sourcerecord, mergedRecordParam);
+  return replaceFieldsFromSource(mergeConfigurationFields, sourceRecord, mergedRecordParam);
 }
 
 export function prinToE300b(preferredRecord, otherRecord, mergedRecordParam) {
