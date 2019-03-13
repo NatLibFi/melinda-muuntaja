@@ -65,7 +65,8 @@ const defaultPreset = [
   printToE200q,
   prinToE300b,
   printToE336,
-  printToE264
+  printToE264,
+  printToE880
 ];
 
 
@@ -89,6 +90,12 @@ export const preset = {
   eToPrintPreset,
   all: allPreset
 };
+
+export function printToE880(targetRecord, sourceRecord, mergedRecordParam) {
+  const tags = sourceRecord.fields.filter(field => field.tag === '880');
+  const updatedFields = orderBy(mergedRecordParam.fields.concat(tags), 'tag');
+  return { mergedRecord: new MarcRecord({ ...mergedRecordParam, fields: updatedFields }) };
+}
 
 export function printToE264(targetRecord, sourceRecord, mergedRecordParam) {
   const tags = sourceRecord.fields.filter(field => field.tag === '264');
