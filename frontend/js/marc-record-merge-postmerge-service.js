@@ -55,18 +55,20 @@ import { fieldOrderComparator } from './marc-field-sort';
 import { eToPrintPreset } from './config/e-to-print/postmerge/eToPrint-postmerge';
 import { isEmpty, orderBy } from 'lodash';
 import { curry } from 'ramda';
-import { findTag, findIndex, updateParamsfield, replaceFieldsFromSource } from './utils';
+import { findTag, findIndex, filterTag, updateParamsfield, replaceFieldsFromSource, updatedMergedRecordParams } from './utils';
    
 const defaultPreset = [
+  // fix776Order,
   check041aLength,
   setAllZeroRecordId,
   sortMergedRecordFields,
-  fix776Order,
   printToE200q,
   prinToE300b,
-  printToE336,
+  printToE_importFields,
   printToE264,
-  printToE880
+  printToE880,
+  printToE300,
+  eToPrintSelect490_830
 ];
 
 
@@ -90,6 +92,47 @@ export const preset = {
   eToPrintPreset,
   all: allPreset
 };
+
+export function eToPrintSelect490_830 (targetRecord, sourceRecord, mergedRecordParam) {
+  const fieldTag = ['490', '830'];
+
+  const fieldPresent = curry((length, field) => {
+    if (field.code === 'x') {
+      return xSubfieldPunctuation(length, field);
+    }
+    return field;
+  });
+  
+  const updatedRecord = fieldTag.reduce((record, fieldTag) => {
+    const tag = {...filterTag(sourceRecord, fieldTag)};  
+    if(!isEmpty(tag)) {
+      const updatedSubfields = {
+        ...tag,
+        subfields: tag.subfields.map(fieldPresent(tag.subfields.length))
+      };  
+      const recordParams = updatedMergedRecordParams(record, updatedSubfields, findIndex(mergedRecordParam, fieldTag));
+      record = recordParams;
+    }
+
+    return record;
+  }, mergedRecordParam);
+  
+  return { 
+    mergedRecord: new MarcRecord(updatedRecord)
+  };
+
+  function xSubfieldPunctuation(length, field) {
+    return length > 2 ? { ...field, value:';' } : { ...field, value: ''};
+  }
+}
+
+export function printToE300(targetRecord, sourceRecord, mergedRecordParam) {
+  const tags = sourceRecord.fields.filter(field => field.tag === '300');
+  if (!isEmpty(tags)) {
+    return { mergedRecord: new MarcRecord(mergedRecordParam) };
+  }
+  return { mergedRecord: new MarcRecord(mergedRecordParam) };
+}
 
 export function printToE880(targetRecord, sourceRecord, mergedRecordParam) {
   const tags = sourceRecord.fields.filter(field => field.tag === '880');
@@ -117,9 +160,8 @@ export function printToE264(targetRecord, sourceRecord, mergedRecordParam) {
   return { mergedRecord: new MarcRecord({ ...mergedRecordParam, fields:  mergedRecordParam.fields.filter(field => field.tag !== '264') }) };
 }
 
-export function printToE336(targetRecord, sourceRecord, mergedRecordParam) {
-  const mergeConfigurationFields = /^(336)$/;
-  
+export function printToE_importFields(targetRecord, sourceRecord, mergedRecordParam) {
+  const mergeConfigurationFields = /^(336|066|776|080)$/;
   return replaceFieldsFromSource(mergeConfigurationFields, sourceRecord, mergedRecordParam);
 }
 
@@ -164,7 +206,8 @@ export function printToE200q(preferredRecord, otherRecord, mergedRecordParam) {
           code: 'q',
           value: ' '
         }
-      ]
+      ],
+      uuid: uuid.v4()
     };
 
     const update020 = curry((updatedSubfields, field) => {
@@ -188,28 +231,26 @@ export function printToE200q(preferredRecord, otherRecord, mergedRecordParam) {
   }
 }
 
+// Not going to do anything if there are multiple 776 fields.
+// export function fix776Order(preferredRecord, otherRecord, mergedRecordParam) {
+//   let mergedRecord = new MarcRecord(mergedRecordParam);
+//   let f776 = mergedRecord.fields.filter(field => field.tag === '776');
 
-export function fix776Order(preferredRecord, otherRecord, mergedRecordParam) {
-  let mergedRecord = new MarcRecord(mergedRecordParam);
-  let f776 = mergedRecord.fields.filter(field => field.tag === '776');
-
-
-  // Not going to do anything if there are multiple 776 fields..
-  if( f776.length !== 1 ) {
-    return { mergedRecord };
-  } else {
-    mergedRecord.fields.forEach(field => {
-      if ( field.tag === '776' ) {
-        field.subfields.sort(function(x, y) {
-          if( x.code < y.code ) return -1;
-          if( x.code > y.code ) return 1;
-          return 0;
-        });
-      }
-    });
-  }
-  return { mergedRecord };
-}
+//   if( f776.length !== 1 ) {
+//     return { mergedRecord };
+//   } else {
+//     mergedRecord.fields.forEach(field => {
+//       if ( field.tag === '776' ) {
+//         field.subfields.sort(function(x, y) {
+//           if( x.code < y.code ) return -1;
+//           if( x.code > y.code ) return 1;
+//           return 0;
+//         });
+//       }
+//     });
+//   }
+//   return { mergedRecord };
+// }
 
 export function applyPostMergeModifications(postMergeFunctions, preferredRecord, otherRecord, originalMergedRecord) {
   let mergedRecord = new MarcRecord(originalMergedRecord);
