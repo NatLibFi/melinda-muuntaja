@@ -67,8 +67,7 @@ const defaultPreset = [
   printToE_importFields,
   printToE264,
   printToE880,
-  printToE300,
-  eToPrintSelect490_830
+  printToE490_830
 ];
 
 
@@ -93,7 +92,7 @@ export const preset = {
   all: allPreset
 };
 
-export function eToPrintSelect490_830 (targetRecord, sourceRecord, mergedRecordParam) {
+export function printToE490_830 (targetRecord, sourceRecord, mergedRecordParam) {
   const fieldTag = ['490', '830'];
 
   const fieldPresent = curry((length, field) => {
@@ -124,14 +123,6 @@ export function eToPrintSelect490_830 (targetRecord, sourceRecord, mergedRecordP
   function xSubfieldPunctuation(length, field) {
     return length > 2 ? { ...field, value:';' } : { ...field, value: ''};
   }
-}
-
-export function printToE300(targetRecord, sourceRecord, mergedRecordParam) {
-  const tags = sourceRecord.fields.filter(field => field.tag === '300');
-  if (!isEmpty(tags)) {
-    return { mergedRecord: new MarcRecord(mergedRecordParam) };
-  }
-  return { mergedRecord: new MarcRecord(mergedRecordParam) };
 }
 
 export function printToE880(targetRecord, sourceRecord, mergedRecordParam) {
@@ -169,7 +160,6 @@ export function prinToE300b(preferredRecord, otherRecord, mergedRecordParam) {
   const tag = findTag(mergedRecordParam.fields, '300');
   const fieldB = tag.subfields.find(field => field.code === 'b');
   const fieldIndex = findIndex(mergedRecordParam, '300');
-
   if (fieldB) {
     const semicolon = fieldB.value.substr(-1) === ';';
     const subfield = semicolon ? removeSemicolon(fieldB) : fieldB;
@@ -177,11 +167,15 @@ export function prinToE300b(preferredRecord, otherRecord, mergedRecordParam) {
       ...tag,
       subfields: tag.subfields.map(field => updatedSubfields(field, subfield.value))
     };
+
     return { mergedRecord: new MarcRecord(updateParamsfield(mergedRecordParam, updatedTag.subfields, fieldIndex)) };
   }
   return { mergedRecord: new MarcRecord(mergedRecordParam) };
 
   function updatedSubfields(field, value) {
+    if (field.code == 'a') {
+      return { ...field, value: `${field.value} :` };
+    }
     if (field.code === 'b') {
       return { ...field, value };
     }
