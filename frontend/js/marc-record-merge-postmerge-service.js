@@ -53,7 +53,7 @@ import moment from 'moment';
 import { selectValues, selectRecordId, selectFieldsByValue, fieldHasSubfield, resetComponentHostLinkSubfield, isLinkedFieldOf } from './record-utils';
 import { fieldOrderComparator } from './marc-field-sort';
 import { eToPrintPreset } from './config/e-to-print/postmerge/eToPrint-postmerge';
-import { isEmpty, orderBy } from 'lodash';
+import { isEmpty, orderBy, sortBy } from 'lodash';
 import { curry } from 'ramda';
 import { findTag, findIndex, filterTag, updateParamsfield, replaceFieldsFromSource, updatedMergedRecordParams } from './utils';
    
@@ -67,7 +67,8 @@ const defaultPreset = [
   printToE_importFields,
   printToE264,
   printToE880,
-  printToE490_830
+  printToE490_830,
+  printToE776
 ];
 
 
@@ -91,6 +92,31 @@ export const preset = {
   eToPrintPreset,
   all: allPreset
 };
+
+export function printToE776 (targetRecord, sourceRecord, mergedRecordParam){
+  const regex = /^776$/;
+  const fieldsFromMergedRecordParam = mergedRecordParam.fields.filter(field => regex.test(field.tag));
+
+  const sortedFields = fieldsFromMergedRecordParam.reduce((collection, tag) => {
+    collection.push({ ...tag, subfields: sortBy(tag.subfields, 'code') });
+    return collection;
+  }, []);
+    
+  if (!isEmpty(fieldsFromMergedRecordParam)) {
+    const filteredMergedRecordParam = {
+      ...mergedRecordParam, 
+      fields: mergedRecordParam.fields.filter(field => !regex.test(field.tag))
+        .concat(sortedFields)
+    };
+
+    return { mergedRecord: new MarcRecord({ 
+      ...filteredMergedRecordParam,
+      fields: orderBy([ ...filteredMergedRecordParam.fields], 'tag')}) 
+    };
+  }
+ 
+  return { mergedRecord: new MarcRecord(mergedRecordParam) };
+}
 
 export function printToE490_830 (targetRecord, sourceRecord, mergedRecordParam) {
   const fieldTag = ['490', '830'];
@@ -152,7 +178,7 @@ export function printToE264(targetRecord, sourceRecord, mergedRecordParam) {
 }
 
 export function printToE_importFields(targetRecord, sourceRecord, mergedRecordParam) {
-  const mergeConfigurationFields = /^(336|066|776|080)$/;
+  const mergeConfigurationFields = /^(336|066|080)$/;
   return replaceFieldsFromSource(mergeConfigurationFields, sourceRecord, mergedRecordParam);
 }
 
