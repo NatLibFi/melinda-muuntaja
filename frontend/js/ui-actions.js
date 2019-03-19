@@ -44,13 +44,36 @@ import * as subrecordMergeTypes from './config/subrecord-merge-types';
 import * as MergeValidation from './marc-record-merge-validate-service';
 import * as PostMerge from './marc-record-merge-postmerge-service';
 import history from './history';
+import { CHANGE_MERGE_PROFILE } from './constants/action-type-constants';
 
 export const SWITCH_MERGE_CONFIG = 'SWITCH_MERGE_CONFIG';
+export const SWITCH_MERGE_TYPE = 'SWITCH_MERGE_TYPE';
+
+export function switchMergeType(mergeType) {
+  const config = { mergeType, mergeProfile: 'default' };
+  return function(dispatch) {
+    dispatch({
+      type: SWITCH_MERGE_TYPE,
+      config
+    });
+    dispatch(updateMergedRecord());
+  };
+}
 
 export function switchMergeConfig(config) {
   return function(dispatch) {
     dispatch({
       type: SWITCH_MERGE_CONFIG,
+      config
+    });
+    dispatch(updateMergedRecord());
+  };
+}
+
+export function changeMergeProfile(config) {
+  return function(dispatch) {
+    dispatch({
+      type: CHANGE_MERGE_PROFILE, 
       config
     });
     dispatch(updateMergedRecord());
@@ -455,10 +478,18 @@ export function swapRecords() {
     dispatch(setSourceRecordId(targetRecordId));
     dispatch(setTargetRecordId(sourceRecordId));
 
-    if (targetRecordId) dispatch(fetchRecord(targetRecordId, 'SOURCE'));
-    else dispatch(resetSourceRecord());
-    if (sourceRecordId) dispatch(fetchRecord(sourceRecordId, 'TARGET'));
-    else dispatch(resetTargetRecord());
+    if (targetRecordId) {
+      dispatch(fetchRecord(targetRecordId, 'SOURCE'));
+    } else {
+      dispatch(resetSourceRecord());
+    }
+
+    if (sourceRecordId) {
+      dispatch(fetchRecord(sourceRecordId, 'TARGET'));
+    } else {
+      dispatch(resetTargetRecord());
+    }
+
   };
 
 }
@@ -478,9 +509,11 @@ export function setTargetRecordId(recordId) {
 export function updateMergedRecord() {
 
   return function(dispatch, getState) {
-
-    const mergeProfile = getState().getIn(['config', 'mergeProfiles', getState().getIn(['config', 'selectedMergeProfile']), 'record']);
+    const getMergeProfile = getState().getIn(['config', 'mergeProfiles', getState().getIn(['config', 'selectedMergeProfile']), 'record']);
+    const defaultProfile = getState().getIn(['config', 'mergeProfiles']);
+    const mergeProfile = getMergeProfile === undefined ? defaultProfile.first() : getMergeProfile;
     const subrecordMergeType = getState().getIn(['config', 'mergeProfiles', getState().getIn(['config', 'selectedMergeProfile']), 'subrecords', 'mergeType']);
+
     const mergeConfiguration = mergeProfile.get('mergeConfiguration');
     const validationRules = mergeProfile.get('validationRules');
     const postMergeFixes = mergeProfile.get('postMergeFixes');
@@ -492,11 +525,9 @@ export function updateMergedRecord() {
     const otherRecord = getState().getIn(['sourceRecord', 'record']);
     const otherRecordHasSubrecords = getState().getIn(['sourceRecord', 'hasSubrecords']);
 
-    if (preferredRecord && otherRecord) {
+    if (preferredRecord && otherRecord) { //targetRecord and sourceRecord
       const merge = createRecordMerger(mergeConfiguration);
-
       const validationRulesClone = _.clone(validationRules);
-
       if (subrecordMergeType === subrecordMergeTypes.DISALLOW_SUBRECORDS) {
         validationRulesClone.push(MergeValidation.otherRecordDoesNotHaveSubrecords);
         validationRulesClone.push(MergeValidation.preferredRecordDoesNotHaveSubrecords);
@@ -579,29 +610,21 @@ export function clearMergedRecord() {
 }
 
 export const fetchRecord = (function() {
-
   const APIBasePath = __DEV__ ? 'http://localhost:3001/api': '/api';
-
   const fetchSourceRecord = recordFetch(APIBasePath, loadSourceRecord, setSourceRecord, setSourceRecordError);
   const fetchTargetRecord = recordFetch(APIBasePath, loadTargetRecord, setTargetRecord, setTargetRecordError);
-
   return function(recordId, type) {
-
     return function (dispatch) {
-
       if (type !== 'SOURCE' && type !== 'TARGET') {
         throw new Error('fetchRecord type parameter must be either SOURCE or TARGET');
       }
-
       if (type === 'SOURCE') {
         return fetchSourceRecord(recordId, dispatch);
       }
-
       if (type === 'TARGET') {
         return fetchTargetRecord(recordId, dispatch);
       }
     };
-
   };
 
 })();
@@ -610,32 +633,25 @@ function recordFetch(APIBasePath, loadRecordAction, setRecordAction, setRecordEr
   let currentRecordId;
   return function(recordId, dispatch) {
     currentRecordId = recordId;
-
+    // sets state to loading
     dispatch(loadRecordAction(recordId));
 
     return fetch(`${APIBasePath}/${recordId}`)
       .then(validateResponseStatus)
       .then(response => response.json())
       .then(json => {
-
-
         if (currentRecordId === recordId) {
-
           const {record, subrecords} = marcRecordsFrom(json.record, json.subrecords);
-
           dispatch(setRecordAction(record, subrecords, recordId));
           dispatch(updateMergedRecord());
         }
-
       }).catch(exceptCoreErrors((error) => {
-
         if (error instanceof FetchNotOkError) {
           switch (error.response.status) {
             case HttpStatus.NOT_FOUND: return dispatch(setRecordErrorAction('Tietuetta ei löytynyt'));
             case HttpStatus.INTERNAL_SERVER_ERROR: return dispatch(setRecordErrorAction('Tietueen lataamisessa tapahtui virhe.'));
           }
         }
-
         dispatch(setRecordErrorAction('There has been a problem with fetch operation: ' + error.message));
       }));
   };

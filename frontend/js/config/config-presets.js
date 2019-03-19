@@ -26,13 +26,14 @@
 *
 */
 
-import mergeProfiles from './merge-profiles';
+import mergeProfiles from './print-to-e';
 
 const defaultPreset = {
   default: mergeProfiles['default']
 };
 
-export const preset = {
+export const printToE = {
+  mergeType: 'printToE',
   'defaults': defaultPreset,
   'aleph': mergeProfiles,
   'kvp': mergeProfiles,

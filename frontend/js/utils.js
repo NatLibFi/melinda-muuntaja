@@ -26,6 +26,68 @@
 *
 */
 
+import { orderBy } from 'lodash';
+import MarcRecord from 'marc-record-js';
+
+export function replaceFieldsFromSource(regex, sourcerecord, mergedRecordParam) {
+  const fieldsFromSourceRecord = sourcerecord.fields.filter(field => regex.test(field.tag));
+
+  const filteredMergedRecordParam = {
+    ...mergedRecordParam, 
+    fields: mergedRecordParam.fields.filter(field => !regex.test(field.tag))
+      .concat(fieldsFromSourceRecord)
+  };
+
+  return { mergedRecord: new MarcRecord({ 
+    ...filteredMergedRecordParam,
+    fields: orderBy([ ...filteredMergedRecordParam.fields], 'tag')}) 
+  };
+}
+
+export function addIntoArray (array, value) {
+  return array.concat(value);
+} 
+
+export function updatedMergedRecordParams(mergedRecordParam, updatedSubfields, fieldIndex) {
+  return fieldIndex > -1 ? updateParamsfield(mergedRecordParam, updatedSubfields.subfields, fieldIndex) : addTag(mergedRecordParam, updatedSubfields);
+}
+
+export function addTag(mergedRecordParam, tag) {
+  return { 
+    ...mergedRecordParam,
+    fields: orderBy([ ...mergedRecordParam.fields, tag], 'tag')
+  };
+}
+
+export function updateParamsfield(mergedRecordParam, subfields, fieldIndex) {
+  return { 
+    ...mergedRecordParam,
+    fields: mergedRecordParam.fields.map((field, index) => updateField(field, subfields, fieldIndex, index))
+  };
+}
+
+function updateField(field, updatedSubfields, fieldIndex, index) {
+  if (index === fieldIndex) {
+    return {
+      ...field,
+      subfields: updatedSubfields
+    };
+  }
+  return field;
+}
+
+export function filterTag (record, fieldTag) {
+  return record.fields.find(obj => obj.tag === fieldTag);
+}
+
+export function findTag(fields, value) {
+  return fields.find(obj => obj.tag === value);
+}
+
+export function findIndex (record, fieldTag) {
+  return record.fields.findIndex(obj => obj.tag === fieldTag);
+}
+
 export function exceptCoreErrors(fn) {
 
   return (error) => {

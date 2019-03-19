@@ -30,12 +30,13 @@
 
 import { preset as MergeValidationPreset } from '../../marc-record-merge-validate-service';
 import { preset as PostMergePreset } from '../../marc-record-merge-postmerge-service';
-import TargetRecord from '../target-record';
+import TargetRecord from './target-record';
 import * as subrecordMergeTypes from '../subrecord-merge-types';
 
 module.exports = {
   "name": "Pidetään osakohteet",
   "description": "TESTIPROFIILI",
+  "mergeType": "demo",
   "record": {
     "targetRecord": TargetRecord,
     "validationRules": MergeValidationPreset.melinda_host,

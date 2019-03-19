@@ -42,7 +42,7 @@ const TEST_CASE_SEPARATOR = '\n\n\n\n';
 
 const storiesPath = path.resolve(__dirname, '../test/marc-record-merge-postmerge-service');
 
-describe('marc-record-merge-validate-service', () => {
+describe('marc-record-postmerge-service', () => {
 
   before(() => {
   
@@ -86,7 +86,7 @@ describe('marc-record-merge-validate-service', () => {
   describe('applyPostMergeModifications', () => {
     const validateStoriesText = fs.readFileSync(path.resolve(storiesPath, 'applyPostMergeModifications.stories'), 'utf8');
     const validateMergeCandidatesTestCases = parseStories(validateStoriesText);
-
+    
     validateMergeCandidatesTestCases.forEach(testCase => {
 
       it(testCase.testName, () => {

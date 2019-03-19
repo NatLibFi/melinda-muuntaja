@@ -1,0 +1,20 @@
+All post merge modifications
+Preferred record:
+LDR    ^^^^^cam^a^^^^^^^4i
+008    ^^^^^^s2018^^^^fi^|^^|^|^^^^||0|^0^fin|c
+041    ‡afin
+337    ‡akäytettävissä ilman laitetta‡bn‡2rdamedia
+338    ‡anide‡bnc‡2rdacarrier
+530    ‡aJulkaistu myös verkkoaineistona.
+
+Other record:
+LDR    00000cam^a22003374i^4500
+008    180418s2018^^^^fi^||||^o^^^^o00|^0|fin|
+
+Merged record before postmerge:
+LDR    ^^^^^cam^a^^^^^^^4i
+008    180418s2018^^^^fi^||||^o^^^^o00|^0|fin|c
+
+Expected record after postmerge:
+LDR    ^^^^^cam^a^^^^^^^4i
+008    ^^^^^^s2018^^^^fi^||||^|^^^^o00|^0|fin|c

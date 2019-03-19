@@ -41,6 +41,5 @@ export function initKeyboardListener(el, store) {
     }
     
   }
-
   el.addEventListener('keydown', onKeyDown);
 }
