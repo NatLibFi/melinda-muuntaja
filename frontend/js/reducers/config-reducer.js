@@ -26,19 +26,26 @@
 *
 */
 
-import { Map } from 'immutable';
+import { Map   } from 'immutable';
 import _ from 'lodash';
-import { SWITCH_MERGE_CONFIG } from '../ui-actions';
+import { SWITCH_MERGE_CONFIG, SWITCH_MERGE_TYPE } from '../ui-actions';
 import { CREATE_SESSION_SUCCESS } from 'commons/constants/action-type-constants';
-import { preset } from '../config/config-presets';
+import { printToE } from '../config/config-presets';
+import { eToPrint } from '../config/e-to-print/config-presets';
 
 const INITIAL_STATE = Map({
   selectedMergeProfile: 'default',
-  mergeProfiles: Map()
+  mergeProfiles: Map(),
+  userInfo: Map(),
+  mergeType: 'printToE'
 });
 
 export default function ui(state = INITIAL_STATE, action) {
+  const userinfo = state.get('userInfo');
   switch (action.type) {
+    case SWITCH_MERGE_TYPE:
+      window.localStorage.setItem('muuntajaConfig', action.config.mergeProfile);
+      return setConfiguration(state, userinfo, action.config.mergeType);
     case SWITCH_MERGE_CONFIG:
       window.localStorage.setItem('muuntajaConfig', action.config);
       return state.set('selectedMergeProfile', action.config);
@@ -49,22 +56,26 @@ export default function ui(state = INITIAL_STATE, action) {
   return state;
 }
 
-function setConfiguration(state, userinfo) {
+function setConfiguration(state, userinfo, mergeType = 'printToE') {
+  const configPresets = [printToE, eToPrint]; // TODO: create separate file for all mergetype definitions and import them here
+  const presets = mergeType ? configPresets.find(preset => preset.mergeType === mergeType) : printToE;
   let configPreset;
-
   const department = userinfo.department.toLowerCase();
+  
+  if (presets.hasOwnProperty(department)) configPreset = presets[department];
+  else configPreset = presets.defaults;
+  return setMergeProfiles(state, configPreset, userinfo, mergeType);
+}
 
-  if (preset.hasOwnProperty(department)) configPreset = preset[department];
-  else configPreset = preset.defaults;
-
+function setMergeProfiles (state, configPreset, userinfo, mergeType) {
   return state.set('mergeProfiles', Object.keys(configPreset).reduce((mergeProfiles, key) => {
     if (configPreset[key] === undefined) return mergeProfiles;
 
     const mergeProfile = replaceConfigVariables(configPreset[key], userinfo, configPreset[key].lowTag);
-
     return mergeProfiles.set(key, Map({
       name: mergeProfile.name,
       description: mergeProfile.description,
+      mergeType: mergeProfile.mergeType,
       record: Map({
         'targetRecord': mergeProfile.record.targetRecord,
         'validationRules': mergeProfile.record.validationRules,
@@ -82,14 +93,15 @@ function setConfiguration(state, userinfo) {
         'newFields': mergeProfile.subrecords.newFields,
       })
     }));
-  }, Map()));
+  }, Map()))
+    .set('userInfo', userinfo)
+    .set('mergeType', mergeType)
+    .set('selectedMergeProfile', 'default');
 }
 
 function replaceConfigVariables(orig_config, userinfo, forcedLowTag = null) {
   let config = _.clone(orig_config);
-
   config = replacePropertyValue('[LOWTAG]', forcedLowTag || userinfo.department, config);
-
   return config;
 }
 

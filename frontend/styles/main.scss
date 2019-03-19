@@ -1,18 +1,119 @@
 
 @import 'vendor/materialize/materialize';
+@import './variables';
 
 html {
   overflow-y: scroll;
+  .marc-record-panel, .marc-record-editor{
+    font-family: 'roboto_monoregular';
+  }
+}
+.context {
+ background-color: $theme-background;
+ height: 100vh;
 }
 
-.navbar-fixed {
-  z-index: 1000;    
-}
-
-.navbar-fixed nav {
-  position: static;    
+.input-field {
+  margin-top: 0.7em;
 }
 
 html.modal-open {
   overflow-y: hidden; 
+}
+
+.brand-logo {
+  &:hover {
+    background-color: transparent;
+  }
+}
+//util component overrides
+.marc-record-container {
+  .row{
+  margin-left: 0;
+  margin-right: 0;
+  }
+
+  .row-no-bottom-margin {
+    border-bottom: 1px solid rgb(230,230,230);
+  }
+}
+
+.fixed-action-btn {
+  .btn-floating {
+    &:hover{
+      background-color: $theme-green-hover;
+    }
+  }
+  .btn-large {
+    padding-top: 4px;
+    width: 96.5px;
+    height: 96.5px;
+    line-height: 0;
+  }
+  .btn-large.disabled {
+    color: white !important;
+  }
+}
+
+// custom classes
+.mt-default{
+  cursor: default;
+}
+
+.mt-warning-text{
+  font-size: 14px;
+  color: #e4a2b1;
+  font-weight: bold;
+  padding-top: 10px;
+  text-transform: uppercase;
+}
+.mt-theme-blue {
+  color: $theme-blue;
+}
+.mt-inline {
+  display: inline;
+}
+
+.mt-btn {
+  background-color: $theme-blue;
+  &:hover{
+    background-color: #0379b3;
+  }
+}
+
+.mt-btn-position {
+  right: 45px;
+  bottom: 45px;
+}
+
+.mt-loader-container {
+  margin-top: 50px;
+  margin-bottom: 30px;
+}
+
+
+// self-hosted material design icon rules
+.material-icons {
+  font-family: 'Material Icons';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24px;  /* Preferred icon size */
+  display: inline-block;
+  line-height: 1;
+  text-transform: none;
+  letter-spacing: normal;
+  word-wrap: normal;
+  white-space: nowrap;
+  direction: ltr;
+
+  /* Support for all WebKit browsers. */
+  -webkit-font-smoothing: antialiased;
+  /* Support for Safari and Chrome. */
+  text-rendering: optimizeLegibility;
+
+  /* Support for Firefox. */
+  -moz-osx-font-smoothing: grayscale;
+
+  /* Support for IE. */
+  font-feature-settings: 'liga';
 }

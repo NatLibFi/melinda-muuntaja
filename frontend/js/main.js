@@ -41,11 +41,16 @@ import * as Cookies from 'js-cookie';
 import { validateSession } from 'commons/action-creators/session-actions';
 import { initKeyboardListener } from './keyboard-commands';
 import history from './history';
+import 'material-design-icons-iconfont';
+import '../styles/main.scss';
+import 'styles/components/record-merge-panel.scss'; // alias in Webpack resolve property
+import '../fonts/index.css';
 
 const loggerMiddleware = createLogger();
+window.jQuery = window.$ = require('jquery');
+import 'materialize-css';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-
 const store = createStore(
   rootReducer,
   composeEnhancers(

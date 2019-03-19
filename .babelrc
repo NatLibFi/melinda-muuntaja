@@ -2,7 +2,7 @@
   "presets": ["es2015", "react", "stage-2"],
   "env": {
     "dev": {
-      "plugins": ['react-hot-loader']
+      "plugins": ["react-hot-loader"]
     },
     "test": {
       "plugins": ["rewire"]
@@ -13,7 +13,7 @@
       "root": ["."],
       "alias": {
         "server": "@natlibfi/melinda-ui-commons/dist/server/",
-        "commons": "@natlibfi/melinda-ui-commons/dist/frontend/js/",
+        "commons": "@natlibfi/melinda-ui-commons/dist/frontend/js/"
       }
     }]
   ]

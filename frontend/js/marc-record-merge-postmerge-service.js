@@ -52,41 +52,225 @@ import uuid from 'node-uuid';
 import moment from 'moment';
 import { selectValues, selectRecordId, selectFieldsByValue, fieldHasSubfield, resetComponentHostLinkSubfield, isLinkedFieldOf } from './record-utils';
 import { fieldOrderComparator } from './marc-field-sort';
-
-
+import { eToPrintPreset } from './config/e-to-print/postmerge/eToPrint-postmerge';
+import { isEmpty, orderBy, sortBy } from 'lodash';
+import { curry } from 'ramda';
+import { findTag, findIndex, filterTag, updateParamsfield, replaceFieldsFromSource, updatedMergedRecordParams } from './utils';
+   
 const defaultPreset = [
-  check041aLength, setAllZeroRecordId, sortMergedRecordFields, fix776Order,
+  // fix776Order,
+  check041aLength,
+  setAllZeroRecordId,
+  sortMergedRecordFields,
+  printToE200q,
+  prinToE300b,
+  printToE_importFields,
+  printToE264,
+  printToE880,
+  printToE490_830,
+  printToE776
 ];
 
+
 const allPreset = [
-  check041aLength, addLOWSIDFieldsFromOther, addLOWSIDFieldsFromPreferred, add035zFromOther, add035zFromPreferred, removeExtra035aFromMerged, 
-  setAllZeroRecordId, add583NoteAboutMerge, removeCATHistory, add500ReprintInfo, handle880Fields, sortMergedRecordFields ];
+  check041aLength,
+  addLOWSIDFieldsFromOther,
+  addLOWSIDFieldsFromPreferred,
+  add035zFromOther, 
+  add035zFromPreferred,
+  removeExtra035aFromMerged, 
+  setAllZeroRecordId,
+  add583NoteAboutMerge, 
+  removeCATHistory, 
+  add500ReprintInfo, 
+  handle880Fields, 
+  sortMergedRecordFields
+];
 
 export const preset = {
   defaults: defaultPreset,
+  eToPrintPreset,
   all: allPreset
 };
 
-export function fix776Order(preferredRecord, otherRecord, mergedRecordParam) {
-  let mergedRecord = new MarcRecord(mergedRecordParam);
-  let f776 = mergedRecord.fields.filter(field => field.tag === '776');
+export function printToE776 (targetRecord, sourceRecord, mergedRecordParam){
+  const regex = /^776$/;
+  const fieldsFromMergedRecordParam = mergedRecordParam.fields.filter(field => regex.test(field.tag));
 
-  // Not going to do anything if there are multiple 776 fields..
-  if( f776.length !== 1 ) {
-    return { mergedRecord };
-  } else {
-    mergedRecord.fields.forEach(field => {
-      if ( field.tag === '776' ) {
-        field.subfields.sort(function(x, y) {
-          if( x.code < y.code ) return -1;
-          if( x.code > y.code ) return 1;
-          return 0;
-        });
-      }
-    });
+  const sortedFields = fieldsFromMergedRecordParam.reduce((collection, tag) => {
+    collection.push({ ...tag, subfields: sortBy(tag.subfields, 'code') });
+    return collection;
+  }, []);
+    
+  if (!isEmpty(fieldsFromMergedRecordParam)) {
+    const filteredMergedRecordParam = {
+      ...mergedRecordParam, 
+      fields: mergedRecordParam.fields.filter(field => !regex.test(field.tag))
+        .concat(sortedFields)
+    };
+
+    return { mergedRecord: new MarcRecord({ 
+      ...filteredMergedRecordParam,
+      fields: orderBy([ ...filteredMergedRecordParam.fields], 'tag')}) 
+    };
   }
-  return { mergedRecord };
+ 
+  return { mergedRecord: new MarcRecord(mergedRecordParam) };
 }
+
+export function printToE490_830 (targetRecord, sourceRecord, mergedRecordParam) {
+  const fieldTag = ['490', '830'];
+
+  const fieldPresent = curry((length, field) => {
+    if (field.code === 'x') {
+      return xSubfieldPunctuation(length, field);
+    }
+    return field;
+  });
+  
+  const updatedRecord = fieldTag.reduce((record, fieldTag) => {
+    const tag = {...filterTag(sourceRecord, fieldTag)};  
+    if(!isEmpty(tag)) {
+      const updatedSubfields = {
+        ...tag,
+        subfields: tag.subfields.map(fieldPresent(tag.subfields.length))
+      };  
+      const recordParams = updatedMergedRecordParams(record, updatedSubfields, findIndex(mergedRecordParam, fieldTag));
+      record = recordParams;
+    }
+
+    return record;
+  }, mergedRecordParam);
+  
+  return { 
+    mergedRecord: new MarcRecord(updatedRecord)
+  };
+
+  function xSubfieldPunctuation(length, field) {
+    return length > 2 ? { ...field, value:';' } : { ...field, value: ''};
+  }
+}
+
+export function printToE880(targetRecord, sourceRecord, mergedRecordParam) {
+  const tags = sourceRecord.fields.filter(field => field.tag === '880');
+  const updatedFields = orderBy(mergedRecordParam.fields.concat(tags), 'tag');
+  return { mergedRecord: new MarcRecord({ ...mergedRecordParam, fields: updatedFields }) };
+}
+
+export function printToE264(targetRecord, sourceRecord, mergedRecordParam) {
+  const tags = sourceRecord.fields.filter(field => field.tag === '264');
+  
+  if (!isEmpty(tags)) {
+    const filteredTags = tags.reduce((collection, tag) => {
+      if (tag.ind2 === '1' || tag.ind2 === '4') {
+        collection.push(tag);
+      }
+      return collection;
+    }, []);
+
+    const filteredMergedRecordParamFields = mergedRecordParam.fields.filter(field => field.tag !== '264');
+    const updatedFields = orderBy(filteredMergedRecordParamFields.concat(filteredTags), 'tag');    
+    
+    return { mergedRecord: new MarcRecord({ ...mergedRecordParam, fields: updatedFields })};
+  }
+
+  return { mergedRecord: new MarcRecord({ ...mergedRecordParam, fields:  mergedRecordParam.fields.filter(field => field.tag !== '264') }) };
+}
+
+export function printToE_importFields(targetRecord, sourceRecord, mergedRecordParam) {
+  const mergeConfigurationFields = /^(336|066|080)$/;
+  return replaceFieldsFromSource(mergeConfigurationFields, sourceRecord, mergedRecordParam);
+}
+
+export function prinToE300b(preferredRecord, otherRecord, mergedRecordParam) {
+  const tag = findTag(mergedRecordParam.fields, '300');
+  const fieldB = tag.subfields.find(field => field.code === 'b');
+  const fieldIndex = findIndex(mergedRecordParam, '300');
+  if (fieldB) {
+    const semicolon = fieldB.value.substr(-1) === ';';
+    const subfield = semicolon ? removeSemicolon(fieldB) : fieldB;
+    const updatedTag = {
+      ...tag,
+      subfields: tag.subfields.map(field => updatedSubfields(field, subfield.value))
+    };
+
+    return { mergedRecord: new MarcRecord(updateParamsfield(mergedRecordParam, updatedTag.subfields, fieldIndex)) };
+  }
+  return { mergedRecord: new MarcRecord(mergedRecordParam) };
+
+  function updatedSubfields(field, value) {
+    if (field.code == 'a') {
+      return { ...field, value: `${field.value} :` };
+    }
+    if (field.code === 'b') {
+      return { ...field, value };
+    }
+    return field;
+  }
+
+  function removeSemicolon(fieldB) {
+    return { ...fieldB, value: fieldB.value.substring(0, fieldB.value.length - 1).trim() };
+  }
+}
+
+// creates an empty q subfield if q value not present, tag 020
+export function printToE200q(preferredRecord, otherRecord, mergedRecordParam) {
+  const tag = findTag(mergedRecordParam.fields, '020');
+  
+  if (isEmpty(tag.subfields.filter(obj => obj.code === 'q'))) {
+    const updatedSubfields = {
+      ...tag,
+      subfields: [
+        ...tag.subfields,
+        { 
+          code: 'q',
+          value: ' '
+        }
+      ],
+      uuid: uuid.v4()
+    };
+
+    const update020 = curry((updatedSubfields, field) => {
+      if (field.tag === '020') {    
+        return updatedSubfields;
+      }
+      return field;
+    });
+
+    const updatedRecord = {
+      ...mergedRecordParam,
+      fields: mergedRecordParam.fields.map(update020(updatedSubfields))
+    };
+    return { mergedRecord: new MarcRecord(updatedRecord) };
+  }
+  
+  return { mergedRecord: new MarcRecord(mergedRecordParam) };
+
+  function findTag(fields, value) {
+    return fields.find(obj => obj.tag === value);
+  }
+}
+
+// Not going to do anything if there are multiple 776 fields.
+// export function fix776Order(preferredRecord, otherRecord, mergedRecordParam) {
+//   let mergedRecord = new MarcRecord(mergedRecordParam);
+//   let f776 = mergedRecord.fields.filter(field => field.tag === '776');
+
+//   if( f776.length !== 1 ) {
+//     return { mergedRecord };
+//   } else {
+//     mergedRecord.fields.forEach(field => {
+//       if ( field.tag === '776' ) {
+//         field.subfields.sort(function(x, y) {
+//           if( x.code < y.code ) return -1;
+//           if( x.code > y.code ) return 1;
+//           return 0;
+//         });
+//       }
+//     });
+//   }
+//   return { mergedRecord };
+// }
 
 export function applyPostMergeModifications(postMergeFunctions, preferredRecord, otherRecord, originalMergedRecord) {
   let mergedRecord = new MarcRecord(originalMergedRecord);
@@ -96,8 +280,7 @@ export function applyPostMergeModifications(postMergeFunctions, preferredRecord,
   };
 
   const result = postMergeFunctions.reduce((result, fn) => {
-    const fnResult = fn(preferredRecord, otherRecord, result.mergedRecord);
-
+    const fnResult = fn(preferredRecord, otherRecord, result.mergedRecord); 
     return {
       mergedRecord: fnResult.mergedRecord,
       notes: _.concat(result.notes, fnResult.notes || [])
@@ -132,14 +315,12 @@ export function addLOWSIDFieldsFromOther(preferredRecord, otherRecord, mergedRec
   var otherRecordLOWFieldList = otherRecord.fields
     .filter(field => field.tag === 'LOW')
     .map(markAsPostmergeField);
-
   mergedRecord.fields = mergedRecord.fields.concat(otherRecordLOWFieldList);
 
   const otherRecordLibraryIdList = selectValues(otherRecord, 'LOW', 'a');
 
   otherRecordLibraryIdList.forEach(libraryId => {
     const otherRecordSIDFieldList = selectFieldsByValue(otherRecord, 'SID', 'b', libraryId.toLowerCase());
-
     if (otherRecordSIDFieldList.length > 0) {
 
       mergedRecord.fields = _.concat(mergedRecord.fields, otherRecordSIDFieldList.map(markAsPostmergeField));
@@ -425,7 +606,6 @@ function updateLinks(linkIndex, field, linkedFieldList) {
 
 export function sortMergedRecordFields(preferredRecord, otherRecord, mergedRecordParam) {
   const mergedRecord = new MarcRecord(mergedRecordParam);
-
   mergedRecord.fields.sort(fieldOrderComparator);
 
   return { mergedRecord };

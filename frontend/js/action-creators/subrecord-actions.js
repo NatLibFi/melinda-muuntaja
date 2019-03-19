@@ -162,7 +162,6 @@ export function setMergedSubrecords(rows, actionType) {
 }
 
 export function updateMergedSubrecord(rowId) {
-
   return function(dispatch, getState) {
 
     const row = getState().getIn(['subrecords', rowId]);

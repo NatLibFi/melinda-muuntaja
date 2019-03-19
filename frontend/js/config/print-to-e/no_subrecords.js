@@ -26,20 +26,30 @@
 *
 */
 
-var rimraf = require('rimraf');
-var path = require('path');
-var fs = require('fs');
+/*eslint-disable quotes*/
 
-var buildDir = path.resolve(__dirname, '../dist');
-var publicDir = path.resolve(buildDir, 'public');
+import { preset as MergeValidationPreset } from '../../marc-record-merge-validate-service';
+import { preset as PostMergePreset } from '../../marc-record-merge-postmerge-service';
+import TargetRecord from './target-record';
+import * as subrecordMergeTypes from '../subrecord-merge-types';
 
-rimraf(buildDir, function (err) {
-  if (err) {
-    throw err;
+module.exports = {
+  "name": "Ei osakohteita",
+  "description": "TESTIPROFIILI",
+  "mergeType": "demo",
+  "record": {
+    "targetRecord": TargetRecord,
+    "validationRules": MergeValidationPreset.melinda_host,
+    "postMergeFixes": PostMergePreset.defaults,
+    "mergeConfiguration": {
+      "fields": {
+        "1..": { "action": "copy", "options": { "dropOriginal": true } },
+      }
+    }
+  },
+  "subrecords": {
+    "mergeType": subrecordMergeTypes.DISALLOW_SUBRECORDS
   }
+};
 
-  if (process.argv.indexOf('createdir') >= 0) {
-    fs.mkdirSync(buildDir);
-    fs.mkdirSync(publicDir);
-  }
-});
+/*eslint-enable quotes*/

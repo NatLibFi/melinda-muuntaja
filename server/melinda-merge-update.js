@@ -97,28 +97,28 @@ export function commitMerge(client, operationType, subrecordMergeType, otherReco
     });
 
     return executeTransaction(_.concat(
-        otherSubrecordActions,
-        mergedSubrecordActions
-      ), [mergedRecordRollbackAction]).then(function(results) {
-        results.unshift(res);
-        logger.log('info', `${jobId}] Commit merge job ${jobId} completed.`);
-        return results;
-      }).catch(function(error) {
-        if (error instanceof RollbackError) {
-          logger.log('error', `${jobId}] Rollback failed`);
-          logger.log('error', jobId, error);
-          logger.log('error', `${jobId}] Commit merge job ${jobId} failed.`);
-          logger.log('info', `${jobId}] Rollback failed`);
-          logger.log('info', jobId, error);
-          logger.log('info', `${jobId}] Commit merge job ${jobId} failed.`);
-        } else {
-          error.message += ' (rollback was successful)';
-          logger.log('info', `${jobId}] Rollback was successful`);
-          logger.log('info', `${jobId}] Error in transaction`, error);
-          logger.log('info', `${jobId}] Commit merge job ${jobId} failed.`);
-        }
-        throw error;
-      });
+      otherSubrecordActions,
+      mergedSubrecordActions
+    ), [mergedRecordRollbackAction]).then(function(results) {
+      results.unshift(res);
+      logger.log('info', `${jobId}] Commit merge job ${jobId} completed.`);
+      return results;
+    }).catch(function(error) {
+      if (error instanceof RollbackError) {
+        logger.log('error', `${jobId}] Rollback failed`);
+        logger.log('error', jobId, error);
+        logger.log('error', `${jobId}] Commit merge job ${jobId} failed.`);
+        logger.log('info', `${jobId}] Rollback failed`);
+        logger.log('info', jobId, error);
+        logger.log('info', `${jobId}] Commit merge job ${jobId} failed.`);
+      } else {
+        error.message += ' (rollback was successful)';
+        logger.log('info', `${jobId}] Rollback was successful`);
+        logger.log('info', `${jobId}] Error in transaction`, error);
+        logger.log('info', `${jobId}] Commit merge job ${jobId} failed.`);
+      }
+      throw error;
+    });
   }
 
   function createRecord(record) {
