@@ -30,7 +30,7 @@ import MarcRecord from 'marc-record-js';
 import { decorateFieldsWithUuid } from '../../record-utils';
 
 const record = new MarcRecord({
-  leader: '^^^^^cam^a^^^^^^^4i',
+  leader: '00000cam^a22006134i^4500',
   fields: [
     {
       tag: '008',
