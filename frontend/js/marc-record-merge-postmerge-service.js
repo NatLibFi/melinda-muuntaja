@@ -217,7 +217,7 @@ export function prinToE300b(preferredRecord, otherRecord, mergedRecordParam) {
 export function printToE200q(preferredRecord, otherRecord, mergedRecordParam) {
   const tag = findTag(mergedRecordParam.fields, '020');
   
-  if (isEmpty(tag.subfields.filter(obj => obj.code === 'q'))) {
+  if (tag && isEmpty(tag.subfields.filter(obj => obj.code === 'q'))) {
     const updatedSubfields = {
       ...tag,
       subfields: [
