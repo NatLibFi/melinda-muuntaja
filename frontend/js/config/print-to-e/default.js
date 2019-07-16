@@ -94,7 +94,7 @@ import { hyphenate } from 'isbn-utils';
 
 module.exports = {
   "name": "Oletus",
-  "description": "Muunnos täydentää e-aineiston tietueen painetun aineiston tietueen tiedoilla. Luokitus- ja sisällönkuvailukentistä kopioidaan vain omalle organisaatiolle merkityt kentät. Muunnos ei käsittele osakohteita.",
+  "description": "Muunnos täydentää e-aineiston tietueen painetun aineiston tietueen tiedoilla. Muunnos ei käsittele osakohteita.",
   "mergeType": "printToE",
   "record": {
     "targetRecord": TargetRecord,
