@@ -280,11 +280,6 @@ module.exports = {
         "500": { 
           "action": "copy", 
           "options": { 
-            "copyIf": { 
-              "9": { 
-                "value": "[LOWTAG]<KEEP>" 
-              }
-            },
             "reduce": { 
               "subfields": ["9"],
               "condition": "unless",
@@ -295,11 +290,6 @@ module.exports = {
         "502": { 
           "action": "copy", 
           "options": { 
-            "copyIf": { 
-              "9": { 
-                "value": "[LOWTAG]<KEEP>" 
-              } 
-            }, 
             "reduce": { 
               "subfields": ["9"], 
               "condition": "unless", 
