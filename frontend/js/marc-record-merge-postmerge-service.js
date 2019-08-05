@@ -447,8 +447,6 @@ export function removeExtra035aFromMerged(preferredRecord, otherRecord, mergedRe
   };
 }
 
-
-// TODO
 export function add080VersionCode (preferredRecord, otherRecord, mergedRecordParam) {
   const mergedRecord = new MarcRecord(mergedRecordParam);
 
@@ -460,7 +458,6 @@ export function add080VersionCode (preferredRecord, otherRecord, mergedRecordPar
           hasCode2 = true;
         }
       });
-
       if (!hasCode2) {
         field.subfields.push(createField({ code: '2', value: '1974/fin/fennica' }));
       }
@@ -471,7 +468,6 @@ export function add080VersionCode (preferredRecord, otherRecord, mergedRecordPar
     mergedRecord
   };
 }
-
 
 export function setAllZeroRecordId(preferredRecord, otherRecord, mergedRecordParam) {
   const mergedRecord = new MarcRecord(mergedRecordParam);
