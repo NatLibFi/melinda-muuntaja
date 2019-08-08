@@ -452,7 +452,7 @@ export function add080VersionCode (preferredRecord, otherRecord, mergedRecordPar
 
   mergedRecord.fields.filter(field => {
     if (field.tag === '080') {
-      var hasCode2 = false;
+      let hasCode2 = false;
       field.subfields.forEach(sub => {
         if (sub.code === '2') {
           hasCode2 = true;
