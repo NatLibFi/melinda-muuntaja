@@ -96,3 +96,30 @@ LDR    00000_a____
 001    28475
 080    ‡a688/689
 100    ‡aTest Author
+
+
+
+Does not add to 080 subfield { |2 1947/fin/fennica }  if 080 it allready has it
+Preferred record:
+LDR    00000_a____
+001    28474
+080    ‡a688/689‡21974/fin/fennica‡9FENNI<KEEP>
+100    ‡aTest Author
+
+Other record:
+LDR    00000_a____
+001    28475
+080    ‡a688/689‡21974/fin/fennica‡9FENNI<KEEP>
+100    ‡aTest Author
+
+Merged record before postmerge:
+LDR    00000_a____
+001    28475
+080    ‡a688/689‡21974/fin/fennica‡9FENNI<KEEP>
+100    ‡aTest Author
+
+Expected record after postmerge:
+LDR    00000_a____
+001    28475
+080    ‡a688/689‡21974/fin/fennica‡9FENNI<KEEP>
+100    ‡aTest Author
