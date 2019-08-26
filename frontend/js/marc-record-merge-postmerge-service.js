@@ -55,22 +55,36 @@ import { fieldOrderComparator } from './marc-field-sort';
 import { eToPrintPreset } from './config/e-to-print/postmerge/eToPrint-postmerge';
 import { isEmpty, orderBy, sortBy } from 'lodash';
 import { curry } from 'ramda';
-import { findTag, findIndex, filterTag, updateParamsfield, replaceFieldsFromSource, updatedMergedRecordParams } from './utils';
+import { findTag, findIndex, filterTag, updateParamsfield, replaceFieldsFromSource, updatedMergedRecordParams, sortSubfields } from './utils';
    
 const defaultPreset = [
   // fix776Order,
   check041aLength,
   setAllZeroRecordId,
-  sortMergedRecordFields,
   printToE200q,
   prinToE300b,
   printToE_importFields,
   printToE264,
   printToE880,
   printToE490_830,
-  printToE776
+  printToE776,
+  sortMergedRecordFields
 ];
 
+const fennicaPreset = [
+  // fix776Order,
+  check041aLength,
+  setAllZeroRecordId,
+  printToE200q,
+  prinToE300b,
+  printToE_importFields,
+  printToE264,
+  printToE880,
+  printToE490_830,
+  printToE776,
+  add080VersionCode,
+  sortMergedRecordFields
+];
 
 const allPreset = [
   check041aLength,
@@ -89,6 +103,7 @@ const allPreset = [
 
 export const preset = {
   defaults: defaultPreset,
+  fennica: fennicaPreset,
   eToPrintPreset,
   all: allPreset
 };
@@ -450,8 +465,8 @@ export function removeExtra035aFromMerged(preferredRecord, otherRecord, mergedRe
 export function add080VersionCode (preferredRecord, otherRecord, mergedRecordParam) {
   const mergedRecord = new MarcRecord(mergedRecordParam);
 
-  mergedRecord.fields.filter(field => {
-    if (field.tag === '080') {
+  mergedRecord.fields.filter(field => field.tag === '080')
+    .forEach(field => {
       let hasCode2 = false;
       field.subfields.forEach(sub => {
         if (sub.code === '2') {
@@ -459,12 +474,12 @@ export function add080VersionCode (preferredRecord, otherRecord, mergedRecordPar
         }
       });
       if (!hasCode2) {
-        field.subfields.push(createField({ code: '2', value: '1974/fin/fennica' }));
+        field.subfields.push({ code: '2', value: '1974/fin/fennica' });
+        field.subfields.sort(sortSubfields);
       }
-    }    
-  });
+    });
 
-  return {
+  return { 
     mergedRecord
   };
 }

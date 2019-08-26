@@ -103,7 +103,7 @@ module.exports = {
   "record": {
     "targetRecord": TargetRecord,
     "validationRules": MergeValidationPreset.melinda_host,
-    "postMergeFixes": PostMergePreset.defaults,
+    "postMergeFixes": PostMergePreset.fennica,
     "mergeConfiguration": {
       "fields": {
         "020": { "action": "createFrom", "options": { "convertTag": "776", "ind1": "0", "ind2": "8", "subfields": { "i": { "replaceValue": "Painettu:" }, "a": { convertCode: "z", modifications: [ { type: "replace", args: [/-/g, ""] } ] } } } },
