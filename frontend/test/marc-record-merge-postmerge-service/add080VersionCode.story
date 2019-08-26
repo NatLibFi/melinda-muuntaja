@@ -21,7 +21,7 @@ LDR    00000_a____
 
 
 
-Adds to 080 subfield { |2 1947/fin/fennica }  if 080 allready exist and sorts subfields
+Adds to 080 subfield { ‡21974/fin/fennica }  if 080 allready exist and has sub field { ‡9FENNI<KEEP> } and sorts subfields
 Preferred record:
 LDR    00000_a____
 001    28474
@@ -69,4 +69,30 @@ Expected record after postmerge:
 LDR    00000_a____
 001    28475
 080    ‡a688/689‡2TEST‡9FENNI<KEEP>
+100    ‡aTest Author
+
+
+
+Does not add to 080 subfield { |2 1947/fin/fennica }  if 080 does not have {‡9FENNI<KEEP>} 
+Preferred record:
+LDR    00000_a____
+001    28474
+100    ‡aTest Author
+
+Other record:
+LDR    00000_a____
+001    28475
+080    ‡a688/689
+100    ‡aTest Author
+
+Merged record before postmerge:
+LDR    00000_a____
+001    28475
+080    ‡a688/689
+100    ‡aTest Author
+
+Expected record after postmerge:
+LDR    00000_a____
+001    28475
+080    ‡a688/689
 100    ‡aTest Author

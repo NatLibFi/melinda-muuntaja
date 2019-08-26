@@ -467,13 +467,17 @@ export function add080VersionCode (preferredRecord, otherRecord, mergedRecordPar
 
   mergedRecord.fields.filter(field => field.tag === '080')
     .forEach(field => {
+      let hasCode9FKeep = false;
       let hasCode2 = false;
       field.subfields.forEach(sub => {
         if (sub.code === '2') {
           hasCode2 = true;
         }
+        if (sub.code === '9' && sub.value === 'FENNI<KEEP>') {
+          hasCode9FKeep = true;
+        }
       });
-      if (!hasCode2) {
+      if (!hasCode2 && hasCode9FKeep) {
         field.subfields.push({ code: '2', value: '1974/fin/fennica' });
         field.subfields.sort(sortSubfields);
       }
