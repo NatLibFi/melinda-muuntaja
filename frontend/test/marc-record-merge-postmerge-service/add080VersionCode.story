@@ -21,7 +21,7 @@ LDR    00000_a____
 
 
 
-Adds to 080 subfield { ‡21974/fin/fennica }  if 080 allready exist and has sub field { ‡9FENNI<KEEP> } and sorts subfields
+Adds to 080 subfield { ‡21974/fin/fennica }  if 080 already exist and has sub field { ‡9FENNI<KEEP> } and sorts subfields
 Preferred record:
 LDR    00000_a____
 001    28474
@@ -47,7 +47,7 @@ LDR    00000_a____
 
 
 
-Does not add to 080 subfield { |2 1947/fin/fennica }  if 080 allready has subfield 2
+Does not add to 080 subfield { |2 1947/fin/fennica }  if 080 already has subfield 2
 Preferred record:
 LDR    00000_a____
 001    28474
@@ -99,7 +99,7 @@ LDR    00000_a____
 
 
 
-Does not add to 080 subfield { |2 1947/fin/fennica }  if 080 it allready has it
+Does not add to 080 subfield { |2 1947/fin/fennica }  if 080 it already has it
 Preferred record:
 LDR    00000_a____
 001    28474
