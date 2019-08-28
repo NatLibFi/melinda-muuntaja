@@ -467,40 +467,23 @@ export function add080VersionCode (preferredRecord, otherRecord, mergedRecordPar
 
   mergedRecord.fields.filter(field => field.tag === '080')
     .forEach(field => {
-      let hasCode9FKeep = false;
-      let hasCode2 = false;
-      field.subfields.forEach(sub => {
-        if (sub.code === '2') {
-          hasCode2 = true;
+      const hasCode2 = field.subfields.findIndex(sub => sub.code === '2');
+      const hasCode9FKeep = field.subfields.findIndex(sub => sub.code === '9' && sub.value === 'FENNI<KEEP>');
+      if (hasCode2 < 0 && hasCode9FKeep > -1) {
+        let index = field.subfields.findIndex(sub => isNaN(sub.code) && sub.code >= 3);
+        if (index > 0) {
+          index = field.subfields.length;
         }
-        if (sub.code === '9' && sub.value === 'FENNI<KEEP>') {
-          hasCode9FKeep = true;
-        }
-      });
-      if (!hasCode2 && hasCode9FKeep) {
-        field.subfields = pushSubfieldInOrder(field);
+        field.subfields.splice(
+          index,
+          0,
+          { code: '2', value: '1974/fin/fennica' });
       }
     });
 
   return { 
     mergedRecord
   };
-
-  function pushSubfieldInOrder(field) {
-    const subfields = [];
-    let versionCode = false;
-    field.subfields.forEach(sub => {
-      if (!versionCode && !isNaN(sub.code) && sub.code > 2) {
-        subfields.push({ code: '2', value: '1974/fin/fennica' });
-        versionCode = true;
-      }
-      subfields.push(sub);
-    });
-    if (!versionCode) {
-      subfields.push({ code: '2', value: '1974/fin/fennica' });
-    }
-    return subfields;
-  }
 }
 
 export function setAllZeroRecordId(preferredRecord, otherRecord, mergedRecordParam) {
