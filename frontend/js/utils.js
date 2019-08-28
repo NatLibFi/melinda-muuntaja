@@ -106,19 +106,3 @@ export function isControlField(field) {
 export function isCoreError(error) {
   return ([EvalError, RangeError, URIError, TypeError, SyntaxError, ReferenceError].some(errorType => error instanceof errorType));
 }
-
-export function sortSubfields(a, b) {
-  if (!isNaN(a.code) && isNaN(b.code)) {
-    return 1;
-  }
-  if (isNaN(a.code) && !isNaN(b.code)) {
-    return -1;
-  }
-  if (a.code > b.code) {
-    return 1;
-  } else if (a.code < b.code) {
-    return -1;
-  } else if (a.code === b.code) {
-    return 0;
-  }
-}

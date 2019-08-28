@@ -55,26 +55,27 @@ import { fieldOrderComparator } from './marc-field-sort';
 import { eToPrintPreset } from './config/e-to-print/postmerge/eToPrint-postmerge';
 import { isEmpty, orderBy, sortBy } from 'lodash';
 import { curry } from 'ramda';
-import { findTag, findIndex, filterTag, updateParamsfield, replaceFieldsFromSource, updatedMergedRecordParams, sortSubfields } from './utils';
+import { findTag, findIndex, filterTag, updateParamsfield, replaceFieldsFromSource, updatedMergedRecordParams} from './utils';
    
 const defaultPreset = [
   // fix776Order,
   check041aLength,
   setAllZeroRecordId,
+  sortMergedRecordFields,
   printToE200q,
   prinToE300b,
   printToE_importFields,
   printToE264,
   printToE880,
   printToE490_830,
-  printToE776,
-  sortMergedRecordFields
+  printToE776
 ];
 
 const fennicaPreset = [
   // fix776Order,
   check041aLength,
   setAllZeroRecordId,
+  sortMergedRecordFields,
   printToE200q,
   prinToE300b,
   printToE_importFields,
@@ -82,8 +83,7 @@ const fennicaPreset = [
   printToE880,
   printToE490_830,
   printToE776,
-  add080VersionCode,
-  sortMergedRecordFields
+  add080VersionCode
 ];
 
 const allPreset = [
@@ -478,14 +478,29 @@ export function add080VersionCode (preferredRecord, otherRecord, mergedRecordPar
         }
       });
       if (!hasCode2 && hasCode9FKeep) {
-        field.subfields.push({ code: '2', value: '1974/fin/fennica' });
-        field.subfields.sort(sortSubfields);
+        field.subfields = pushSubfieldInOrder(field);
       }
     });
 
   return { 
     mergedRecord
   };
+
+  function pushSubfieldInOrder(field) {
+    const subfields = [];
+    let versionCode = false;
+    field.subfields.forEach(sub => {
+      if (!versionCode && !isNaN(sub.code) && sub.code > 2) {
+        subfields.push({ code: '2', value: '1974/fin/fennica' });
+        versionCode = true;
+      }
+      subfields.push(sub);
+    });
+    if (!versionCode) {
+      subfields.push({ code: '2', value: '1974/fin/fennica' });
+    }
+    return subfields;
+  }
 }
 
 export function setAllZeroRecordId(preferredRecord, otherRecord, mergedRecordParam) {
