@@ -467,17 +467,14 @@ export function add080VersionCode (preferredRecord, otherRecord, mergedRecordPar
 
   mergedRecord.fields.filter(field => field.tag === '080')
     .forEach(field => {
-      const hasCode2 = field.subfields.findIndex(sub => sub.code === '2');
-      const hasCode9FKeep = field.subfields.findIndex(sub => sub.code === '9' && sub.value === 'FENNI<KEEP>');
-      if (hasCode2 < 0 && hasCode9FKeep > -1) {
-        let index = field.subfields.findIndex(sub => isNaN(sub.code) && sub.code >= 3);
-        if (index > 0) {
-          index = field.subfields.length;
-        }
-        field.subfields.splice(
-          index,
-          0,
-          { code: '2', value: '1974/fin/fennica' });
+      if (field.subfields.some(({code}) => code === '2')) {
+        return;
+      }
+      let index = field.subfields.findIndex(sub => !isNaN(sub.code) && sub.code >= '2');
+      if (index >= 0) {
+        field.subfields.splice(index, 0, { code: '2', value: '1974/fin/fennica' });
+      } else {
+        field.subfields.push({ code: '2', value: '1974/fin/fennica' });
       }
     });
 
