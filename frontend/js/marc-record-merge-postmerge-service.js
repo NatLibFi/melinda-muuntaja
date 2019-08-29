@@ -465,18 +465,20 @@ export function removeExtra035aFromMerged(preferredRecord, otherRecord, mergedRe
 export function add080VersionCode (preferredRecord, otherRecord, mergedRecordParam) {
   const mergedRecord = new MarcRecord(mergedRecordParam);
 
-  mergedRecord.fields.filter(field => field.tag === '080')
-    .forEach(field => {
-      if (field.subfields.some(({code}) => code === '2')) {
-        return;
-      }
-      let index = field.subfields.findIndex(sub => !isNaN(sub.code) && sub.code >= '2');
-      if (index >= 0) {
-        field.subfields.splice(index, 0, { code: '2', value: '1974/fin/fennica' });
-      } else {
-        field.subfields.push({ code: '2', value: '1974/fin/fennica' });
-      }
-    });
+  mergedRecord.fields.filter(({tag, subfields}) => {
+    return tag === '080' && !has2();
+  
+    function has2() {
+      return subfields.some(({code}) => code === '2');
+    }
+  }).forEach(({subfields}) => {
+    const index = subfields.findIndex(sub => Number(sub.code) > 2);
+    if (index >= 0) {
+      subfields.splice(index, 0, { code: '2', value: '1974/fin/fennica' });
+    } else {
+      subfields.push({ code: '2', value: '1974/fin/fennica' });
+    }
+  });
 
   return { 
     mergedRecord
