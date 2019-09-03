@@ -91,6 +91,13 @@ export class NavBar extends React.Component {
               <li className="heading">{appTitle}</li>
             </ul>
             <ul id="nav" className="right">
+              <li><a href="https://www.kiwi.fi/x/iBcvBQ" target="_blank" rel="noopener noreferrer">
+                <i
+                  className="material-icons tooltip"
+                  title="Käyttöohje">help
+                </i>
+              </a>
+              </li>
               <li>
                 <a
                   className="dropdown-navbar dropdown-button-menu"

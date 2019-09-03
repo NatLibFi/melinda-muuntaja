@@ -138,23 +138,6 @@ export class ToolBar extends React.Component {
     );
   }
 
-  renderHelpButton() {
-    return (
-      <div className="mt-inline">
-        <a
-          href="https://www.kiwi.fi/x/iBcvBQ"
-          target="_blank"
-          rel="noopener noreferrer">
-          <i
-            className="material-icons tooltip"
-            title="Käyttöohje">help
-          </i>
-        </a>
-        <span className="group-label">Ohje</span>
-      </div>
-    );
-  }
-
   renderMergeType(){
     return (
       <div className="col s3 offset-s1 input-field">
@@ -218,7 +201,6 @@ export class ToolBar extends React.Component {
         <div className="col s3 mt-controls">
           {this.renderNewPairButton()}
           {this.renderSearchRecordButton()}
-          {this.renderHelpButton()}
         </div>
         {this.renderMergeType()}
         {this.renderMergeProfile()}
