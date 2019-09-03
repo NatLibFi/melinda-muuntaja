@@ -42,7 +42,9 @@ export class NavBar extends React.Component {
     mergeStatus: PropTypes.string,
     mergeButtonEnabled: PropTypes.bool.isRequired,
     removeSession: PropTypes.func.isRequired,
-    config: PropTypes.object
+    config: PropTypes.object,
+    appTitle: PropTypes.string.isRequired,
+    username: PropTypes.string
   };
 
   constructor() {
@@ -75,40 +77,34 @@ export class NavBar extends React.Component {
   }
 
   render() {
+    const { username, appTitle } = this.props;
+
     return (
       <div className="navbar-fixed">
         <nav> 
           <div className="nav-wrapper">
-            <div className="row">
-              <div className="col s1">
-                <ul>
-                  <li>
-                    <a className="brand-logo mt-default">
-                      <img 
-                        className="mt-logo" 
-                        src={melindaLogo}
-                      />
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <div className="col s7">
-                <ul id="nav" className="right">
-                  <li>
-                    <a
-                      className="dropdown-navbar dropdown-button-menu"
-                      href="#" data-activates="mainmenu">
-                      <i className="material-icons">account_circle</i>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </div>
+            <img 
+              className="mt-logo left" 
+              src={melindaLogo}
+            />
+            <ul id="nav" className="left">
+              <li className="heading">{appTitle}</li>
+            </ul>
+            <ul id="nav" className="right">
+              <li>
+                <a
+                  className="dropdown-navbar dropdown-button-menu"
+                  href="#" data-activates="mainmenu">
+                  <i className="material-icons">account_circle</i>
+                </a>
+              </li>
+            </ul>
           </div>
         </nav>
         <ul
           id='mainmenu'
           className='dropdown-content'>
+          <li className="user-name-menu-item">{username ? username : ''}</li>
           <li className="divider"/>
           <li>
             <a

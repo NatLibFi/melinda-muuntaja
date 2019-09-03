@@ -14,14 +14,9 @@ nav {
     min-width: 140px;
   }
 
-  .heading{
-    text-transform: uppercase;
-    font-weight: 100;
-    font-size: 1.1em;
-    padding: 10px 0 0 11px;
-    @media only screen and (max-width: $small-laptop) {
-      padding: 3px 0 0 33px;
-    }
+  .heading {
+    margin-left: 1em;
+    font-size: 1.5em;
   }
 
   .dropdown-content li:hover {
