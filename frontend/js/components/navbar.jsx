@@ -94,7 +94,7 @@ export class NavBar extends React.Component {
               <li><a href="https://www.kiwi.fi/x/iBcvBQ" target="_blank" rel="noopener noreferrer">
                 <i
                   className="material-icons tooltip"
-                  title="Käyttöohje">help
+                  title="Käyttöohje">help_outline
                 </i>
               </a>
               </li>
