@@ -55,7 +55,7 @@ import { fieldOrderComparator } from './marc-field-sort';
 import { eToPrintPreset } from './config/e-to-print/postmerge/eToPrint-postmerge';
 import { isEmpty, orderBy, sortBy } from 'lodash';
 import { curry } from 'ramda';
-import { findTag, findIndex, filterTag, updateParamsfield, replaceFieldsFromSource, updatedMergedRecordParams } from './utils';
+import { findTag, findIndex, filterTag, updateParamsfield, replaceFieldsFromSource, updatedMergedRecordParams} from './utils';
    
 const defaultPreset = [
   // fix776Order,
@@ -71,6 +71,20 @@ const defaultPreset = [
   printToE776
 ];
 
+const fennicaPreset = [
+  // fix776Order,
+  check041aLength,
+  setAllZeroRecordId,
+  sortMergedRecordFields,
+  printToE200q,
+  prinToE300b,
+  printToE_importFields,
+  printToE264,
+  printToE880,
+  printToE490_830,
+  printToE776,
+  add080VersionCode
+];
 
 const allPreset = [
   check041aLength,
@@ -89,6 +103,7 @@ const allPreset = [
 
 export const preset = {
   defaults: defaultPreset,
+  fennica: fennicaPreset,
   eToPrintPreset,
   all: allPreset
 };
@@ -447,6 +462,28 @@ export function removeExtra035aFromMerged(preferredRecord, otherRecord, mergedRe
   };
 }
 
+export function add080VersionCode (preferredRecord, otherRecord, mergedRecordParam) {
+  const mergedRecord = new MarcRecord(mergedRecordParam);
+
+  mergedRecord.fields.filter(({tag, subfields}) => {
+    return tag === '080' && !has2();
+  
+    function has2() {
+      return subfields.some(({code}) => code === '2');
+    }
+  }).forEach(({subfields}) => {
+    const index = subfields.findIndex(sub => Number(sub.code) > 2);
+    if (index >= 0) {
+      subfields.splice(index, 0, { code: '2', value: '1974/fin/fennica' });
+    } else {
+      subfields.push({ code: '2', value: '1974/fin/fennica' });
+    }
+  });
+
+  return { 
+    mergedRecord
+  };
+}
 
 export function setAllZeroRecordId(preferredRecord, otherRecord, mergedRecordParam) {
   const mergedRecord = new MarcRecord(mergedRecordParam);

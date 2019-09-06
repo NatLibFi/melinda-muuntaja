@@ -73,7 +73,8 @@ export class BaseComponent extends React.Component {
     toggleSourceSubrecordFieldSelection: PropTypes.func.isRequired,
     editMergedSubrecord: PropTypes.func.isRequired,
     saveSubrecord: PropTypes.func.isRequired,
-    notifications: PropTypes.array
+    notifications: PropTypes.array,
+    userinfo: PropTypes.object
   }
   
   componentDidUpdate() {
@@ -135,10 +136,14 @@ export class BaseComponent extends React.Component {
   }
 
   renderMainPanel() {
-    
+    const firstName = _.head(_.get(this.props.userinfo, 'name', '').split(' '));
+
     return (
       <div>
-        <NavBarContainer />
+        <NavBarContainer 
+          username={firstName}
+          appTitle='Muuntaja'
+        />
         { this.props.mergeDialog.visible ? this.renderMergeDialog() : null }
         { this.props.searchDialogVisible ? <SearchDialogContainer /> : ''}
         <ToolBarContainer />
@@ -171,6 +176,7 @@ function mapStateToProps(state) {
   return {
     sessionState,
     mergeStatus: state.getIn(['mergeStatus', 'status']),
+    userinfo: state.getIn(['session', 'userinfo']),
     mergeResponseMessage: state.getIn(['mergeStatus', 'message']),
     mergeResponse: state.getIn(['mergeStatus', 'response']),
     mergeDialog: state.getIn(['mergeStatus', 'dialog']).toJS(),
