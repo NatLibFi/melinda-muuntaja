@@ -118,9 +118,6 @@ export class NavBar extends React.Component {
               href="#"
               onClick={() => {this.endSession(); this.clearLocalStorage();}}>Kirjaudu ulos
             </a>
-            <a>
-              {this.props.config.userInfo.name}
-            </a>
           </li>
         </ul>
       </div>
