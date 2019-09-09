@@ -466,8 +466,12 @@ export function add080VersionCode (preferredRecord, otherRecord, mergedRecordPar
   const mergedRecord = new MarcRecord(mergedRecordParam);
 
   mergedRecord.fields.filter(({tag, subfields}) => {
-    return tag === '080' && !has2();
+    return tag === '080' && !has2() && has9Keep();
   
+    function has9Keep() {
+      return subfields.some(({code, value}) => code === '9' && value === 'FENNI<KEEP>');
+    }
+
     function has2() {
       return subfields.some(({code}) => code === '2');
     }
