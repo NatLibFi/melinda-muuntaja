@@ -8,7 +8,7 @@ import classNames from 'classnames';
 
 const SaveButton = (props) => {
   const btnGroupClasses = classNames(
-    'btn-floating', 
+    'btn-floating-extended', 
     'btn-large', 
     'click-to-toggle',
     {
@@ -22,7 +22,7 @@ const SaveButton = (props) => {
         onClick={props.commitMerge}
         name="commit_merge">
         <i className="large material-icons">save</i>
-        Tallenna
+        &nbsp;Tallenna
       </a>
     </div>
   );
