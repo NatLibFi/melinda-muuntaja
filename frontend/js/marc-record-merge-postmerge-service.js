@@ -68,20 +68,6 @@ const defaultPreset = [
   printToE264,
   printToE880,
   printToE490_830,
-  printToE776
-];
-
-const fennicaPreset = [
-  // fix776Order,
-  check041aLength,
-  setAllZeroRecordId,
-  sortMergedRecordFields,
-  printToE200q,
-  prinToE300b,
-  printToE_importFields,
-  printToE264,
-  printToE880,
-  printToE490_830,
   printToE776,
   add080VersionCode
 ];
@@ -103,7 +89,6 @@ const allPreset = [
 
 export const preset = {
   defaults: defaultPreset,
-  fennica: fennicaPreset,
   eToPrintPreset,
   all: allPreset
 };
