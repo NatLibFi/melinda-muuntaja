@@ -469,7 +469,7 @@ export function add080VersionCode(preferredRecord, otherRecord, mergedRecordPara
 
   mergedRecord.fields.filter(({tag, subfields}) => {
     return tag === '080' && !has2() && has9Keep();
-
+    
     function has9Keep() {
       return subfields.some(({code, value}) => code === '9' && value === 'FENNI<KEEP>');
     }
