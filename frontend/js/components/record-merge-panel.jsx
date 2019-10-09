@@ -30,15 +30,21 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 
-import { editMergedRecord, toggleSourceRecordFieldSelection } from '../ui-actions';
-import { saveRecord } from '../action-creators/record-actions';
-import { RecordPanel } from 'commons/components/record-panel';
-import { Preloader } from 'commons/components/preloader';
-import { ErrorMessagePanel } from 'commons/components/error-message-panel';
-import { MergeValidationErrorMessagePanel} from 'commons/components/merge-validation-error-message-panel';
-import { isControlField } from '../utils';
-import { recordSaveActionAvailable } from '../selectors/merge-status-selector';
+import {editMergedRecord, toggleSourceRecordFieldSelection} from '../ui-actions';
+import {saveRecord} from '../action-creators/record-actions';
+import {RecordPanel} from 'commons/components/record-panel';
+import {Preloader} from 'commons/components/preloader';
+import {ErrorMessagePanel} from 'commons/components/error-message-panel';
+import {MergeValidationErrorMessagePanel} from 'commons/components/merge-validation-error-message-panel';
+import {isControlField} from '../utils';
+import _ from 'lodash';
+import { withRouter } from 'react-router';
+import classNames from 'classnames';
+import * as uiActionCreators from '../ui-actions';
+import '../../styles/components/record-merge-panel.scss';
+import {recordSaveActionAvailable, hostRecordActionsEnabled} from '../selectors/merge-status-selector';
 
+const RECORD_LOADING_DELAY = 500;
 export class RecordMergePanel extends React.Component {
 
   static propTypes = {
@@ -55,7 +61,47 @@ export class RecordMergePanel extends React.Component {
     toggleSourceRecordFieldSelection: PropTypes.func.isRequired,
     saveRecord: PropTypes.func.isRequired,
     editMergedRecord: PropTypes.func.isRequired,
-    saveButtonVisible: PropTypes.bool.isRequired
+    controlsEnabled: PropTypes.bool.isRequired,
+    targetRecordId: PropTypes.string.isRequired,
+    sourceRecordId: PropTypes.string.isRequired,
+    setSourceRecordId: PropTypes.func.isRequired,
+    setTargetRecordId: PropTypes.func.isRequired,
+    swapRecords: PropTypes.func.isRequired,
+    fetchRecord: PropTypes.func.isRequired,
+    saveButtonVisible: PropTypes.bool.isRequired,
+    locationDidChange: PropTypes.func.isRequired,
+    resetSourceRecord: PropTypes.func.isRequired,
+    resetTargetRecord: PropTypes.func.isRequired,
+    history: PropTypes.object.isRequired
+  }
+
+  constructor() {
+    super();
+    this.handleSourceChangeDebounced = _.debounce((event) => {
+      this.props.fetchRecord(event.target.value, 'SOURCE');
+    }, RECORD_LOADING_DELAY);
+
+    this.handleTargetChangeDebounced = _.debounce((event) => {
+      this.props.fetchRecord(event.target.value, 'TARGET');
+    }, RECORD_LOADING_DELAY);
+  }
+
+  UNSAFE_componentWillMount() {
+    this.unlisten = this.props.history.listen(location => this.props.locationDidChange(location));
+    this.props.locationDidChange(this.props.history.location);
+  }
+
+  UNSAFE_componentWillReceiveProps(next) {
+    if (next.targetRecordId === this.props.targetRecordId && next.sourceRecordId === this.props.sourceRecordId) return;
+    if (_.identity(next.targetRecordId) && _.identity(next.sourceRecordId)) {
+      this.props.history.push(`/record/${next.sourceRecordId}/to/${next.targetRecordId}`);
+    }
+    else if (_.identity(next.sourceRecordId)) {
+      this.props.history.push(`/record/${next.sourceRecordId}`);
+    }
+    else {
+      this.props.history.push('/');
+    }
   }
 
   toggleSourceRecordField(field) {
@@ -70,72 +116,144 @@ export class RecordMergePanel extends React.Component {
     }
   }
 
-  renderSourceRecordPanel(recordState, errorMessage, record) {
-    if (recordState === 'ERROR') {
-      return <ErrorMessagePanel message={errorMessage} />;
+  handleChange(event) {
+    const {controlsEnabled} = this.props;
+    if (!controlsEnabled) {
+      return;
     }
 
-    return (       
+    event.persist();
+
+    if (event.target.id === 'source_record') {
+      if (event.target.value.length > 0) {
+        this.props.setSourceRecordId(event.target.value);
+        this.handleSourceChangeDebounced(event);
+      }
+      else {
+        this.props.resetSourceRecord();
+      }
+    }
+    if (event.target.id === 'target_record') {
+      if (event.target.value.length > 0) {
+        this.props.setTargetRecordId(event.target.value);
+        this.handleTargetChangeDebounced(event);
+      }
+      else {
+        this.props.resetTargetRecord();
+      }
+    }
+  }
+
+  handleSwap() {
+    const {controlsEnabled} = this.props;
+
+    if (controlsEnabled) {
+      this.props.swapRecords();
+    }
+
+  }
+
+  renderSourceRecordPanel(recordState, errorMessage, record) {
+    const {controlsEnabled} = this.props;
+
+    const swapButtonClasses = classNames({
+      'waves-effect': controlsEnabled,
+      'waves-light': controlsEnabled,
+      'disabled': !(this.props.targetRecordId && this.props.sourceRecordId)
+    });
+
+    const button = (
+      <div className="button tooltip" title="Vaihda keskenään">
+        <a className={swapButtonClasses} href="#" onClick={(e) => this.handleSwap(e)}>
+          <i className="material-icons left">swap_horiz</i>
+        </a>
+      </div>
+    );
+
+    const sourceField = this.recordInput('source_record', this.props.sourceRecordId, this.handleChange.bind(this), !controlsEnabled, 'Lähdetietue', button);
+
+    if (recordState === 'ERROR') {
+      return (<ErrorMessagePanel
+        typePanel
+        recordHeader={sourceField}
+        message={errorMessage} />);
+    }
+
+    return (
       <RecordPanel
         showHeader
-        title="Lähdetietue"
+        recordHeader={sourceField}
         record={record}
-        onFieldClick={(field) => this.toggleSourceRecordField(field)}>
-        { recordState === 'LOADING' ? 
-          <div className="card-content mt-loader-container">
-            <div className="row">
-              <div className="col s12 offset-s5">
-                <Preloader/>
-              </div>
-            </div>
-          </div> : null }
+        onFieldClick={(field) => this.toggleSourceRecordField(field)}
+      >
+        {recordState === 'LOADING' ? <div className="card-content"><Preloader /></div> : null}
       </RecordPanel>
     );
   }
 
+  recordInput(id, value, onChange, disable, label, button = null) {
+    return (
+      <div className="row title-row-card">
+        <div className="input-field col 11s">
+          <input id={id} type="tel" value={value} onChange={onChange} disabled={disable} />
+          <label htmlFor={id}>{label}</label>
+        </div>
+        {button}
+      </div>
+    );
+  }
+
   renderTargetRecordPanel(recordState, errorMessage, record) {
+    const {controlsEnabled} = this.props;
+    const targetField = this.recordInput('target_record', this.props.targetRecordId , this.handleChange.bind(this), !controlsEnabled, 'Pohjatietue');
+
     if (recordState === 'ERROR') {
-      return <ErrorMessagePanel message={errorMessage} />;
+      return (<ErrorMessagePanel
+        typePanel
+        recordHeader={targetField}
+        message={errorMessage} />);
     }
 
-    return (     
+    return (
       <RecordPanel
         showHeader
-        title="Pohjatietue"
-        record={record}>
-        { recordState === 'LOADING' ? 
-          <div className="card-content mt-loader-container">
-            <div className="row">
-              <div className="col s12 offset-s5">
-                <Preloader/>
-              </div>
-            </div>
-          </div> : null }
+        recordHeader={targetField}
+        record={record}
+      >
+        {recordState === 'LOADING' ? <div className="card-content"><Preloader /></div> : null}
       </RecordPanel>
+    );
+  }
+
+  mergeHeader() {
+    return (
+      <div className="row row-no-bottom-margin">
+        <div className="col s12">
+          <ul className="title-row-card" ref={(c) => this._tabs = c}>
+            <li className="title">Tulostietue</li>
+          </ul>
+        </div>
+      </div>
     );
   }
 
   renderMergedRecordPanel(recordState, errorMessage, record) {
     if (recordState === 'ERROR') {
-      return <MergeValidationErrorMessagePanel error={errorMessage} />;
+      return (<MergeValidationErrorMessagePanel
+        recordHeader={this.mergeHeader()}
+        typePanel
+        error={errorMessage} />);
     }
 
     return (
-      <RecordPanel 
+      <RecordPanel
         showHeader
         editable
-        title="Tulostietue"
-        record={record} 
+        recordHeader={this.mergeHeader()}
+        record={record}
         onFieldClick={(field) => this.toggleMergedRecordField(field)}
         onRecordUpdate={(record) => this.props.editMergedRecord(record)}>
-        { recordState === 'LOADING' ?
-          <div className="card-content mt-loader-container">
-            <div className="row">
-              <div className="col s12 offset-s5">
-                <Preloader/>
-              </div>
-            </div>
-          </div> : null }
+        {recordState === 'LOADING' ? <div className="card-content"><Preloader /></div> : null}
       </RecordPanel>
     );
   }
@@ -175,11 +293,14 @@ function mapStateToProps(state) {
     targetRecord: state.getIn(['targetRecord', 'state']) === 'EMPTY' ? state.getIn(['config', 'mergeProfiles', state.getIn(['config', 'selectedMergeProfile']), 'record', 'targetRecord']) : state.getIn(['targetRecord', 'record']),
     targetRecordError: state.getIn(['targetRecord', 'state']) === 'EMPTY' ? null : state.getIn(['targetRecord', 'errorMessage']),
     targetRecordState: state.getIn(['targetRecord', 'state']) === 'EMPTY' ? 'LOADED' : state.getIn(['targetRecord', 'state']),
-    saveButtonVisible: recordSaveActionAvailable(state)
+    saveButtonVisible: recordSaveActionAvailable(state),
+    controlsEnabled: hostRecordActionsEnabled(state),
+    sourceRecordId: state.getIn(['sourceRecord', 'id']) || '',
+    targetRecordId: state.getIn(['targetRecord', 'id']) || ''
   };
 }
 
-export const RecordMergePanelContainer = connect(
+export const RecordMergePanelContainer = withRouter(connect(
   mapStateToProps,
-  { editMergedRecord, toggleSourceRecordFieldSelection, saveRecord }
-)(RecordMergePanel);
+  {editMergedRecord, toggleSourceRecordFieldSelection, saveRecord, ...uiActionCreators}
+)(RecordMergePanel));
