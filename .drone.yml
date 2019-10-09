@@ -3,7 +3,7 @@ name: default
 steps:
 - name: generate-tags
   image: quay.io/natlibfi/drone-gen-tags
-  - name: test-init
+- name: test-init
   image: busybox
   commands:
   - chmod -R o+w /drone/src
