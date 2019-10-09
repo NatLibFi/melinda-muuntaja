@@ -694,6 +694,7 @@ export function toggleSourceRecordFieldSelection(fieldInSourceRecord) {
 
     if (field === undefined) {
       dispatch(addSourceRecordField(fieldInSourceRecord));
+      dispatch(updateMergedRecord());
     } else {
       dispatch(removeSourceRecordField(fieldInSourceRecord));
     }
