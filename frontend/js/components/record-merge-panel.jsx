@@ -84,6 +84,8 @@ export class RecordMergePanel extends React.Component {
     this.handleTargetChangeDebounced = _.debounce((event) => {
       this.props.fetchRecord(event.target.value, 'TARGET');
     }, RECORD_LOADING_DELAY);
+
+    this.state = {editMode: false};
   }
 
   UNSAFE_componentWillMount() {
@@ -114,6 +116,11 @@ export class RecordMergePanel extends React.Component {
     if (field.fromOther && !isControlField(field)) {
       this.props.toggleSourceRecordFieldSelection(field);
     }
+  }
+
+  handleEditModeChange(event) {
+    event.preventDefault();
+    this.setState({editMode: !this.state.editMode});
   }
 
   handleChange(event) {
@@ -225,12 +232,18 @@ export class RecordMergePanel extends React.Component {
     );
   }
 
-  mergeHeader() {
+  mergeHeader(record = null) {
+    const editButtonClasses = classNames({
+      disabled: !record,
+      active: this.state.editMode
+    });
+
     return (
       <div className="row title-row-card">
         <div className="title-wrapper col 11s">
           <ul ref={(c) => this._tabs = c}>
             <li className="title">Tulostietue</li>
+            <li className="button tooltip" title="Muokkaa"><a className={editButtonClasses} href="#" onClick={(e) => this.handleEditModeChange(e)}><i className="material-icons">edit</i></a></li>
           </ul>
         </div>
       </div>
@@ -248,8 +261,8 @@ export class RecordMergePanel extends React.Component {
     return (
       <RecordPanel
         showHeader
-        editable
-        recordHeader={this.mergeHeader()}
+        editable={this.state.editMode}
+        recordHeader={this.mergeHeader(record)}
         record={record}
         onFieldClick={(field) => this.toggleMergedRecordField(field)}
         onRecordUpdate={(record) => this.props.editMergedRecord(record)}>
