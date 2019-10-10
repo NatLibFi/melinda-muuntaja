@@ -98,6 +98,12 @@ nav {
       &.active {
         background-color: rgba(0,0,0,.1);
       }
+
+      &.disabled a {
+        color: #6d6d6d !important;
+        pointer-events: none;
+        cursor: default !important;
+      }
     }
     a {
       transition: background-color .3s;
@@ -117,21 +123,6 @@ nav {
         background-color: rgba(0,0,0,.1);
       }
     }
-
-    .user-name-menu-item {
-      flex-wrap: wrap;
-      text-align: center;
-      font-size: $navbar-font-size;
-      color: #000000;
-      font-weight: bold;
-      background-color: rgba(0,0,0,.1) !important;
-      padding: 14px 16px;
-      cursor: default;
- 
-      &:hover {
-        background: rgba(0,0,0,.1) !important; // removes flicker when mouseover
-       }
-     }
 
     &.left {
       float: left;

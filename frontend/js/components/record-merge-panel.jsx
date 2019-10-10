@@ -196,7 +196,7 @@ export class RecordMergePanel extends React.Component {
       <div className="row title-row-card">
         <div className="input-field col 11s">
           <input id={id} type="tel" value={value} onChange={onChange} disabled={disable} />
-          <label htmlFor={id}>{label}</label>
+          {value ? <label className="active" htmlFor={id}>{label}</label> : <label htmlFor={id}>{label}</label>}
         </div>
         {button}
       </div>
@@ -227,9 +227,9 @@ export class RecordMergePanel extends React.Component {
 
   mergeHeader() {
     return (
-      <div className="row row-no-bottom-margin">
-        <div className="col s12">
-          <ul className="title-row-card" ref={(c) => this._tabs = c}>
+      <div className="row title-row-card">
+        <div className="title-wrapper col 11s">
+          <ul ref={(c) => this._tabs = c}>
             <li className="title">Tulostietue</li>
           </ul>
         </div>

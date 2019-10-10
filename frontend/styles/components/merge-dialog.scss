@@ -1,14 +1,22 @@
-
 .modal-merge-dialog {
   position: fixed;
   z-index: 999;
   width: 100%;
   height: 100%;
-  background-color: rgba(1,1,1,0.2);
+  background-color: rgba(1, 1, 1, 0.2);
 
+  a {
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    
+    i {
+      margin-right: 5px;
+    }
+  }
 
   a.disabled {
-    color: #9F9F9F !important;
+    color: #9f9f9f !important;
     cursor: default !important;
   }
 
@@ -18,10 +26,9 @@
   }
 
   .response-container {
-
     & > div {
       margin-bottom: 3px;
-      border: 1px solid #9F9F9F;
+      border: 1px solid #9f9f9f;
       border-radius: 5px;
       padding: 5px;
       max-height: 700px;
