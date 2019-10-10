@@ -155,7 +155,7 @@ export class NavBar extends React.Component {
                   <i className="material-icons">save</i>
                 </a>
               </li>
-              <li>
+              <li className="tooltip" title="Asetukset">
                 <a className='dropdown-settings dropdown-button-menu'
                   href="#" data-activates="settings">
                   <i className="material-icons">settings</i>
