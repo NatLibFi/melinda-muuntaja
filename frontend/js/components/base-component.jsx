@@ -30,20 +30,17 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import '../../styles/main.scss';
-import { NavBarContainer } from './navbar';
-import { ToolBarContainer } from './toolbar';
-import { RecordSelectionControlsContainer } from './record-selection-controls';
-import { RecordMergePanelContainer } from './record-merge-panel';
-import { SubrecordComponent } from 'commons/components/subrecord/subrecord-component';
-import { SigninFormPanelContainer } from 'commons/components/signin-form-panel';
-import SaveButton from './save-button';
+import {NavBarContainer} from './navbar';
+import {RecordMergePanelContainer} from './record-merge-panel';
+import {SubrecordComponent} from 'commons/components/subrecord/subrecord-component';
+import {SigninFormPanelContainer} from 'commons/components/signin-form-panel';
 import {connect} from 'react-redux';
 import * as uiActionCreators from '../ui-actions';
-import { MergeDialog } from './merge-dialog';
-import { SearchDialogContainer } from './search-dialog';
-import { eitherHasSubrecords, sourceSubrecords, targetSubrecords, subrecordRowsDisplay } from '../selectors/subrecord-selectors';
-import { recordSaveActionAvailable, subrecordActionsEnabled } from '../selectors/merge-status-selector';
-import { compactRowsMap } from '../selectors/ui-selectors';
+import {MergeDialog} from './merge-dialog';
+import {SearchDialogContainer} from './search-dialog';
+import {eitherHasSubrecords, sourceSubrecords, targetSubrecords, subrecordRowsDisplay} from '../selectors/subrecord-selectors';
+import {recordSaveActionAvailable, subrecordActionsEnabled} from '../selectors/merge-status-selector';
+import {compactRowsMap} from '../selectors/ui-selectors';
 import * as subrecordActions from '../action-creators/subrecord-actions';
 
 export class BaseComponent extends React.Component {
@@ -76,11 +73,11 @@ export class BaseComponent extends React.Component {
     notifications: PropTypes.array,
     userinfo: PropTypes.object
   }
-  
+
   componentDidUpdate() {
     const userConfig = localStorage.getItem('muuntajaConfig');
     if (userConfig !== null) {
-      this.context.store.dispatch({ type: 'SWITCH_MERGE_CONFIG', config: userConfig });
+      this.context.store.dispatch({type: 'SWITCH_MERGE_CONFIG', config: userConfig});
     }
   }
 
@@ -88,7 +85,7 @@ export class BaseComponent extends React.Component {
     return null;
   }
 
-  renderSignin() {   
+  renderSignin() {
     return this.props.sessionState === 'VALIDATION_ONGOING' ? this.renderValidationIndicator() : <SigninFormPanelContainer title='Muuntaja' />;
   }
 
@@ -96,8 +93,8 @@ export class BaseComponent extends React.Component {
     return (
       <div>
         <div className='divider' />
-        <SubrecordComponent 
-          setCompactSubrecordView={this.props.setCompactSubrecordView} 
+        <SubrecordComponent
+          setCompactSubrecordView={this.props.setCompactSubrecordView}
           compactSubrecordView={this.props.compactSubrecordView}
           subrecords={this.props.subrecords}
           saveButtonVisible={this.props.saveButtonVisible}
@@ -125,9 +122,9 @@ export class BaseComponent extends React.Component {
 
   renderMergeDialog() {
     return (
-      <MergeDialog 
-        status={this.props.mergeStatus} 
-        message={this.props.mergeResponseMessage} 
+      <MergeDialog
+        status={this.props.mergeStatus}
+        message={this.props.mergeResponseMessage}
         closable={this.props.mergeDialog.closable}
         response={this.props.mergeResponse}
         onClose={this.closeMergeDialog.bind(this)}
@@ -140,19 +137,14 @@ export class BaseComponent extends React.Component {
 
     return (
       <div>
-        <NavBarContainer 
+        <NavBarContainer
           username={firstName}
           appTitle='Muuntaja'
         />
-        { this.props.mergeDialog.visible ? this.renderMergeDialog() : null }
-        { this.props.searchDialogVisible ? <SearchDialogContainer /> : ''}
-        <ToolBarContainer />
-        <div className="container">
-          <RecordSelectionControlsContainer />
-          <RecordMergePanelContainer />
-          { this.props.shouldRenderSubrecordComponent ? this.renderSubrecordComponent() : ''}
-          <SaveButton />
-        </div>
+        {this.props.mergeDialog.visible ? this.renderMergeDialog() : null}
+        {this.props.searchDialogVisible ? <SearchDialogContainer /> : ''}
+        <RecordMergePanelContainer />
+        {this.props.shouldRenderSubrecordComponent ? this.renderSubrecordComponent() : ''}
       </div>
     );
   }
@@ -172,7 +164,7 @@ export class BaseComponent extends React.Component {
 
 function mapStateToProps(state) {
   const sessionState = state.getIn(['session', 'state']);
-  
+
   return {
     sessionState,
     mergeStatus: state.getIn(['mergeStatus', 'status']),

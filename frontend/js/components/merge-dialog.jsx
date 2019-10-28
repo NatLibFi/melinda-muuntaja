@@ -28,9 +28,9 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import { isEmpty } from 'lodash';
+import {isEmpty} from 'lodash';
 import classNames from 'classnames';
-import { CommitMergeStates } from '../constants';
+import {CommitMergeStates} from '../constants';
 import '../../styles/components/merge-dialog.scss';
 
 export class MergeDialog extends React.Component {
@@ -52,7 +52,7 @@ export class MergeDialog extends React.Component {
   }
 
   title() {
-    switch(this.props.status) {
+    switch (this.props.status) {
       case CommitMergeStates.COMMIT_MERGE_ONGOING: return 'Tietueita tallennetaan';
       case CommitMergeStates.COMMIT_MERGE_ERROR: return 'Virhe tietueiden tallentamisessa';
       case CommitMergeStates.COMMIT_MERGE_COMPLETE: return 'Tietueet tallennettu';
@@ -61,11 +61,11 @@ export class MergeDialog extends React.Component {
   }
 
   renderResponseMessages(response) {
-    
+
     if (isEmpty(response)) {
       return <div className="response-container"><div className="red lighten-5">Tuntematon virhe</div></div>;
     }
-    
+
     if (response.name === 'RollbackError') {
       return <div className="response-container"><div className="red lighten-5">{response.message}</div></div>;
     }
@@ -78,11 +78,11 @@ export class MergeDialog extends React.Component {
 
     return (
       <div className="response-container">
-        { fi ?  <div className="green lighten-4">{fi}</div> : null}
-        { messages.length ? <div className="green lighten-4">{messages}</div> : null}
-        { errors.length   ? <div className="red lighten-5">{errors}</div> : null}
-        { warnings.length ? <div className="lime lighten-4">{warnings}</div> : null}
-        { triggers.length ? <div className="light-blue lighten-5">{triggers}</div> : null}
+        {fi ? <div className="green lighten-4">{fi}</div> : null}
+        {messages.length ? <div className="green lighten-4">{messages}</div> : null}
+        {errors.length ? <div className="red lighten-5">{errors}</div> : null}
+        {warnings.length ? <div className="lime lighten-4">{warnings}</div> : null}
+        {triggers.length ? <div className="light-blue lighten-5">{triggers}</div> : null}
       </div>
     );
 
@@ -102,30 +102,16 @@ export class MergeDialog extends React.Component {
     if (this.props.response) {
       return this.renderResponseMessages(this.props.response);
     } else if (this.props.status === CommitMergeStates.COMMIT_MERGE_ONGOING) {
-      return <div>{this.renderSpinner()}</div>;
+      return <div>{this.renderPreloader()}</div>;
     } else {
       return <p>{this.props.message}</p>;
     }
   }
 
-  renderSpinner() {
+  renderPreloader() {
     return (
-      <div className="row mt-loader-container">
-        <div className="col s12 offset-s5">
-          <div className="preloader-wrapper big active">
-            <div className="spinner-layer spinner-blue-only">
-              <div className="circle-clipper left">
-                <div className="circle" />
-              </div>
-              <div className="gap-patch">
-                <div className="circle" />
-              </div>
-              <div className="circle-clipper right">
-                <div className="circle" />
-              </div>
-            </div>
-          </div>
-        </div>
+      <div className="progress">
+        <div className="indeterminate" />
       </div>
     );
   }
@@ -133,7 +119,7 @@ export class MergeDialog extends React.Component {
   render() {
     const buttonClasses = classNames({
       disabled: !this.props.closable
-    });
+    }, 'baseline');
 
     return (
       <div className="row modal-merge-dialog">
@@ -144,7 +130,10 @@ export class MergeDialog extends React.Component {
               {this.renderContent()}
             </div>
             <div className="card-action right-align">
-              <a className={buttonClasses} href="#" onClick={(e) => this.close(e)}>Sulje</a>
+              <a className={buttonClasses} href="#" onClick={(e) => this.close(e)}>
+                <i className="material-icons">close</i>
+                Sulje
+              </a>
             </div>
           </div>
         </div>
