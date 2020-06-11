@@ -27,11 +27,11 @@
 */
 
 /* eslint no-console:0 */
-import { readEnvironmentVariable } from '../melinda-ui-commons/server/utils';
+import {readEnvironmentVariable} from '../melinda-ui-commons/server/utils';
 import MelindaClient from '@natlibfi/melinda-api-client';
 import _ from 'lodash';
-import { stdin } from 'process';
-import MarcRecord from 'marc-record-js';
+import {stdin} from 'process';
+import {MarcRecord} from '@natlibfi/marc-record';
 import fs from 'fs';
 import path from 'path';
 
@@ -97,7 +97,7 @@ if (command === 'create-family') {
       subrecords.forEach(res => {
         console.log(`Subrecord saved: ${res.recordId}`);
       });
-      
+
     })
     .catch(printError);
 
@@ -178,11 +178,11 @@ function readRecordFromStdin() {
 
     stdin.on('end', function () {
       try {
-        
+
         const filteredInputChinks = inputChunks.split('\n').filter(_.identity).join('\n');
         const record = MarcRecord.fromString(filteredInputChinks);
         resolve(record);
-      } catch(e) {
+      } catch (e) {
         reject(e);
       }
     });
@@ -217,28 +217,28 @@ function printResponse(response) {
 
   console.log('Messages:');
   response.messages.forEach(msg => console.log(` ${msg.code} ${msg.message}`));
-  
+
   console.log('Errors:');
   response.errors.forEach(msg => console.log(` ${msg.code} ${msg.message}`));
-  
+
   console.log('Triggers:');
   response.triggers.forEach(msg => console.log(` ${msg.code} ${msg.message}`));
-  
+
   console.log('Warnings:');
   response.warnings.forEach(msg => console.log(` ${msg.code} ${msg.message}`));
-  
+
 }
 
 function printError(error) {
   console.log(error);
-  
+
   console.log('Errors:');
   _.get(error, 'errors', []).forEach(msg => console.log(` ${msg.code} ${msg.message}`));
-  
+
   console.log('Triggers:');
   _.get(error, 'triggers', []).forEach(msg => console.log(` ${msg.code} ${msg.message}`));
-  
+
   console.log('Warnings:');
   _.get(error, 'warnings', []).forEach(msg => console.log(` ${msg.code} ${msg.message}`));
-  
+
 }

@@ -26,10 +26,10 @@
 *
 */
 
-import { match } from '../frontend/js/component-record-match-service';
+import {match} from '../frontend/js/component-record-match-service';
 import _ from 'lodash';
-import MarcRecord from 'marc-record-js';
-import uuid from 'node-uuid';
+import {MarcRecord} from '@natlibfi/marc-record';
+import {v4 as uuid} from 'uuid';
 import fetch from 'isomorphic-fetch';
 import path from 'path';
 import fs from 'fs';
@@ -40,7 +40,7 @@ const APIBasePath = 'https://merge-test.melinda.kansalliskirjasto.fi/api';
 const filesPath = path.resolve(__dirname, '..', '..', 'component-record-match-files');
 
 const cols = process.stdout.columns;
-const maxWidth = Math.floor((cols-6)/2);
+const maxWidth = Math.floor((cols - 6) / 2);
 
 const columnifyOptions = {
   columns: ['a', 'b'],
@@ -68,7 +68,7 @@ const matchResult = match(a.subrecords, b.subrecords);
 const data = matchResult
   .map(compactView)
   .map(result => ({a: result[0].toString(), b: result[1].toString()}))
-  .reduce((rows, item) => { 
+  .reduce((rows, item) => {
     rows.push(item);
     rows.push({});
     return rows;
@@ -79,7 +79,7 @@ const report = columnify(data, columnifyOptions);
 console.log(report);
 
 function randomSort(arr) {
-  return arr.sort(() => Math.floor(Math.random()*3)-1);
+  return arr.sort(() => Math.floor(Math.random() * 3) - 1);
 }
 
 function compactView(pair) {
@@ -123,19 +123,19 @@ function loadRecord(recordId) {
       const marcRecord = new MarcRecord(mainRecord);
       const marcSubRecords = subrecords
         .map(record => new MarcRecord(record));
-     
+
       marcSubRecords.forEach(record => {
         record.fields.forEach(field => {
-          field.uuid = uuid.v4();
+          field.uuid = uuid();
         });
       });
 
       marcRecord.fields.forEach(field => {
-        field.uuid = uuid.v4();
+        field.uuid = uuid();
       });
 
       return {
-        record: marcRecord, 
+        record: marcRecord,
         subrecords: marcSubRecords
       };
 

@@ -28,14 +28,14 @@
 
 import {executeTransaction, RollbackError} from './async-transaction';
 import _ from 'lodash';
-import { logger } from 'server/logger';
-import uuid from 'uuid';
+import {logger} from 'server/logger';
+import {v4 as uuid} from 'uuid';
 
 const FUTURE_HOST_ID_PLACEHOLDER = '(FI-MELINDA)[future-host-id]';
 
 export function commitMerge(client, operationType, subrecordMergeType, otherRecord, preferredRecord, mergedRecord) {
 
-  const jobId = uuid.v4().slice(0,8);
+  const jobId = uuid().slice(0, 8);
 
   if (operationType == 'CREATE') {
     return createRecord(mergedRecord.record).then(saveSubrecords).catch(error => {
@@ -78,7 +78,7 @@ export function commitMerge(client, operationType, subrecordMergeType, otherReco
         };
       });
     }
-    
+
     const mergedSubrecordActions = mergedRecord.subrecords.map(record => {
       const originalRecord = preferredRecord ? findRecordById(getRecordId(record), preferredRecord.subrecords) : null;
 
@@ -99,11 +99,11 @@ export function commitMerge(client, operationType, subrecordMergeType, otherReco
     return executeTransaction(_.concat(
       otherSubrecordActions,
       mergedSubrecordActions
-    ), [mergedRecordRollbackAction]).then(function(results) {
+    ), [mergedRecordRollbackAction]).then(function (results) {
       results.unshift(res);
       logger.log('info', `${jobId}] Commit merge job ${jobId} completed.`);
       return results;
-    }).catch(function(error) {
+    }).catch(function (error) {
       if (error instanceof RollbackError) {
         logger.log('error', `${jobId}] Rollback failed`);
         logger.log('error', jobId, error);
@@ -135,10 +135,10 @@ export function commitMerge(client, operationType, subrecordMergeType, otherReco
 
   function undeleteRecordFromMelinda(recordId) {
     logger.log('info', `${jobId}] Undeleting ${recordId}`);
-    return client.loadRecord(recordId, {handle_deleted:1, no_rerouting: 1}).then(function(record) {
+    return client.loadRecord(recordId, {handle_deleted: 1, no_rerouting: 1}).then(function (record) {
       record.fields = record.fields.filter(field => field.tag !== 'STA');
       updateRecordLeader(record, 5, 'c');
-      return client.updateRecord(record, {bypass_low_validation: 1, handle_deleted: 1, no_rerouting: 1, bypass_index_check: 1}).then(function(res) {
+      return client.updateRecord(record, {bypass_low_validation: 1, handle_deleted: 1, no_rerouting: 1, bypass_index_check: 1}).then(function (res) {
         logger.log('info', `${jobId}] Undelete ok for ${recordId}`, res.messages);
         return _.assign({}, res, {operation: 'UNDELETE'});
       });
@@ -151,11 +151,11 @@ export function commitMerge(client, operationType, subrecordMergeType, otherReco
   function deleteRecordFromMelinda(record) {
     const recordId = getRecordId(record);
     logger.log('info', `${jobId}] Deleting ${recordId}`);
-    
+
     record.appendField(['STA', '', '', 'a', 'DELETED']);
     updateRecordLeader(record, 5, 'd');
 
-    return client.updateRecord(record, {bypass_low_validation: 1, handle_deleted: 1, no_rerouting: 1, bypass_index_check: 1}).then(function(res) {
+    return client.updateRecord(record, {bypass_low_validation: 1, handle_deleted: 1, no_rerouting: 1, bypass_index_check: 1}).then(function (res) {
       logger.log('info', `${jobId}] Delete ok for ${recordId}`, res.messages);
       return _.assign({}, res, {operation: 'DELETE'});
     }).catch(err => {
@@ -168,7 +168,7 @@ export function commitMerge(client, operationType, subrecordMergeType, otherReco
     const recordId = getRecordId(record);
 
     logger.log('info', `${jobId}] Updating record ${recordId}`);
-    
+
     return client.updateRecord(record, {bypass_low_validation: 1, bypass_index_check: 1}).then(res => {
       logger.log('info', `${jobId}] Update record ok for ${recordId}`, res.messages);
       return _.assign({}, res, {operation: 'UPDATE'});
@@ -180,10 +180,10 @@ export function commitMerge(client, operationType, subrecordMergeType, otherReco
 
   function deleteRecordById(recordId) {
     logger.log('info', `${jobId}] Deleting ${recordId}`);
-    return client.loadRecord(recordId, {handle_deleted: 1, no_rerouting: 1}).then(function(record) {
+    return client.loadRecord(recordId, {handle_deleted: 1, no_rerouting: 1}).then(function (record) {
       record.appendField(['STA', '', '', 'a', 'DELETED']);
       updateRecordLeader(record, 5, 'd');
-      return client.updateRecord(record, {bypass_low_validation: 1, handle_deleted: 1, no_rerouting: 1, bypass_index_check: 1}).then(function(res) {
+      return client.updateRecord(record, {bypass_low_validation: 1, handle_deleted: 1, no_rerouting: 1, bypass_index_check: 1}).then(function (res) {
         logger.log('info', `${jobId}] Delete ok for ${recordId}`, res.messages);
         return _.assign({}, res, {operation: 'DELETE'});
       });
@@ -195,7 +195,7 @@ export function commitMerge(client, operationType, subrecordMergeType, otherReco
 }
 
 function setParentRecordId(id) {
-  return function(subrecord) {
+  return function (subrecord) {
 
     subrecord.fields = subrecord.fields.map(field => {
       if (field.tag === '773') {
@@ -221,7 +221,7 @@ function validateIds(family) {
 
   const invalidOtherSubrecordIndex = _.findIndex(family.subrecords, (record) => !isValidId(getRecordId(record)));
   if (invalidOtherSubrecordIndex !== -1) {
-    return notValid(`Id not found for ${invalidOtherSubrecordIndex+1}. subrecord from record.`); 
+    return notValid(`Id not found for ${invalidOtherSubrecordIndex + 1}. subrecord from record.`);
   }
 
   return {
@@ -229,9 +229,9 @@ function validateIds(family) {
   };
 
   function notValid(message) {
-    return { 
-      error: new Error(message) 
-    }; 
+    return {
+      error: new Error(message)
+    };
   }
 }
 
@@ -248,5 +248,5 @@ function getRecordId(record) {
 }
 
 function updateRecordLeader(record, index, characters) {
-  record.leader = record.leader.substr(0,index) + characters + record.leader.substr(index+characters.length);
+  record.leader = record.leader.substr(0, index) + characters + record.leader.substr(index + characters.length);
 }

@@ -26,8 +26,9 @@
 *
 */
 
-import MarcRecord from 'marc-record-js';
-import { decorateFieldsWithUuid } from '../../record-utils';
+import {MarcRecord} from '@natlibfi/marc-record';
+import {decorateFieldsWithUuid} from '../../record-utils';
+MarcRecord.setValidationOptions({fields: false, subfields: false, subfieldValues: false});
 
 const record = new MarcRecord({
   leader: '^^^^^caa^a22002174i^4500',
@@ -43,7 +44,7 @@ const record = new MarcRecord({
       subfields: [
         {
           code: '7',
-          value: 'p1am'   
+          value: 'p1am'
         },
         {
           code: 'w',

@@ -30,10 +30,10 @@ import sinon from 'sinon';
 import chai from 'chai';
 import sinonChai from 'sinon-chai';
 import request from 'supertest';
-import HttpStatus from 'http-status-codes';
-import { __RewireAPI__ as RewireAPI } from '../merge-controller';
-import { mergeController } from '../merge-controller';
-import { createSessionToken } from 'server/session-crypt';
+import HttpStatus from 'http-status';
+import {__RewireAPI__ as RewireAPI} from '../merge-controller';
+import {mergeController} from '../merge-controller';
+import {createSessionToken} from 'server/session-crypt';
 
 chai.use(sinonChai);
 
@@ -57,7 +57,7 @@ describe('MARC IO controller', () => {
       RewireAPI.__Rewire__('commitMerge', commitMergeStub);
       RewireAPI.__Rewire__('createArchive', createArchiveStub);
       RewireAPI.__Rewire__('loadRecord', loadRecordStub);
-     
+
     });
     afterEach(() => {
       RewireAPI.__ResetDependency__('commitMerge');
@@ -70,7 +70,7 @@ describe('MARC IO controller', () => {
       request(mergeController)
         .post('/commit-merge')
         .expect(HttpStatus.UNAUTHORIZED, done);
-        
+
     });
 
     it('returns BAD_REQUEST if records are missing', (done) => {
@@ -87,7 +87,7 @@ describe('MARC IO controller', () => {
     it('returns 200 if commit is successful', (done) => {
 
       commitMergeStub.resolves('Ok');
-      const { record, subrecords } = createFakeRecordFamily();
+      const {record, subrecords} = createFakeRecordFamily();
       record.fields.push({'tag': '001', 'value': '123'});
       loadRecordStub.resolves({record, subrecords});
 
@@ -97,13 +97,13 @@ describe('MARC IO controller', () => {
         .send({
           'operationType': 'CREATE',
           'subrecordMergeType': 'MERGE',
-          'otherRecord': createFakeRecordFamily(), 
-          'preferredRecord': createFakeRecordFamily(), 
+          'otherRecord': createFakeRecordFamily(),
+          'preferredRecord': createFakeRecordFamily(),
           'mergedRecord': createFakeRecordFamily(),
           'unmodifiedRecord': createFakeRecordFamily()
         })
         .expect(HttpStatus.OK, done);
-        
+
     });
 
     it('returns error from server if commit-merge fails', (done) => {
@@ -116,13 +116,13 @@ describe('MARC IO controller', () => {
         .send({
           'operationType': 'CREATE',
           'subrecordMergeType': 'MERGE',
-          'otherRecord': createFakeRecordFamily(), 
-          'preferredRecord': createFakeRecordFamily(), 
+          'otherRecord': createFakeRecordFamily(),
+          'preferredRecord': createFakeRecordFamily(),
           'mergedRecord': createFakeRecordFamily(),
           'unmodifiedRecord': createFakeRecordFamily()
         })
         .expect(HttpStatus.INTERNAL_SERVER_ERROR, done);
-        
+
     });
   });
 

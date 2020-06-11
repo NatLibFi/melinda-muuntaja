@@ -27,31 +27,31 @@
 */
 
 import fetch from 'isomorphic-fetch';
-import MarcRecord from 'marc-record-js';
-import HttpStatus from 'http-status-codes';
+import {MarcRecord} from '@natlibfi/marc-record';
+import HttpStatus from 'http-status';
 import _ from 'lodash';
 import createRecordMerger from '@natlibfi/marc-record-merge';
-import { exceptCoreErrors } from './utils';
-import { RESET_WORKSPACE, TOGGLE_COMPACT_SUBRECORD_VIEW } from './constants/action-type-constants';
-import { FetchNotOkError } from './errors';
-import { subrecordRows, sourceSubrecords, targetSubrecords, rowsWithResultRecord } from './selectors/subrecord-selectors';
-import { updateSubrecordArrangement, updateMergedSubrecords, saveSubrecordSuccess } from './action-creators/subrecord-actions';
-import { match } from './component-record-match-service';
-import { decorateFieldsWithUuid, setRecordId, selectRecordId } from './record-utils';
-import uuid from 'uuid';
+import {exceptCoreErrors} from './utils';
+import {RESET_WORKSPACE, TOGGLE_COMPACT_SUBRECORD_VIEW} from './constants/action-type-constants';
+import {FetchNotOkError} from './errors';
+import {subrecordRows, sourceSubrecords, targetSubrecords, rowsWithResultRecord} from './selectors/subrecord-selectors';
+import {updateSubrecordArrangement, updateMergedSubrecords, saveSubrecordSuccess} from './action-creators/subrecord-actions';
+import {match} from './component-record-match-service';
+import {decorateFieldsWithUuid, setRecordId, selectRecordId} from './record-utils';
+import {v4 as uuid} from 'uuid';
 import * as subrecordMergeTypes from './config/subrecord-merge-types';
 
 import * as MergeValidation from './marc-record-merge-validate-service';
 import * as PostMerge from './marc-record-merge-postmerge-service';
 import history from './history';
-import { CHANGE_MERGE_PROFILE } from './constants/action-type-constants';
+import {CHANGE_MERGE_PROFILE} from './constants/action-type-constants';
 
 export const SWITCH_MERGE_CONFIG = 'SWITCH_MERGE_CONFIG';
 export const SWITCH_MERGE_TYPE = 'SWITCH_MERGE_TYPE';
 
 export function switchMergeType(mergeType) {
-  const config = { mergeType, mergeProfile: 'default' };
-  return function(dispatch) {
+  const config = {mergeType, mergeProfile: 'default'};
+  return function (dispatch) {
     dispatch({
       type: SWITCH_MERGE_TYPE,
       config
@@ -61,7 +61,7 @@ export function switchMergeType(mergeType) {
 }
 
 export function switchMergeConfig(config) {
-  return function(dispatch) {
+  return function (dispatch) {
     dispatch({
       type: SWITCH_MERGE_CONFIG,
       config
@@ -71,9 +71,9 @@ export function switchMergeConfig(config) {
 }
 
 export function changeMergeProfile(config) {
-  return function(dispatch) {
+  return function (dispatch) {
     dispatch({
-      type: CHANGE_MERGE_PROFILE, 
+      type: CHANGE_MERGE_PROFILE,
       config
     });
     dispatch(updateMergedRecord());
@@ -82,9 +82,9 @@ export function changeMergeProfile(config) {
 
 export function commitMerge() {
 
-  const APIBasePath = __DEV__ ? 'http://localhost:3001/merge': '/merge';
+  const APIBasePath = __DEV__ ? 'http://localhost:3001/merge' : '/merge';
 
-  return function(dispatch, getState) {
+  return function (dispatch, getState) {
     dispatch(commitMergeStart());
     const operationType = getState().getIn(['targetRecord', 'state']) !== 'EMPTY' ? 'UPDATE' : 'CREATE';
     const subrecordMergeType = getState().getIn(['config', 'mergeProfiles', getState().getIn(['config', 'selectedMergeProfile']), 'subrecords', 'mergeType']);
@@ -100,7 +100,7 @@ export function commitMerge() {
 
     const subrecords = subrecordRows(getState());
 
-    const { sourceSubrecordList, targetSubrecordList, mergedSubrecordList, unmodifiedMergedSubrecordList } = subrecords.reduce((result, row) => {
+    const {sourceSubrecordList, targetSubrecordList, mergedSubrecordList, unmodifiedMergedSubrecordList} = subrecords.reduce((result, row) => {
       if (row.targetRecord) {
         row.mergedRecord = new MarcRecord(row.mergedRecord);
 
@@ -113,7 +113,7 @@ export function commitMerge() {
       if (row.unmodifiedMergedRecord) result.unmodifiedMergedSubrecordList.push(row.unmodifiedMergedRecord);
 
       return result;
-    }, { sourceSubrecordList: [], targetSubrecordList: [], mergedSubrecordList: [], unmodifiedMergedSubrecordList: [] });
+    }, {sourceSubrecordList: [], targetSubrecordList: [], mergedSubrecordList: [], unmodifiedMergedSubrecordList: []});
 
     const body = {
       operationType,
@@ -157,7 +157,7 @@ export function commitMerge() {
 
             const newMergedRecordId = res.recordId;
 
-            const { record, subrecords } = marcRecordsFrom(res.record, res.subrecords);
+            const {record, subrecords} = marcRecordsFrom(res.record, res.subrecords);
 
             dispatch(commitMergeSuccess(newMergedRecordId, res));
             dispatch(saveRecordSuccess(record));
@@ -263,9 +263,9 @@ export function clearSearchResults() {
 }
 
 export function handleSearch() {
-  const APIBasePath = __DEV__ ? 'http://localhost:3001/sru': '/sru';
+  const APIBasePath = __DEV__ ? 'http://localhost:3001/sru' : '/sru';
 
-  return function(dispatch, getState) {
+  return function (dispatch, getState) {
     const query = getState().getIn(['search', 'query']);
     const page = getState().getIn(['search', 'currentPage']);
     const index = getState().getIn(['search', 'index']);
@@ -349,7 +349,7 @@ export function setSearchIndex(index) {
 }
 
 export function locationDidChange(location) {
-  return function(dispatch, getState) {
+  return function (dispatch, getState) {
     dispatch(setLocation(location));
 
     const match = _.get(location, 'pathname', '').match('/record/(\\d+)(?:/to/(\\d+))?/?$');
@@ -376,7 +376,7 @@ export function locationDidChange(location) {
 export const SAVE_RECORD_SUCCESS = 'SAVE_RECORD_SUCCESS';
 
 export function saveRecordSuccess(record) {
-  return { type: SAVE_RECORD_SUCCESS, record};
+  return {type: SAVE_RECORD_SUCCESS, record};
 }
 
 export const SET_LOCATION = 'SET_LOCATION';
@@ -400,7 +400,7 @@ export function loadSourceRecord(recordId) {
 export const RESET_SOURCE_RECORD = 'RESET_SOURCE_RECORD';
 
 export function resetSourceRecord() {
-  return function(dispatch) {
+  return function (dispatch) {
     dispatch({
       'type': RESET_SOURCE_RECORD,
     });
@@ -431,7 +431,7 @@ export function loadTargetRecord(recordId) {
 export const RESET_TARGET_RECORD = 'RESET_TARGET_RECORD';
 
 export function resetTargetRecord() {
-  return function(dispatch) {
+  return function (dispatch) {
     dispatch({
       'type': RESET_TARGET_RECORD,
     });
@@ -472,7 +472,7 @@ export const SWAP_RECORDS = 'SWAP_RECORDS';
 
 export function swapRecords() {
 
-  return function(dispatch, getState) {
+  return function (dispatch, getState) {
     const sourceRecordId = getState().getIn(['sourceRecord', 'id']);
     const targetRecordId = getState().getIn(['targetRecord', 'id']);
     dispatch(setSourceRecordId(targetRecordId));
@@ -497,18 +497,18 @@ export function swapRecords() {
 export const SET_SOURCE_RECORD_ID = 'SET_SOURCE_RECORD_ID';
 
 export function setSourceRecordId(recordId) {
-  return { 'type': SET_SOURCE_RECORD_ID, 'recordId': recordId };
+  return {'type': SET_SOURCE_RECORD_ID, 'recordId': recordId};
 }
 
 export const SET_TARGET_RECORD_ID = 'SET_TARGET_RECORD_ID';
 
 export function setTargetRecordId(recordId) {
-  return { 'type': SET_TARGET_RECORD_ID, 'recordId': recordId };
+  return {'type': SET_TARGET_RECORD_ID, 'recordId': recordId};
 }
 
 export function updateMergedRecord() {
 
-  return function(dispatch, getState) {
+  return function (dispatch, getState) {
     const getMergeProfile = getState().getIn(['config', 'mergeProfiles', getState().getIn(['config', 'selectedMergeProfile']), 'record']);
     const defaultProfile = getState().getIn(['config', 'mergeProfiles']);
     const mergeProfile = getMergeProfile === undefined ? defaultProfile.first() : getMergeProfile;
@@ -545,7 +545,7 @@ export function updateMergedRecord() {
               return field.tag === fieldInMerged.tag && _.isEqual(field.subfields, fieldInMerged.subfields);
             });
 
-            if (fields.length === 0) mergedRecord.appendField({ ...field, uuid: uuid.v4()});
+            if (fields.length === 0) mergedRecord.appendField({...field, uuid: uuid()});
           });
 
           return mergedRecord;
@@ -609,11 +609,11 @@ export function clearMergedRecord() {
   };
 }
 
-export const fetchRecord = (function() {
-  const APIBasePath = __DEV__ ? 'http://localhost:3001/api': '/api';
+export const fetchRecord = (function () {
+  const APIBasePath = __DEV__ ? 'http://localhost:3001/api' : '/api';
   const fetchSourceRecord = recordFetch(APIBasePath, loadSourceRecord, setSourceRecord, setSourceRecordError);
   const fetchTargetRecord = recordFetch(APIBasePath, loadTargetRecord, setTargetRecord, setTargetRecordError);
-  return function(recordId, type) {
+  return function (recordId, type) {
     return function (dispatch) {
       if (type !== 'SOURCE' && type !== 'TARGET') {
         throw new Error('fetchRecord type parameter must be either SOURCE or TARGET');
@@ -631,7 +631,7 @@ export const fetchRecord = (function() {
 
 function recordFetch(APIBasePath, loadRecordAction, setRecordAction, setRecordErrorAction) {
   let currentRecordId;
-  return function(recordId, dispatch) {
+  return function (recordId, dispatch) {
     currentRecordId = recordId;
     // sets state to loading
     dispatch(loadRecordAction(recordId));
@@ -681,14 +681,14 @@ export const ADD_SOURCE_RECORD_FIELD = 'ADD_SOURCE_RECORD_FIELD';
 export const REMOVE_SOURCE_RECORD_FIELD = 'REMOVE_SOURCE_RECORD_FIELD';
 
 export function addSourceRecordField(field) {
-  return { 'type': ADD_SOURCE_RECORD_FIELD, field};
+  return {'type': ADD_SOURCE_RECORD_FIELD, field};
 }
 export function removeSourceRecordField(field) {
-  return { 'type': REMOVE_SOURCE_RECORD_FIELD, field};
+  return {'type': REMOVE_SOURCE_RECORD_FIELD, field};
 }
 
 export function toggleSourceRecordFieldSelection(fieldInSourceRecord) {
-  return function(dispatch, getState) {
+  return function (dispatch, getState) {
     const mergedRecord = getState().getIn(['mergedRecord', 'record']);
     const field = mergedRecord.fields.find(fieldInMergedRecord => fieldInMergedRecord.uuid === fieldInSourceRecord.uuid);
 
@@ -703,11 +703,11 @@ export function toggleSourceRecordFieldSelection(fieldInSourceRecord) {
 }
 
 export function setCompactSubrecordView(enabled) {
-  return function(dispatch, getState) {
+  return function (dispatch, getState) {
 
     const rowsToCompact = rowsWithResultRecord(getState()).map(row => row.rowId);
 
-    dispatch({ 'type': TOGGLE_COMPACT_SUBRECORD_VIEW, enabled, rowsToCompact});
+    dispatch({'type': TOGGLE_COMPACT_SUBRECORD_VIEW, enabled, rowsToCompact});
   };
 }
 

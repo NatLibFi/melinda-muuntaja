@@ -28,16 +28,16 @@
 
 import express from 'express';
 import cors from 'cors';
-import { readEnvironmentVariable, corsOptions, requireBodyParams } from 'server/utils';
-import { logger } from 'server/logger';
+import {readEnvironmentVariable, corsOptions, requireBodyParams} from 'server/utils';
+import {logger} from 'server/logger';
 import bodyParser from 'body-parser';
-import MarcRecord from 'marc-record-js';
+import {MarcRecord} from '@natlibfi/marc-record';
 import cookieParser from 'cookie-parser';
-import HttpStatus from 'http-status-codes';
-import { commitMerge } from './melinda-merge-update';
-import { readSessionMiddleware } from 'server/session-controller';
+import HttpStatus from 'http-status';
+import {commitMerge} from './melinda-merge-update';
+import {readSessionMiddleware} from 'server/session-controller';
 import _ from 'lodash';
-import { createArchive } from './archive-service';
+import {createArchive} from './archive-service';
 
 const MelindaClient = require('@natlibfi/melinda-api-client');
 const apiUrl = readEnvironmentVariable('MELINDA_API');
@@ -63,10 +63,10 @@ mergeController.post('/commit-merge', cors(corsOptions), requireSession, require
 
   const {username, password} = req.session;
 
-  const { operationType, subrecordMergeType } = req.body;
+  const {operationType, subrecordMergeType} = req.body;
 
   const [otherRecord, mergedRecord, unmodifiedRecord] =
-        [req.body.otherRecord, req.body.mergedRecord, req.body.unmodifiedRecord].map(transformToMarcRecordFamily);
+    [req.body.otherRecord, req.body.mergedRecord, req.body.unmodifiedRecord].map(transformToMarcRecordFamily);
 
   const preferredRecord = req.body.preferredRecord ? transformToMarcRecordFamily(req.body.preferredRecord) : undefined;
 
@@ -156,8 +156,8 @@ function transformToMarcRecordFamily(json) {
 }
 
 function transformToMarcRecord(json) {
-  const { sourceRecordId, preferredRecordId } = json;
-  return { ...new MarcRecord(json), sourceRecordId, preferredRecordId };
+  const {sourceRecordId, preferredRecordId} = json;
+  return {...new MarcRecord(json), sourceRecordId, preferredRecordId};
 }
 
 function selectRecordId(record) {

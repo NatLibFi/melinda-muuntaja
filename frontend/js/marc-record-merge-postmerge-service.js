@@ -47,8 +47,8 @@ adds 500 a "Lisäpainokset: " (inferred from 250, and 008)
 */
 
 import _ from 'lodash';
-import MarcRecord from 'marc-record-js';
-import uuid from 'node-uuid';
+import {MarcRecord} from '@natlibfi/marc-record';
+import {v4 as uuid} from 'uuid';
 import moment from 'moment';
 import {selectValues, selectRecordId, selectFieldsByValue, fieldHasSubfield, resetComponentHostLinkSubfield, isLinkedFieldOf} from './record-utils';
 import {fieldOrderComparator} from './marc-field-sort';
@@ -246,7 +246,7 @@ export function printToE200q(preferredRecord, otherRecord, mergedRecordParam) {
           value: ' '
         }
       ],
-      uuid: uuid.v4()
+      uuid: uuid()
     };
 
     const update020 = curry((updatedSubfields, field) => {
@@ -469,7 +469,7 @@ export function add080VersionCode(preferredRecord, otherRecord, mergedRecordPara
 
   mergedRecord.fields.filter(({tag, subfields}) => {
     return tag === '080' && !has2() && has9Keep();
-    
+
     function has9Keep() {
       return subfields.some(({code, value}) => code === '9' && value === 'FENNI<KEEP>');
     }
@@ -701,7 +701,7 @@ function markAsPostmergeField(field) {
 
 function createField(fieldContent) {
   return _.assign({}, {
-    uuid: uuid.v4(),
+    uuid: uuid(),
     fromPostmerge: true,
     ind1: ' ',
     ind2: ' '
