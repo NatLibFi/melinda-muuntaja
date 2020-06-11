@@ -62,7 +62,7 @@ function initCommit(req, res) {
   const [otherRecord, mergedRecord, unmodifiedRecord] =
     [req.body.otherRecord, req.body.mergedRecord, req.body.unmodifiedRecord].map(transformToMarcRecordFamily);
 
-  const preferredRecord = req.body.preferredRecord ? transformToMarcRecordFamily(req.body.preferredRecord) : undefined;
+  const preferredRecord = req.body.preferredRecord ? transformToMarcRecordFamily(req.body.preferredRecord) : {record: new MarcRecord()};
 
   const clientConfig = {
     restApiUrl,
@@ -73,9 +73,15 @@ function initCommit(req, res) {
 
   const client = createApiClient(clientConfig);
 
+  logger.log('debug', `Operation type: ${JSON.stringify(operationType)}`);
+  logger.log('debug', `Subrecord merge type: ${JSON.stringify(subrecordMergeType)}`);
+  logger.log('debug', `Other record: ${JSON.stringify(otherRecord)}`);
+  logger.log('debug', `Prefered record: ${JSON.stringify(preferredRecord)}`);
+  logger.log('debug', `Merged record: ${JSON.stringify(mergedRecord)}`);
+
   commitMerge(client, operationType, subrecordMergeType, otherRecord, preferredRecord, mergedRecord)
     .then((response) => {
-      logger.log('info', 'Commit merge successful', response);
+      logger.log('info', `Commit merge successful ${JSON.stringify(response)}`);
       const mergedMainRecordResult = _.get(response, '[0]');
 
       createArchive(username, otherRecord, preferredRecord, mergedRecord, unmodifiedRecord, mergedMainRecordResult.recordId).then((res) => {
