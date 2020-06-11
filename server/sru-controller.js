@@ -28,8 +28,8 @@
 
 import express from 'express';
 import cors from 'cors';
-import { readEnvironmentVariable, corsOptions } from 'server/utils';
-import { logger } from 'server/logger';
+import {readEnvironmentVariable, corsOptions} from 'server/utils';
+import {logger} from 'server/logger';
 import marc_record_converters from '@natlibfi/marc-record-converters';
 import createSruClient from '@natlibfi/sru-client';
 
@@ -46,9 +46,9 @@ sruController.options('/', cors(corsOptions)); // enable pre-flight
 
 sruController.get('/', cors(corsOptions), (req, res) => {
   const records = [];
-  const { q, page = 1 } = req.query;
+  const {q, page = 1} = req.query;
   const startRecord = (page - 1) * RECORDS_PER_PAGE + 1;
-  
+
   logger.log('info', `SRU query: '${q}'`);
 
   sruClient.searchRetrieve({query: req.query.q, offset: startRecord})

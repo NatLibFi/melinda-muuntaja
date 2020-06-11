@@ -45,24 +45,28 @@ describe('MARC IO controller', () => {
 
     let commitMergeStub;
     let createArchiveStub;
-    let loadRecordStub;
+    let getRecordStub;
 
     beforeEach(() => {
       commitMergeStub = sinon.stub();
-      loadRecordStub = sinon.stub();
+      getRecordStub = sinon.stub();
+      const createApiClientStub = sinon.stub().returns({
+        getRecord: getRecordStub
+      });
       createArchiveStub = sinon.stub().resolves({
         filename: 'FAKE-FILENAME',
         size: 'FAKE-SIZE'
       });
+
       RewireAPI.__Rewire__('commitMerge', commitMergeStub);
       RewireAPI.__Rewire__('createArchive', createArchiveStub);
-      RewireAPI.__Rewire__('loadRecord', loadRecordStub);
-
+      RewireAPI.__Rewire__('createApiClient', createApiClientStub);
     });
+
     afterEach(() => {
       RewireAPI.__ResetDependency__('commitMerge');
       RewireAPI.__ResetDependency__('createArchive');
-      RewireAPI.__ResetDependency__('loadRecord');
+      RewireAPI.__ResetDependency__('createApiClient');
     });
 
     it('returns UNAUTHORIZED if credentials are missing', (done) => {
@@ -89,7 +93,7 @@ describe('MARC IO controller', () => {
       commitMergeStub.resolves('Ok');
       const {record, subrecords} = createFakeRecordFamily();
       record.fields.push({'tag': '001', 'value': '123'});
-      loadRecordStub.resolves({record, subrecords});
+      getRecordStub.resolves({record, subrecords});
 
       request(mergeController)
         .post('/commit-merge')

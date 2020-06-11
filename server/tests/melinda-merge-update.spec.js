@@ -47,8 +47,8 @@ describe('melinda merge update', function () {
     it('returns metadata of successful create operation', function (done) {
       const expectedRecordId = 15;
 
-      clientStub.updateRecord.resolves('UPDATE-OK');
-      clientStub.createRecord.resolves(createSuccessResponse(expectedRecordId));
+      clientStub.postPrio.onCall(0).resolves(createSuccessResponse(expectedRecordId));
+      clientStub.postPrio.onCall(1).resolves('UPDATE-OK');
 
       const [other, merged] = [createRecordFamily(), createRecordFamily()];
 
@@ -64,8 +64,8 @@ describe('melinda merge update', function () {
     it('returns metadata of successful update operation', function (done) {
       const expectedRecordId = 123456789;
 
-      clientStub.updateRecord.resolves(createSuccessResponse(expectedRecordId));
-      clientStub.createRecord.resolves('CREATE-OK');
+      clientStub.postPrio.onCall(0).resolves(createSuccessResponse(expectedRecordId));
+      clientStub.postPrio.onCall(1).resolves('CREATE-OK');
 
       const [other, preferred, merged] = [createRecordFamily(), createRecordFamily(), createRecordFamily(expectedRecordId)];
 
@@ -93,8 +93,7 @@ describe('melinda merge update', function () {
 
 function createClientStub() {
   return {
-    updateRecord: sinon.stub(),
-    createRecord: sinon.stub()
+    postPrio: sinon.stub()
   };
 }
 
