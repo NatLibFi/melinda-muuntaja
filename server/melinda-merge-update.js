@@ -124,7 +124,7 @@ export function commitMerge(client, operationType, subrecordMergeType, otherReco
   function createRecord(record) {
     logger.log('info', `${jobId}] Creating new record`);
 
-    return client.postPrio({params: {noop: 0, unique: 0}, body: JSON.stringify(record)}).then(res => {
+    return client.create(record, {noop: 0, unique: 0}).then(res => {
       logger.log('info', `${jobId}] Create record ok for ${res.recordId}`), res.messages;
       return _.assign({}, res, {operation: 'CREATE'});
     }).catch(err => {
@@ -135,7 +135,7 @@ export function commitMerge(client, operationType, subrecordMergeType, otherReco
 
   function undeleteRecordFromMelinda(recordId) {
     logger.log('info', `${jobId}] Undeleting ${recordId}`);
-    return client.getRecord(recordId).then(({record}) => {
+    return client.read(recordId).then(({record}) => {
       record.get(/^STA$/u).forEach(field => record.removeField(field));
       updateRecordLeader(record, 5, 'c');
       return client.updateRecord({params: {noop: 0}, body: JSON.stringify(record)}, recordId).then(res => {
@@ -155,7 +155,7 @@ export function commitMerge(client, operationType, subrecordMergeType, otherReco
     record.appendField(['STA', '', '', 'a', 'DELETED']);
     updateRecordLeader(record, 5, 'd');
 
-    return client.postPrio({params: {noop: 0}, body: JSON.stringify(record)}, recordId).then(res => {
+    return client.update(record, recordId, {noop: 0}).then(res => {
       logger.log('info', `${jobId}] Delete ok for ${recordId}`, res.messages);
       return _.assign({}, res, {operation: 'DELETE'});
     }).catch(err => {
@@ -168,7 +168,7 @@ export function commitMerge(client, operationType, subrecordMergeType, otherReco
     const recordId = getRecordId(record);
     logger.log('info', `${jobId}] Updating record ${recordId}`);
 
-    return client.postPrio({params: {noop: 0}, body: JSON.stringify(record)}, recordId).then(res => {
+    return client.update(record, recordId, {noop: 0}).then(res => {
       logger.log('info', `${jobId}] Update record ok for ${recordId}`, res.messages);
       return _.assign({}, res, {operation: 'UPDATE'});
     }).catch(err => {
@@ -179,10 +179,10 @@ export function commitMerge(client, operationType, subrecordMergeType, otherReco
 
   function deleteRecordById(recordId) {
     logger.log('info', `${jobId}] Deleting ${recordId}`);
-    return client.getRecord(recordId).then(({record}) => {
+    return client.read(recordId).then(({record}) => {
       record.appendField(['STA', '', '', 'a', 'DELETED']);
       updateRecordLeader(record, 5, 'd');
-      return client.postPrio({params: {noop: 0}, body: JSON.stringify(record)}, recordId).then(res => {
+      return client.update(record, recordId, {noop: 0}).then(res => {
         logger.log('info', `${jobId}] Delete ok for ${recordId}`, res.messages);
         return _.assign({}, res, {operation: 'DELETE'});
       });

@@ -38,9 +38,9 @@ import {readSessionMiddleware} from 'server/session-controller';
 import _ from 'lodash';
 import {createArchive} from './archive-service';
 import {createApiClient, Utils} from '@natlibfi/melinda-commons';
-import {restApiUrl} from './config';
+import {sruUrl, restApiUrl} from './config';
 
-const {createLogger} = Utils;
+const {createLogger, logError, createSubrecordPicker} = Utils;
 const logger = createLogger();
 
 logger.log('info', `merge-controller endpoint: ${restApiUrl}`);
@@ -63,6 +63,8 @@ function initCommit(req, res) {
     [req.body.otherRecord, req.body.mergedRecord, req.body.unmodifiedRecord].map(transformToMarcRecordFamily);
 
   const preferredRecord = req.body.preferredRecord ? transformToMarcRecordFamily(req.body.preferredRecord) : {record: new MarcRecord()};
+
+  const subrecordPicker = createSubrecordPicker(sruUrl);
 
   const clientConfig = {
     restApiUrl,
@@ -91,30 +93,36 @@ function initCommit(req, res) {
       const createdRecordId = mergedMainRecordResult.recordId;
       const subrecordIdList = _.chain(response).filter(res => res.operation === 'CREATE').map('recordId').tail().value();
 
-      client.getRecord(createdRecordId, {subrecords: 1}).then(({record, subrecords}) => {
-        if (record.fields.length === 0) {
-          logger.log('debug', `Record ${createdRecordId} appears to be empty record.`);
-          return res.sendStatus(httpStatus.NOT_FOUND);
-        }
+      client.read(createdRecordId).then(({record}) =>
+        Promise.resolve(subrecordPicker.readSubrecords(createdRecordId)).then((subrecords) => {
+          if (record === undefined) {
+            logger.log('debug', `Record ${createdRecordId} appears to be empty record.`);
+            return res.sendStatus(httpStatus.NOT_FOUND);
+          }
 
-        const subrecordsById = _.zipObject(subrecords.map(selectRecordId), subrecords);
-        const subrecordsInRequestOrder = subrecordIdList.map(id => subrecordsById[id]);
+          const subrecordsById = _.zipObject(subrecords.map(selectRecordId), subrecords);
+          const subrecordsInRequestOrder = subrecordIdList.map(id => subrecordsById[id]);
 
-        if (_.difference(subrecords, subrecordsInRequestOrder).length !== 0) {
-          logger.log('info', `Warning: merge request had ${subrecords.length} subrecords while merged response had ${subrecordsInRequestOrder.length}`);
-        }
+          if (_.difference(subrecords, subrecordsInRequestOrder).length !== 0) {
+            logger.log('info', `Warning: merge request had ${subrecords.length} subrecords while merged response had ${subrecordsInRequestOrder.length}`);
+          }
 
-        const response = _.extend({}, mergedMainRecordResult, {
-          record,
-          subrecords: subrecordsInRequestOrder
-        });
+          const response = _.extend({}, mergedMainRecordResult, {
+            record,
+            subrecords: subrecordsInRequestOrder
+          });
 
-        res.send(response);
+          res.status(httpStatus.OK).send(response);
+        }).catch(error => {
+          logError(error);
+          return res.status(httpStatus.INTERNAL_SERVER_ERROR).send(error);
+        })
+      ).catch(error => {
+        logError(error);
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).send(error);
       });
-
-
     }).catch(error => {
-      logger.log('error', 'Commit merge error', error);
+      logError(error);
       res.status(httpStatus.INTERNAL_SERVER_ERROR).send(error);
     });
 

@@ -45,13 +45,13 @@ describe('MARC IO controller', () => {
 
     let commitMergeStub;
     let createArchiveStub;
-    let getRecordStub;
+    let readStub;
 
     beforeEach(() => {
       commitMergeStub = sinon.stub();
-      getRecordStub = sinon.stub();
+      readStub = sinon.stub();
       const createApiClientStub = sinon.stub().returns({
-        getRecord: getRecordStub
+        read: readStub
       });
       createArchiveStub = sinon.stub().resolves({
         filename: 'FAKE-FILENAME',
@@ -93,7 +93,7 @@ describe('MARC IO controller', () => {
       commitMergeStub.resolves('Ok');
       const {record, subrecords} = createFakeRecordFamily();
       record.fields.push({'tag': '001', 'value': '123'});
-      getRecordStub.resolves({record, subrecords});
+      readStub.resolves({record, subrecords});
 
       request(mergeController)
         .post('/commit-merge')

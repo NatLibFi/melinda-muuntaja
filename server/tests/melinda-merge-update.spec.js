@@ -41,14 +41,16 @@ describe('melinda merge update', function () {
     let clientStub;
 
     beforeEach(() => {
-      clientStub = createClientStub();
+      clientStub = {
+        create: sinon.stub(),
+        update: sinon.stub()
+      };
     });
 
     it('returns metadata of successful create operation', function (done) {
       const expectedRecordId = 15;
 
-      clientStub.postPrio.onCall(0).resolves(createSuccessResponse(expectedRecordId));
-      clientStub.postPrio.onCall(1).resolves('UPDATE-OK');
+      clientStub.create.onCall(0).resolves(createSuccessResponse(expectedRecordId));
 
       const [other, merged] = [createRecordFamily(), createRecordFamily()];
 
@@ -64,8 +66,7 @@ describe('melinda merge update', function () {
     it('returns metadata of successful update operation', function (done) {
       const expectedRecordId = 123456789;
 
-      clientStub.postPrio.onCall(0).resolves(createSuccessResponse(expectedRecordId));
-      clientStub.postPrio.onCall(1).resolves('CREATE-OK');
+      clientStub.update.onCall(0).resolves(createSuccessResponse(expectedRecordId));
 
       const [other, preferred, merged] = [createRecordFamily(), createRecordFamily(), createRecordFamily(expectedRecordId)];
 
@@ -90,12 +91,6 @@ describe('melinda merge update', function () {
     });
   });
 });
-
-function createClientStub() {
-  return {
-    postPrio: sinon.stub()
-  };
-}
 
 function expectFulfillmentToNotBeCalled(done) {
   return () => done(new Error('Fulfillment handler was called unexpectedly.'));

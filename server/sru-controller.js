@@ -30,14 +30,15 @@ import express from 'express';
 import cors from 'cors';
 import {readEnvironmentVariable, corsOptions} from 'server/utils';
 import {logger} from 'server/logger';
-import marc_record_converters from '@natlibfi/marc-record-converters';
 import createSruClient from '@natlibfi/sru-client';
+import {MARCXML} from '@natlibfi/marc-record-serializers';
 
 const RECORDS_PER_PAGE = 10;
 const sruClient = createSruClient({
-  serverUrl: readEnvironmentVariable('SRU_URL'),
+  url: readEnvironmentVariable('SRU_URL'),
   recordSchema: 'marcxml',
-  maximumRecords: RECORDS_PER_PAGE
+  maxRecordsPerRequest: RECORDS_PER_PAGE,
+  retrieveAll: false
 });
 
 export const sruController = express();
@@ -77,7 +78,7 @@ sruController.get('/', cors(corsOptions), (req, res) => {
       numberOfRecords: records.length,
       numberOfPages: Math.ceil(records.length / RECORDS_PER_PAGE),
       currentPage: page,
-      records: records.map(recordxml => marc_record_converters.marc21slimXML.from(recordxml)),
+      records: records.map(recordxml => MARCXML.from(recordxml)),
     });
   }
 });
