@@ -13,7 +13,7 @@ steps:
   commands:
   - npm install
   - npm test
-- name: docker 
+- name: docker
   image: plugins/docker
   settings:
     repo: quay.io/natlibfi/melinda-muuntaja
@@ -23,5 +23,5 @@ steps:
     password:
       from_secret: docker_password
   when:
-    branch: [master, test]
+    branch: [master, test, melkehitys-1541]
     event: [push, tag]
