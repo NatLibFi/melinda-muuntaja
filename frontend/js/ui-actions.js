@@ -350,7 +350,7 @@ export function setSearchIndex(index) {
 
 export function locationDidChange(location) {
   return function (dispatch, getState) {
-    dispatch(setLocation(location));
+    // dispatch(setLocation(location));
 
     const match = _.get(location, 'pathname', '').match('/record/(\\d+)(?:/to/(\\d+))?/?$');
 
@@ -489,9 +489,7 @@ export function swapRecords() {
     } else {
       dispatch(resetTargetRecord());
     }
-
   };
-
 }
 
 export const SET_SOURCE_RECORD_ID = 'SET_SOURCE_RECORD_ID';

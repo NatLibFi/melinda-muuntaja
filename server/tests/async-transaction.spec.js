@@ -80,7 +80,7 @@ describe('transcation', function() {
         if (error.name == 'AssertionError') {
           done(error);
         }
-        
+
         expect(error.message).to.equal('merge');
         done();
       });
@@ -125,7 +125,7 @@ describe('transcation', function() {
 
         try {
           expect(rollback1.getCall(0).args).to.eql(['del1']);
-          expect(rollback2.getCall(0).args).to.eql(['del2']);          
+          expect(rollback2.getCall(0).args).to.eql(['del2']);
           expect(error.message).to.equal('merge');
           done();
         } catch(e) {
@@ -148,7 +148,7 @@ describe('transcation', function() {
         if (error.name == 'AssertionError') {
           done(error);
         }
-        
+
         expect(error.message).to.equal('del2');
 
         done();
@@ -168,7 +168,7 @@ describe('transcation', function() {
       .then(onFulfilledMustNotBeCalled(done))
       .catch(catchHandler(function(error) {
         expect(error).to.be.instanceof(RollbackError);
-        expect(error.message).to.equal('undel1');  
+        expect(error.message).to.equal('undel1');
         done();
       }, done));
   });
@@ -213,13 +213,13 @@ function failingFn(text) {
 
 function asyncFunc(text) {
   return new Promise((resolve) => {
-    setTimeout(function() { resolve(text); }, 5);
+    setTimeout(() => { resolve(text); }, 5);
   });
 }
 
 function asyncFail(text) {
   return new Promise((resolve, reject) => {
-    setTimeout(function() { reject(new Error(text)); }, 5);
+    setTimeout(() => { reject(new Error(text)); }, 5);
   });
 }
 

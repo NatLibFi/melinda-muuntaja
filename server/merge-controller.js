@@ -37,10 +37,11 @@ import {commitMerge} from './melinda-merge-update';
 import {readSessionMiddleware} from 'server/session-controller';
 import _ from 'lodash';
 import {createArchive} from './archive-service';
-import {createApiClient, Utils} from '@natlibfi/melinda-commons';
+import {createApiClient} from '@natlibfi/melinda-rest-api-client-js';
+import {createSubrecordPicker} from '@natlibfi/melinda-commons';
+import {createLogger} from '@natlibfi/melinda-backend-commons';
 import {sruUrl, restApiUrl} from './config';
 
-const {createLogger, logError, createSubrecordPicker} = Utils;
 const logger = createLogger();
 
 logger.log('info', `merge-controller endpoint: ${restApiUrl}`);
@@ -64,7 +65,7 @@ function initCommit(req, res) {
 
   const preferredRecord = req.body.preferredRecord ? transformToMarcRecordFamily(req.body.preferredRecord) : {record: new MarcRecord()};
 
-  const subrecordPicker = createSubrecordPicker(sruUrl);
+  const subrecordPicker = createSubrecordPicker(sruUrl, true);
 
   const clientConfig = {
     restApiUrl,
@@ -93,8 +94,8 @@ function initCommit(req, res) {
       const createdRecordId = mergedMainRecordResult.recordId;
       const subrecordIdList = _.chain(response).filter(res => res.operation === 'CREATE').map('recordId').tail().value();
 
-      client.read(createdRecordId).then(({record}) =>
-        Promise.resolve(subrecordPicker.readSubrecords(createdRecordId)).then((subrecords) => {
+      client.read(createdRecordId).then((record) =>
+        Promise.resolve(subrecordPicker.readAllSubrecords(createdRecordId)).then((subrecords) => {
           if (record === undefined) {
             logger.log('debug', `Record ${createdRecordId} appears to be empty record.`);
             return res.sendStatus(httpStatus.NOT_FOUND);
@@ -114,15 +115,15 @@ function initCommit(req, res) {
 
           res.status(httpStatus.OK).send(response);
         }).catch(error => {
-          logError(error);
+          logger.log('error', error);
           return res.status(httpStatus.INTERNAL_SERVER_ERROR).send(error);
         })
       ).catch(error => {
-        logError(error);
+        logger.log('error', error);
         return res.status(httpStatus.INTERNAL_SERVER_ERROR).send(error);
       });
     }).catch(error => {
-      logError(error);
+      logger.log('error', error);
       res.status(httpStatus.INTERNAL_SERVER_ERROR).send(error);
     });
 
@@ -158,8 +159,7 @@ function requireSession(req, res, next) {
 
   if (username && password) {
     return next();
-  } else {
-    res.sendStatus(httpStatus.UNAUTHORIZED);
   }
 
+  res.sendStatus(httpStatus.UNAUTHORIZED);
 }

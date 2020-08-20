@@ -38,13 +38,15 @@ import {ErrorMessagePanel} from 'commons/components/error-message-panel';
 import {MergeValidationErrorMessagePanel} from 'commons/components/merge-validation-error-message-panel';
 import {isControlField} from '../utils';
 import _ from 'lodash';
-import { withRouter } from 'react-router';
+import {withRouter} from 'react-router';
 import classNames from 'classnames';
 import * as uiActionCreators from '../ui-actions';
 import '../../styles/components/record-merge-panel.scss';
 import {recordSaveActionAvailable, hostRecordActionsEnabled} from '../selectors/merge-status-selector';
 
-const RECORD_LOADING_DELAY = 500;
+let typeTimerSource;
+let typeTimerTarget;
+const RECORD_LOADING_DELAY = 1000;
 export class RecordMergePanel extends React.Component {
 
   static propTypes = {
@@ -73,19 +75,13 @@ export class RecordMergePanel extends React.Component {
     resetSourceRecord: PropTypes.func.isRequired,
     resetTargetRecord: PropTypes.func.isRequired,
     history: PropTypes.object.isRequired
-  }
+  };
 
   constructor() {
     super();
-    this.handleSourceChangeDebounced = _.debounce((event) => {
-      this.props.fetchRecord(event.target.value, 'SOURCE');
-    }, RECORD_LOADING_DELAY);
-
-    this.handleTargetChangeDebounced = _.debounce((event) => {
-      this.props.fetchRecord(event.target.value, 'TARGET');
-    }, RECORD_LOADING_DELAY);
-
-    this.state = {editMode: false};
+    this.state = {
+      editMode: false
+    };
   }
 
   UNSAFE_componentWillMount() {
@@ -120,7 +116,9 @@ export class RecordMergePanel extends React.Component {
 
   handleEditModeChange(event) {
     event.preventDefault();
-    this.setState({editMode: !this.state.editMode});
+    this.setState({
+      editMode: !this.state.editMode
+    });
   }
 
   handleChange(event) {
@@ -134,7 +132,7 @@ export class RecordMergePanel extends React.Component {
     if (event.target.id === 'source_record') {
       if (event.target.value.length > 0) {
         this.props.setSourceRecordId(event.target.value);
-        this.handleSourceChangeDebounced(event);
+        this.props.fetchRecord(event.target.value, 'SOURCE');
       }
       else {
         this.props.resetSourceRecord();
@@ -143,7 +141,7 @@ export class RecordMergePanel extends React.Component {
     if (event.target.id === 'target_record') {
       if (event.target.value.length > 0) {
         this.props.setTargetRecordId(event.target.value);
-        this.handleTargetChangeDebounced(event);
+        this.props.fetchRecord(event.target.value, 'TARGET');
       }
       else {
         this.props.resetTargetRecord();
@@ -157,7 +155,16 @@ export class RecordMergePanel extends React.Component {
     if (controlsEnabled) {
       this.props.swapRecords();
     }
+  }
 
+  onChangeSourceTimer(event) {
+    clearTimeout(typeTimerSource);
+    typeTimerSource = setTimeout(this.handleChange(event), RECORD_LOADING_DELAY);
+  }
+
+  onChangeTargetTimer(event) {
+    clearTimeout(typeTimerTarget);
+    typeTimerTarget = setTimeout(this.handleChange(event), RECORD_LOADING_DELAY);
   }
 
   renderSourceRecordPanel(recordState, errorMessage, record) {
@@ -177,7 +184,7 @@ export class RecordMergePanel extends React.Component {
       </div>
     );
 
-    const sourceField = this.recordInput('source_record', this.props.sourceRecordId, this.handleChange.bind(this), !controlsEnabled, 'Lähdetietue', button);
+    const sourceField = this.recordInput('source_record', this.props.sourceRecordId, this.onChangeSourceTimer.bind(this), !controlsEnabled, 'Lähdetietue', button);
 
     if (recordState === 'ERROR') {
       return (<ErrorMessagePanel
@@ -212,7 +219,7 @@ export class RecordMergePanel extends React.Component {
 
   renderTargetRecordPanel(recordState, errorMessage, record) {
     const {controlsEnabled} = this.props;
-    const targetField = this.recordInput('target_record', this.props.targetRecordId , this.handleChange.bind(this), !controlsEnabled, 'Pohjatietue');
+    const targetField = this.recordInput('target_record', this.props.targetRecordId, this.onChangeTargetTimer.bind(this), !controlsEnabled, 'Pohjatietue');
 
     if (recordState === 'ERROR') {
       return (<ErrorMessagePanel

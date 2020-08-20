@@ -111,7 +111,6 @@ function readPairFromFile(pairId) {
 
 
 function loadRecord(recordId) {
-
   return fetch(`${APIBasePath}/${recordId}`)
     .then(validateResponseStatus)
     .then(response => response.json())
@@ -138,10 +137,7 @@ function loadRecord(recordId) {
         record: marcRecord,
         subrecords: marcSubRecords
       };
-
     });
-
-
 }
 
 function validateResponseStatus(response) {

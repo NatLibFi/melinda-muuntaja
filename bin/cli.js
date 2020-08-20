@@ -27,7 +27,8 @@
 */
 
 /* eslint no-console:0 */
-import {Utils, createApiClient} from '@natlibfi/melinda-commons';
+import {createApiClient} from '@natlibfi/melinda-rest-api-client-js';
+import {createLogger} from '@natlibfi/melinda-backend-commons';
 import _ from 'lodash';
 import {stdin} from 'process';
 import {MarcRecord} from '@natlibfi/marc-record';
@@ -35,7 +36,6 @@ import fs from 'fs';
 import path from 'path';
 import {restApiUrl, restApiUsername, restApiPassword} from './config';
 
-const {createLogger, logError} = Utils;
 const logger = createLogger();
 
 const clientConfig = {
@@ -60,7 +60,7 @@ if (command === 'get') {
   client.loadRecord(recordId, {handle_deleted: 1, bypass_low_validation: 1}).then(record => {
     logger.log('info', record.toString());
   }).catch(error => {
-    logError(error);
+    logger.log('error',error);
   });
 }
 
@@ -228,7 +228,7 @@ function printResponse(response) {
 }
 
 function printError(error) {
-  logError(error);
+  logger.log('error', error);
   logger.log('error', 'Errors:');
   _.get(error, 'errors', []).forEach(msg => logger.log('error', ` ${msg.code} ${msg.message}`));
 
