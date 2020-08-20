@@ -1,3 +1,4 @@
+---
 kind: pipeline
 name: default
 steps:
@@ -25,3 +26,16 @@ steps:
   when:
     branch: [master, test, melkehitys-1541]
     event: [push, tag]
+---
+kind: secret
+name: docker_username
+data: ouNENo4qD2NY65bcbgSWHj+1wDeSib6mQTrCUXr4jz3gUPWA52m9uxXUKFXPag8vfq4=
+---
+kind: secret
+name: docker_password
+data: 3tyBTSaydnGMaASeq29fz8CResuUBMOl6LAEkm3VEz/fD+UId3c1jLrniyq3qbETxTmEej5qP8MdyfNxn9DvzxeJPJuAky8KwEv766P17+AKcyZWBgBPCDlMh4E=
+---
+kind: signature
+hmac: 7e4a9eed9427916411400254ca003fb484b2f53f3c12c92f428f8a1aa756ebf5
+
+...
