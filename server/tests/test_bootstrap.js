@@ -25,7 +25,10 @@
 * for the JavaScript code in this file.
 *
 */
-
+process.env.REST_API_URL='test-rest-url';
+process.env.REST_API_USERNAME='test-rest-username';
+process.env.REST_API_PASSWORD='test-rest-password';
+process.env.SRU_URL='test-sru-url';
 process.env.MELINDA_API='test-url1';
 process.env.ALEPH_URL='test-url2';
 process.env.ALEPH_USER_LIBRARY='test-lib';
