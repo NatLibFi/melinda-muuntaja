@@ -36,6 +36,9 @@ import reducer from '../js/root-reducer';
 import {subrecordRows} from '../js/selectors/subrecord-selectors';
 import _ from 'lodash';
 
+// Lisätty
+MarcRecord.setValidationOptions({fields: false, subfields: false, subfieldValues: false});
+
 describe('Subrecord reducer', () => {
 
   const testRecordObject = new MarcRecord({

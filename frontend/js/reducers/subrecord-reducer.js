@@ -42,6 +42,8 @@ import {
   TOGGLE_COMPACT_SUBRECORD_VIEW
 } from '../constants/action-type-constants';
 
+
+
 const INITIAL_STATE = Map({
   index: List()
 });

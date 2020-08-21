@@ -33,6 +33,7 @@ import {exceptCoreErrors} from '../utils';
 import {FetchNotOkError} from '../errors';
 import {v4 as uuid} from 'uuid';
 
+
 import {
   INSERT_SUBRECORD_ROW, REMOVE_SUBRECORD_ROW, CHANGE_SOURCE_SUBRECORD_ROW, CHANGE_TARGET_SUBRECORD_ROW,
   CHANGE_SUBRECORD_ROW, SET_MERGED_SUBRECORDS, SET_SUBRECORD_ACTION, SET_MERGED_SUBRECORD, SET_MERGED_SUBRECORD_ERROR,
@@ -192,7 +193,7 @@ export function updateMergedSubrecord(rowId) {
         return field.tag === '773' && field.subfields.filter(s => s.code === 'w').some(s => s.value === `(FI-MELINDA)${hostRecordId}`);
       }).map(resetComponentHostLinkSubfield);
 
-      // Note: We don't handle LOW/SID tags when subrecord action=COPY. 
+      // Note: We don't handle LOW/SID tags when subrecord action=COPY.
       // LOW-SYNC will handle that after the record has been added to melinda.
       return dispatch(setMergedSubrecord(rowId, recordToCopy));
 

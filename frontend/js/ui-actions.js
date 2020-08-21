@@ -46,6 +46,8 @@ import * as PostMerge from './marc-record-merge-postmerge-service';
 import history from './history';
 import {CHANGE_MERGE_PROFILE} from './constants/action-type-constants';
 
+
+
 export const SWITCH_MERGE_CONFIG = 'SWITCH_MERGE_CONFIG';
 export const SWITCH_MERGE_TYPE = 'SWITCH_MERGE_TYPE';
 
@@ -350,7 +352,7 @@ export function setSearchIndex(index) {
 
 export function locationDidChange(location) {
   return function (dispatch, getState) {
-    // dispatch(setLocation(location));
+    dispatch(setLocation(location));
 
     const match = _.get(location, 'pathname', '').match('/record/(\\d+)(?:/to/(\\d+))?/?$');
 
@@ -505,7 +507,6 @@ export function setTargetRecordId(recordId) {
 }
 
 export function updateMergedRecord() {
-
   return function (dispatch, getState) {
     const getMergeProfile = getState().getIn(['config', 'mergeProfiles', getState().getIn(['config', 'selectedMergeProfile']), 'record']);
     const defaultProfile = getState().getIn(['config', 'mergeProfiles']);
@@ -532,23 +533,25 @@ export function updateMergedRecord() {
       }
 
       MergeValidation.validateMergeCandidates(validationRulesClone, preferredRecord, otherRecord, preferredHasSubrecords, otherRecordHasSubrecords)
-        .then(() => merge(preferredRecord, otherRecord))
-        .then((originalMergedRecord) => {
-          if (!newFields) return originalMergedRecord;
-
-          var mergedRecord = new MarcRecord(originalMergedRecord);
+      .then(() => merge(preferredRecord, otherRecord))
+      .then((originalMergedRecord) => {
+          if (!newFields) {
+            return originalMergedRecord;
+          }
 
           newFields.forEach(field => {
-            const fields = mergedRecord.fields.filter(fieldInMerged => {
+            const fields = originalMergedRecord.fields.filter(fieldInMerged => {
               return field.tag === fieldInMerged.tag && _.isEqual(field.subfields, fieldInMerged.subfields);
             });
 
-            if (fields.length === 0) mergedRecord.appendField({...field, uuid: uuid()});
+            if (fields.length === 0) originalMergedRecord.appendField({...field, uuid: uuid()});
           });
 
-          return mergedRecord;
+          return originalMergedRecord;
         })
-        .then(mergedRecord => PostMerge.applyPostMergeModifications(postMergeFixes, preferredRecord, otherRecord, mergedRecord))
+        .then(mergedRecord => {
+          return PostMerge.applyPostMergeModifications(postMergeFixes, preferredRecord, otherRecord, mergedRecord)
+        })
         .then(result => {
           dispatch(setMergedRecord(result.record));
         })

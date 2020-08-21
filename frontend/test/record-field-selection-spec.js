@@ -31,6 +31,8 @@ import * as actions from '../js/ui-actions';
 import reducer from '../js/root-reducer';
 import {MarcRecord} from '@natlibfi/marc-record';
 
+
+
 describe('record field selections', () => {
 
   const fieldInSourceRecord = {

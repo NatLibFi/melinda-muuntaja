@@ -6,6 +6,8 @@ import {v4 as uuid} from 'uuid';
 import {curry} from 'ramda';
 import {filterTag, findIndex, updateParamsfield, addTag, updatedMergedRecordParams, addIntoArray, replaceFieldsFromSource} from '../../../utils';
 
+
+
 export const eToPrintPreset = [
   eToPrintRemoveTags,
   eToPrintSelect008,
@@ -107,7 +109,7 @@ export function eToPrintSelect040(targetRecord, sourceRecord, mergedRecordParam)
   };
 }
 
-// 
+//
 function eToPrintSelect020(targetRecord, sourceRecord, mergedRecordParam) {
   const fieldTag = '020';
   const tag020 = {...filterTag(sourceRecord, fieldTag)};
@@ -212,10 +214,10 @@ function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
 }
 
 // removes tag 655 if match in a-field
-// 'e-kirjat', 
-// 'e-böcker', 
-// 'sähköiset julkaisut', 
-// 'elektroniska publikationer', 
+// 'e-kirjat',
+// 'e-böcker',
+// 'sähköiset julkaisut',
+// 'elektroniska publikationer',
 // 'Electronic books.'
 
 function eToPrintSelect655(targetRecord, sourceRecord, mergedRecordParam) {

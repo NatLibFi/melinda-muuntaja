@@ -33,6 +33,8 @@ import {RESET_WORKSPACE} from '../constants/action-type-constants';
 import {DEFAULT_MERGED_RECORD} from '../root-reducer';
 import {MarcRecord} from '@natlibfi/marc-record';
 
+
+
 const INITIAL_STATE = Map({
   state: 'EMPTY'
 });
@@ -119,13 +121,13 @@ export function addField(state, field) {
     record.insertField(field);
   }
 
-  return state.set('record', new MarcRecord(record));
+  return state.set('record', record);
 }
 
 export function removeField(state, field) {
   const record = state.get('record');
   record.fields = record.fields.filter(currentField => currentField.uuid !== field.uuid);
-  return state.set('record', new MarcRecord(record));
+  return state.set('record', record);
 }
 
 function isControlField(field) {

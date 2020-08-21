@@ -42,6 +42,8 @@ import {createSubrecordPicker} from '@natlibfi/melinda-commons';
 import {createLogger} from '@natlibfi/melinda-backend-commons';
 import {sruUrl, restApiUrl} from './config';
 
+
+
 const logger = createLogger();
 
 logger.log('info', `merge-controller endpoint: ${restApiUrl}`);

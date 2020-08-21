@@ -28,6 +28,8 @@
 
 import {MarcRecord} from '@natlibfi/marc-record';
 import {decorateFieldsWithUuid} from '../../record-utils';
+
+// Lisätty
 MarcRecord.setValidationOptions({fields: false, subfields: false, subfieldValues: false});
 
 const record = new MarcRecord({

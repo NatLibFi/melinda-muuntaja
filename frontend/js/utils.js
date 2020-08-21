@@ -29,6 +29,8 @@
 import {orderBy} from 'lodash';
 import {MarcRecord} from '@natlibfi/marc-record';
 
+
+
 export function replaceFieldsFromSource(regex, sourcerecord, mergedRecordParam) {
   const fieldsFromSourceRecord = sourcerecord.fields.filter(field => regex.test(field.tag));
 
@@ -39,10 +41,10 @@ export function replaceFieldsFromSource(regex, sourcerecord, mergedRecordParam) 
   };
 
   return {
-    mergedRecord: new MarcRecord({
+    mergedRecord: {
       ...filteredMergedRecordParam,
       fields: orderBy([...filteredMergedRecordParam.fields], 'tag')
-    })
+    }
   };
 }
 

@@ -34,6 +34,9 @@ import reducer from '../js/root-reducer';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {subrecordRows} from '../js/selectors/subrecord-selectors';
 
+// Lisätty
+MarcRecord.setValidationOptions({fields: false, subfields: false, subfieldValues: false});
+
 describe('ui reducers', () => {
 
   const testRecordObject = new MarcRecord({
