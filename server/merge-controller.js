@@ -140,7 +140,7 @@ function initCommit(req, res) {
 
   function transformToMarcRecord(json) {
     const {sourceRecordId, preferredRecordId} = json;
-    return {...new MarcRecord(json), sourceRecordId, preferredRecordId};
+    return {...new MarcRecord(json, {subfieldValues: false}), sourceRecordId, preferredRecordId};
   }
 
   function selectRecordId(record) {

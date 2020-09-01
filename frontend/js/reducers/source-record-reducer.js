@@ -31,7 +31,8 @@ import {LOAD_SOURCE_RECORD, SET_SOURCE_RECORD, SET_SOURCE_RECORD_ERROR, SET_SOUR
 import {RESET_WORKSPACE} from '../constants/action-type-constants';
 import {MarcRecord} from '@natlibfi/marc-record';
 
-
+// Lisätty
+MarcRecord.setValidationOptions({fields: false, subfields: false, subfieldValues: false});
 
 const INITIAL_STATE = Map({
   state: 'EMPTY'
@@ -92,8 +93,7 @@ export function setFieldSelected(state, field) {
       recordField.fromOther = true;
       recordField.wasUsed = true;
     });
-  return state.set('record', record);
-
+  return state.set('record', new MarcRecord(record, {subfieldValues: false}));
 }
 
 export function setFieldUnselected(state, field) {
@@ -104,5 +104,5 @@ export function setFieldUnselected(state, field) {
       recordField.fromOther = false;
       recordField.wasUsed = false;
     });
-  return state.set('record', record);
+  return state.set('record', new MarcRecord(record, {subfieldValues: false}));
 }

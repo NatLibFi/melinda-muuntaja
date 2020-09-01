@@ -533,24 +533,26 @@ export function updateMergedRecord() {
       }
 
       MergeValidation.validateMergeCandidates(validationRulesClone, preferredRecord, otherRecord, preferredHasSubrecords, otherRecordHasSubrecords)
-      .then(() => merge(preferredRecord, otherRecord))
-      .then((originalMergedRecord) => {
+        .then(() => merge(preferredRecord, otherRecord))
+        .then((originalMergedRecord) => {
           if (!newFields) {
             return originalMergedRecord;
           }
 
+          let mergedRecord = new MarcRecord(originalMergedRecord, {subfieldValues: false})
+
           newFields.forEach(field => {
-            const fields = originalMergedRecord.fields.filter(fieldInMerged => {
+            const fields = mergedRecord.fields.filter(fieldInMerged => {
               return field.tag === fieldInMerged.tag && _.isEqual(field.subfields, fieldInMerged.subfields);
             });
 
-            if (fields.length === 0) originalMergedRecord.appendField({...field, uuid: uuid()});
+            if (fields.length === 0) mergedRecord.appendField({...field, uuid: uuid()});
           });
 
-          return originalMergedRecord;
+          return mergedRecord;
         })
         .then(mergedRecord => {
-          return PostMerge.applyPostMergeModifications(postMergeFixes, preferredRecord, otherRecord, mergedRecord)
+          return PostMerge.applyPostMergeModifications(postMergeFixes, preferredRecord, otherRecord, mergedRecord);
         })
         .then(result => {
           dispatch(setMergedRecord(result.record));
