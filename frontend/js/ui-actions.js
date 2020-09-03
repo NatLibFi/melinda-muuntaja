@@ -104,7 +104,7 @@ export function commitMerge() {
 
     const {sourceSubrecordList, targetSubrecordList, mergedSubrecordList, unmodifiedMergedSubrecordList} = subrecords.reduce((result, row) => {
       if (row.targetRecord) {
-        row.mergedRecord = new MarcRecord(row.mergedRecord);
+        row.mergedRecord = new MarcRecord(row.mergedRecord, {subfieldValues: false});
 
         setRecordId(row.mergedRecord, selectRecordId(row.targetRecord));
       }
@@ -281,7 +281,7 @@ export function handleSearch() {
       .then(response => response.json())
       .then(json => {
         json.records = json.records.map(record => {
-          const marcRecord = new MarcRecord(record);
+          const marcRecord = new MarcRecord(record, {subfieldValues: false});
           decorateFieldsWithUuid(marcRecord);
 
           return marcRecord;
@@ -539,7 +539,7 @@ export function updateMergedRecord() {
             return originalMergedRecord;
           }
 
-          let mergedRecord = new MarcRecord(originalMergedRecord, {subfieldValues: false})
+          let mergedRecord = new MarcRecord(originalMergedRecord, {subfieldValues: false});
 
           newFields.forEach(field => {
             const fields = mergedRecord.fields.filter(fieldInMerged => {
@@ -661,8 +661,8 @@ function recordFetch(APIBasePath, loadRecordAction, setRecordAction, setRecordEr
 }
 
 function marcRecordsFrom(record, subrecords) {
-  const marcRecord = new MarcRecord(record);
-  const marcSubrecords = subrecords.map(record => new MarcRecord(record));
+  const marcRecord = new MarcRecord(record, {subfieldValues: false});
+  const marcSubrecords = subrecords.map(record => new MarcRecord(record, {subfieldValues: false}));
 
   decorateFieldsWithUuid(marcRecord);
   marcSubrecords.forEach(decorateFieldsWithUuid);

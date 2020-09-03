@@ -55,7 +55,7 @@ describe('record field selections', () => {
         }]
       }
     ]
-  });
+  }, {subfieldValues: false});
 
   const otherRecordObject = new MarcRecord({
     leader: '^^^^^cam^a22002897i^4500',
@@ -67,7 +67,7 @@ describe('record field selections', () => {
       {tag: '009', value: 'TARGET'},
       fieldInSourceRecord
     ]
-  });
+  }, {subfieldValues: false});
 
   const mergedRecordObject = new MarcRecord({
     leader: '^^^^^cam^a22002897i^4500',

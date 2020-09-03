@@ -295,7 +295,7 @@ export function printToE200q(preferredRecord, otherRecord, mergedRecordParam) {
 // }
 
 export function applyPostMergeModifications(postMergeFunctions, preferredRecord, otherRecord, originalMarcRecord) {
-  let mergedRecord = new MarcRecord(originalMarcRecord, {subfieldValues: false})
+  let mergedRecord = new MarcRecord(originalMarcRecord, {subfieldValues: false});
   const initial_value = {
     mergedRecord,
     notes: []

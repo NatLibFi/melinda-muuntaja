@@ -34,6 +34,7 @@ import HttpStatus from 'http-status';
 import {__RewireAPI__ as RewireAPI} from '../merge-controller';
 import {mergeController} from '../merge-controller';
 import {createSessionToken} from 'server/session-crypt';
+import {MarcRecord} from '@natlibfi/marc-record';
 
 chai.use(sinonChai);
 
@@ -143,9 +144,14 @@ describe('MARC IO controller', () => {
 });
 
 function createFakeRecord() {
-  return {
-    fields: []
-  };
+  return MarcRecord.fromString([
+    'LDR    abcdefghijk',
+    '001    28474',
+    '003    aaabbb',
+    '100    ‡aTest Author',
+    '245 0  ‡aSome content',
+    '245 0  ‡aTest Title‡bTest field‡cTest content'
+  ].join('\n'));
 }
 
 function createFakeRecordFamily() {

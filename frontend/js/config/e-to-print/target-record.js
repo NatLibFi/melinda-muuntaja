@@ -100,7 +100,7 @@ const record = new MarcRecord({
       ]
     }
   ]
-});
+}, {subfieldValues: false});
 
 decorateFieldsWithUuid(record);
 

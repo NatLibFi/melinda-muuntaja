@@ -182,10 +182,10 @@ export function updateMergedSubrecord(rowId) {
 
       if (preferredRecord) {
         hostRecordId = selectRecordId(selectPreferredHostRecord(getState()));
-        recordToCopy = new MarcRecord(preferredRecord);
+        recordToCopy = new MarcRecord(preferredRecord, {subfieldValues: false});
       } else {
         hostRecordId = selectRecordId(selectOtherHostRecord(getState()));
-        recordToCopy = new MarcRecord(otherRecord);
+        recordToCopy = new MarcRecord(otherRecord, {subfieldValues: false});
       }
 
       // reset 773w
@@ -305,7 +305,7 @@ function mergeSubrecord({preferredRecord, otherRecord, preferredHostRecord, othe
       .then(() => merge(preferredRecord, otherRecord))
       .then((originalMergedRecord) => {
         if (!newFields) return originalMergedRecord;
-        var mergedRecord = new MarcRecord(originalMergedRecord);
+        var mergedRecord = new MarcRecord(originalMergedRecord, {subfieldValues: false});
 
         newFields.forEach(field => {
           const fields = mergedRecord.fields.filter(fieldInMerged => {
@@ -390,7 +390,7 @@ export const saveSubrecord = (function () {
         .then(response => response.json())
         .then(json => {
 
-          const marcRecord = new MarcRecord(json.record);
+          const marcRecord = new MarcRecord(json.record, {subfieldValues: false});
           decorateFieldsWithUuid(marcRecord);
 
           dispatch(saveSubrecordSuccess(rowId, marcRecord));

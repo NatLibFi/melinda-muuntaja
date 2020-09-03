@@ -74,7 +74,7 @@ export const saveRecord = (function () {
 
           const mainRecord = json.record;
 
-          const marcRecord = new MarcRecord(mainRecord);
+          const marcRecord = new MarcRecord(mainRecord, {subfieldValues: false});
 
           marcRecord.fields.forEach(field => {
             field.uuid = uuid();

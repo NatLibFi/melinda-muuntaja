@@ -161,7 +161,7 @@ function setFieldSelected(record, field) {
       recordField.fromOther = true;
       recordField.wasUsed = true;
     });
-  return new MarcRecord(record);
+  return new MarcRecord(record, {subfieldValues: false});
 }
 
 function setFieldUnselected(record, field) {
@@ -171,7 +171,7 @@ function setFieldUnselected(record, field) {
       recordField.fromOther = false;
       recordField.wasUsed = false;
     });
-  return new MarcRecord(record);
+  return new MarcRecord(record, {subfieldValues: false});
 }
 
 

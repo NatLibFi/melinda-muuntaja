@@ -88,7 +88,7 @@ function compactView(pair) {
 
 function compactRecord(record) {
   if (record === undefined) return '';
-  const copy = new MarcRecord(record);
+  const copy = new MarcRecord(record, {subfieldValues: false});
   copy.fields = copy.fields.filter(field => ['031', '100', '245'].some(tag => tag === field.tag));
   return copy;
 }
@@ -100,11 +100,11 @@ function readPairFromFile(pairId) {
   return {
     a: {
       record: new MarcRecord(a.record),
-      subrecords: a.subrecords.map(sub => new MarcRecord(sub))
+      subrecords: a.subrecords.map(sub => new MarcRecord(sub, {subfieldValues: false}))
     },
     b: {
       record: new MarcRecord(b.record),
-      subrecords: b.subrecords.map(sub => new MarcRecord(sub))
+      subrecords: b.subrecords.map(sub => new MarcRecord(sub, {subfieldValues: false}))
     }
   };
 }
@@ -119,9 +119,9 @@ function loadRecord(recordId) {
       const mainRecord = json.record;
       const subrecords = json.subrecords;
 
-      const marcRecord = new MarcRecord(mainRecord);
+      const marcRecord = new MarcRecord(mainRecord, {subfieldValues: false});
       const marcSubRecords = subrecords
-        .map(record => new MarcRecord(record));
+        .map(record => new MarcRecord(record, {subfieldValues: false}));
 
       marcSubRecords.forEach(record => {
         record.fields.forEach(field => {

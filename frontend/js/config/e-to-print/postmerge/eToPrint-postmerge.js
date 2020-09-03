@@ -36,7 +36,7 @@ export function eToPrintRemoveTags(preferredRecord, otherRecord, mergedRecordPar
     ...mergedRecordParam,
     fields: mergedRecordParam.fields.filter(field => !tagList.includes(field.tag))
   };
-  const mergedRecord = new MarcRecord(filteredMergedRecordParam);
+  const mergedRecord = new MarcRecord(filteredMergedRecordParam, {subfieldValues: false});
 
   return {
     mergedRecord
@@ -69,7 +69,7 @@ export function eToPrintSelect008(preferredRecord, otherRecord, mergedRecordPara
   };
 
   return {
-    mergedRecord: new MarcRecord(updatedMergeParams)
+    mergedRecord: new MarcRecord(updatedMergeParams, {subfieldValues: false})
   };
 
   function replaceString(sourceTag, index, replaceWith) {
@@ -100,12 +100,12 @@ export function eToPrintSelect040(targetRecord, sourceRecord, mergedRecordParam)
     const updatedMergedRecordParam = fieldIndex > -1 ? updateParamsfield(mergedRecordParam, updated040Field.subfields, fieldIndex) : addTag(mergedRecordParam, updated040Field);
 
     return {
-      mergedRecord: new MarcRecord(updatedMergedRecordParam)
+      mergedRecord: new MarcRecord(updatedMergedRecordParam, {subfieldValues: false})
     };
   }
 
   return {
-    mergedRecord: new MarcRecord(mergedRecordParam)
+    mergedRecord: new MarcRecord(mergedRecordParam, {subfieldValues: false})
   };
 }
 
@@ -132,12 +132,12 @@ function eToPrintSelect020(targetRecord, sourceRecord, mergedRecordParam) {
     const updatedMergedRecordParam = fieldIndex > -1 ? updateParamsfield(mergedRecordParam, tag020.subfields, fieldIndex) : addTag(mergedRecordParam, tag020);
 
     return {
-      mergedRecord: new MarcRecord(updatedMergedRecordParam)
+      mergedRecord: new MarcRecord(updatedMergedRecordParam, {subfieldValues: false})
     };
   }
 
   return {
-    mergedRecord: new MarcRecord(mergedRecordParam)
+    mergedRecord: new MarcRecord(mergedRecordParam, {subfieldValues: false})
   };
 
   function updateValue(field, value) {
@@ -195,11 +195,11 @@ function eToPrintSelect300(targetRecord, sourceRecord, mergedRecordParam) {
     const updatedMergedRecordParam = fieldIndex > -1 ? updateParamsfield(mergedRecordParam, updatedTag300.subfields, fieldIndex) : addTag(mergedRecordParam, updatedTag300);
 
     return {
-      mergedRecord: new MarcRecord(updatedMergedRecordParam)
+      mergedRecord: new MarcRecord(updatedMergedRecordParam, {subfieldValues: false})
     };
   }
   return {
-    mergedRecord: new MarcRecord(mergedRecordParam)
+    mergedRecord: new MarcRecord(mergedRecordParam, {subfieldValues: false})
   };
 
   function checkMatch(field, subfieldsLength) {
@@ -238,11 +238,11 @@ function eToPrintSelect655(targetRecord, sourceRecord, mergedRecordParam) {
     };
 
     return {
-      mergedRecord: new MarcRecord(updatedMergedRecordParam)
+      mergedRecord: new MarcRecord(updatedMergedRecordParam, {subfieldValues: false})
     };
   }
   return {
-    mergedRecord: new MarcRecord(mergedRecordParam)
+    mergedRecord: new MarcRecord(mergedRecordParam, {subfieldValues: false})
   };
 
   function filterStrigs(field) {
@@ -290,11 +290,11 @@ function eToPrintSelect776(targetRecord, sourceRecord, mergedRecordParam) {
     const updatedMergedRecordParam = isEmpty(removedSubfieldMergeParams) ? baseMergedRecordParam : removedSubfieldMergeParams;
 
     return {
-      mergedRecord: new MarcRecord(updatedMergedRecordParam)
+      mergedRecord: new MarcRecord(updatedMergedRecordParam, {subfieldValues: false})
     };
   }
   return {
-    mergedRecord: new MarcRecord(mergedRecordParam)
+    mergedRecord: new MarcRecord(mergedRecordParam, {subfieldValues: false})
   };
 
   function trim020a(fieldA) {
@@ -340,7 +340,7 @@ export function ISBNhyphenate(targetRecord, sourceRecord, mergedRecordParam) {
   };
 
   return {
-    mergedRecord: new MarcRecord(updatedMergedRecordParam)
+    mergedRecord: new MarcRecord(updatedMergedRecordParam, {subfieldValues: false})
   };
 
   function findTag(field) {
@@ -393,7 +393,7 @@ export function eToPrintSelect490_830(targetRecord, sourceRecord, mergedRecordPa
   }, mergedRecordParam);
 
   return {
-    mergedRecord: new MarcRecord(updatedRecord)
+    mergedRecord: new MarcRecord(updatedRecord, {subfieldValues: false})
   };
 
   function xSubfieldPunctuation(length, field) {
