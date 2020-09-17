@@ -31,9 +31,6 @@ import {LOAD_SOURCE_RECORD, SET_SOURCE_RECORD, SET_SOURCE_RECORD_ERROR, SET_SOUR
 import {RESET_WORKSPACE} from '../constants/action-type-constants';
 import {MarcRecord} from '@natlibfi/marc-record';
 
-// Lisätty
-MarcRecord.setValidationOptions({fields: false, subfields: false, subfieldValues: false});
-
 const INITIAL_STATE = Map({
   state: 'EMPTY'
 });

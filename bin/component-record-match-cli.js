@@ -99,11 +99,11 @@ function readPairFromFile(pairId) {
 
   return {
     a: {
-      record: new MarcRecord(a.record),
+      record: new MarcRecord(a.record, {subfieldValues: false}),
       subrecords: a.subrecords.map(sub => new MarcRecord(sub, {subfieldValues: false}))
     },
     b: {
-      record: new MarcRecord(b.record),
+      record: new MarcRecord(b.record, {subfieldValues: false}),
       subrecords: b.subrecords.map(sub => new MarcRecord(sub, {subfieldValues: false}))
     }
   };

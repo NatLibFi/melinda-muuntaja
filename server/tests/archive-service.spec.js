@@ -45,22 +45,22 @@ describe('Archive service', () => {
   const username = 'test-user';
 
   const otherRecord = {
-    record: new MarcRecord({fields: [{tag: '001', value: '1'}]}),
+    record: new MarcRecord({fields: [{tag: '001', value: '1'}]}, {subfieldValues: false}),
     subrecords: []
   };
 
   const preferredRecord = {
-    record: new MarcRecord({fields: [{tag: '001', value: '2'}]}),
+    record: new MarcRecord({fields: [{tag: '001', value: '2'}]}, {subfieldValues: false}),
     subrecords: []
   };
 
   const mergedRecord = {
-    record: new MarcRecord({fields: [{tag: '001', value: '3'}]}),
+    record: new MarcRecord({fields: [{tag: '001', value: '3'}]}, {subfieldValues: false}),
     subrecords: []
   };
 
   const unmodifiedMergedRecord = {
-    record: new MarcRecord({fields: [{tag: '001', value: '3'}]}),
+    record: new MarcRecord({fields: [{tag: '001', value: '3'}]}, {subfieldValues: false}),
     subrecords: []
   };
 

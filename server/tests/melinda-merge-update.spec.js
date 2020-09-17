@@ -31,7 +31,6 @@ import chai from 'chai';
 import sinonChai from 'sinon-chai';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {commitMerge} from '../melinda-merge-update';
-MarcRecord.setValidationOptions({fields: false, subfields: false, subfieldValues: false});
 
 chai.use(sinonChai);
 const expect = chai.expect;

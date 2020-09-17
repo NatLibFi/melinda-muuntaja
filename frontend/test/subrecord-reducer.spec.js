@@ -36,9 +36,6 @@ import reducer from '../js/root-reducer';
 import {subrecordRows} from '../js/selectors/subrecord-selectors';
 import _ from 'lodash';
 
-// Lisätty
-MarcRecord.setValidationOptions({fields: false, subfields: false, subfieldValues: false});
-
 describe('Subrecord reducer', () => {
 
   const testRecordObject = new MarcRecord({
@@ -55,7 +52,7 @@ describe('Subrecord reducer', () => {
       }
 
     ]
-  });
+  }, {subfieldValues: false});
 
   const otherTestRecordObject = new MarcRecord({
     leader: '^^^^^cam^a22002897i^4500',
@@ -67,7 +64,7 @@ describe('Subrecord reducer', () => {
       {tag: '009', value: 'TARGET'},
 
     ]
-  });
+  }, {subfieldValues: false});
 
   const tsub1 = new MarcRecord({
     leader: '^^^^^cam^a22002897i^4500',
@@ -76,7 +73,7 @@ describe('Subrecord reducer', () => {
       {tag: '008', value: 'TARGET'},
       {tag: '003', value: 'tsub1'}
     ]
-  });
+  }, {subfieldValues: false});
 
   const tsub2 = new MarcRecord({
     leader: '^^^^^cam^a22002897i^4500',
@@ -85,7 +82,7 @@ describe('Subrecord reducer', () => {
       {tag: '008', value: 'TARGET'},
       {tag: '003', value: 'tsub2'}
     ]
-  });
+  }, {subfieldValues: false});
 
   const tsub3 = new MarcRecord({
     leader: '^^^^^cam^a22002897i^4500',
@@ -94,7 +91,7 @@ describe('Subrecord reducer', () => {
       {tag: '008', value: 'TARGET'},
       {tag: '003', value: 'tsub3'}
     ]
-  });
+  }, {subfieldValues: false});
 
   const ssub1 = new MarcRecord({
     leader: '^^^^^cam^a22002897i^4500',
@@ -103,7 +100,7 @@ describe('Subrecord reducer', () => {
       {tag: '008', value: 'SOURCE'},
       {tag: '003', value: 'ssub1'}
     ]
-  });
+  }, {subfieldValues: false});
 
   const ssub2 = new MarcRecord({
     leader: '^^^^^cam^a22002897i^4500',
@@ -112,7 +109,7 @@ describe('Subrecord reducer', () => {
       {tag: '008', value: 'SOURCE'},
       {tag: '003', value: 'ssub2'}
     ]
-  });
+  }, {subfieldValues: false});
 
   const msub1 = new MarcRecord({
     leader: '^^^^^cam^a22002897i^4500',
@@ -121,7 +118,7 @@ describe('Subrecord reducer', () => {
       {tag: '008', value: 'MERGED'},
       {tag: '003', value: 'msub1'}
     ]
-  });
+  }, {subfieldValues: false});
 
   describe('subrecords', function () {
 

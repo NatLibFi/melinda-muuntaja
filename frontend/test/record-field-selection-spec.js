@@ -84,7 +84,7 @@ describe('record field selections', () => {
         }]
       }
     ]
-  });
+  }, {subfieldValues: false});
 
   describe('on ADD_SOURCE_RECORD_FIELD', () => {
     let state;

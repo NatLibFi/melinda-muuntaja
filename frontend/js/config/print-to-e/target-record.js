@@ -29,9 +29,6 @@
 import {MarcRecord} from '@natlibfi/marc-record';
 import {decorateFieldsWithUuid} from '../../record-utils';
 
-// Lisätty
-MarcRecord.setValidationOptions({fields: false, subfields: false, subfieldValues: false});
-
 const record = new MarcRecord({
   leader: '00000cam^a22006134i^4500',
   fields: [

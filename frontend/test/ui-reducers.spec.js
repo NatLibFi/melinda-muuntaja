@@ -34,9 +34,6 @@ import reducer from '../js/root-reducer';
 import {MarcRecord} from '@natlibfi/marc-record';
 import {subrecordRows} from '../js/selectors/subrecord-selectors';
 
-// Lisätty
-MarcRecord.setValidationOptions({fields: false, subfields: false, subfieldValues: false});
-
 describe('ui reducers', () => {
 
   const testRecordObject = new MarcRecord({
@@ -53,7 +50,7 @@ describe('ui reducers', () => {
       }
 
     ]
-  });
+  }, {subfieldValues: false});
 
   const otherTestRecordObject = new MarcRecord({
     leader: '^^^^^cam^a22002897i^4500',
@@ -64,7 +61,7 @@ describe('ui reducers', () => {
       {tag: '008', value: 'TARGET'},
       {tag: '009', value: 'TARGET'},
     ]
-  });
+  }, {subfieldValues: false});
 
   const ssub1 = new MarcRecord({
     leader: '^^^^^cam^a22002897i^4500',
@@ -73,7 +70,7 @@ describe('ui reducers', () => {
       {tag: '008', value: 'SOURCE'},
       {tag: '003', value: 'ssub1'}
     ]
-  });
+  }, {subfieldValues: false});
 
   describe('loadSourceRecord', () => {
     it('sets the state to LOADING', () => {
