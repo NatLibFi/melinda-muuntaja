@@ -97,12 +97,12 @@ function initCommit(req, res) {
       const subrecordIdList = _.chain(response).filter(res => res.operation === 'CREATE').map('recordId').tail().value();
 
       client.read(createdRecordId).then((record) =>
-        Promise.resolve(subrecordPicker.readAllSubrecords(createdRecordId)).then((subrecords) => {
+        Promise.resolve(subrecordPicker.readAllSubrecords(createdRecordId)).then(({records}) => {
           if (record === undefined) {
             logger.log('debug', `Record ${createdRecordId} appears to be empty record.`);
             return res.sendStatus(httpStatus.NOT_FOUND);
           }
-
+          const subrecords = records;
           const subrecordsById = _.zipObject(subrecords.map(selectRecordId), subrecords);
           const subrecordsInRequestOrder = subrecordIdList.map(id => subrecordsById[id]);
 

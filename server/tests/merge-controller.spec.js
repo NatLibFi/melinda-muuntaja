@@ -104,7 +104,7 @@ describe('MARC IO controller', () => {
       const {record, subrecords} = createFakeRecordFamily();
       record.fields.push({'tag': '001', 'value': '123'});
       readStub.resolves(record);
-      readSubrecordsStub.resolves(subrecords);
+      readSubrecordsStub.resolves({records: subrecords});
 
       request(mergeController)
         .post('/commit-merge')

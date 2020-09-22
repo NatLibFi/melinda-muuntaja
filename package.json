@@ -41,7 +41,7 @@
     "@natlibfi/marc-record-serializers": "^7.1.6",
     "@natlibfi/marc-record-validate": "^6.0.1",
     "@natlibfi/marc-record-validators-melinda": "^8.2.5",
-    "@natlibfi/melinda-backend-commons": "^1.0.6",
+    "@natlibfi/melinda-backend-commons": "^2.0.0",
     "@natlibfi/melinda-commons": "^11.0.1",
     "@natlibfi/melinda-rest-api-client-js": "^1.0.0-alpha.2",
     "@natlibfi/melinda-ui-commons": "^v4.0.2-alpha.9",
