@@ -1,4 +1,4 @@
-FROM node:12-alpine
+FROM node:12-alpine as builder
 WORKDIR /home/node
 
 COPY --chown=node:node . build
