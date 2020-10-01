@@ -33,7 +33,7 @@ import {logger} from 'server/logger';
 import createSruClient from '@natlibfi/sru-client';
 import {MARCXML} from '@natlibfi/marc-record-serializers';
 
-const RECORDS_PER_PAGE = 10;
+const RECORDS_PER_PAGE = 25;
 const sruClient = createSruClient({
   url: readEnvironmentVariable('SRU_URL'),
   recordSchema: 'marcxml',
@@ -53,13 +53,9 @@ sruController.get('/', cors(corsOptions), (req, res) => {
   logger.log('info', `SRU query: '${q}'`);
 
   sruClient.searchRetrieve({query: req.query.q, offset: startRecord})
-    .on('record', record => {
+    .on('record', xmlString => {
       if (records.length < RECORDS_PER_PAGE) {
-        records.push(record);
-
-        if (records.length === RECORDS_PER_PAGE) {
-          sendResponse();
-        }
+        records.push(MARCXML.from(xmlString, {subfieldValues: false}));
       }
     })
     .on('end', () => {
@@ -74,11 +70,13 @@ sruController.get('/', cors(corsOptions), (req, res) => {
 
   function sendResponse() {
     logger.log('info', `SRU records found: ${records.length}`);
-    res.send({
-      numberOfRecords: records.length,
-      numberOfPages: Math.ceil(records.length / RECORDS_PER_PAGE),
-      currentPage: page,
-      records: records.map(recordxml => MARCXML.from(recordxml)),
-    });
+    Promise.all(records).then(recordsDone => {
+      res.send({
+        numberOfRecords: records.length,
+        numberOfPages: Math.ceil(records.length / RECORDS_PER_PAGE),
+        currentPage: page,
+        records: recordsDone
+      });
+    })
   }
 });
