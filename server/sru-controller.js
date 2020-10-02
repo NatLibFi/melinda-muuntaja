@@ -77,6 +77,6 @@ sruController.get('/', cors(corsOptions), (req, res) => {
         currentPage: page,
         records: recordsDone
       });
-    })
+    });
   }
 });
