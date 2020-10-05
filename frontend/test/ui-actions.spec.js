@@ -32,6 +32,7 @@ import sinonChai from 'sinon-chai';
 import * as actions from '../js/ui-actions';
 import { __RewireAPI__ as ActionsRewireAPI } from '../js/ui-actions';
 import Immutable from 'immutable';
+import {MarcRecord} from '@natlibfi/marc-record';
 
 chai.use(sinonChai);
 const expect = chai.expect;
@@ -67,7 +68,6 @@ describe('ui actions', () => {
 
       expect(fetchRecordStub).to.have.been.calledWith(100, 'TARGET');
       expect(fetchRecordStub).to.have.been.calledWith(200, 'SOURCE');
-      
     });
 
   });
@@ -99,10 +99,12 @@ describe('ui actions', () => {
       it('should dispatch loadSourceRecord and setSourceRecord actions', (done) => {
 
         const result = {
-          record: {
-            leader: 'test-leader', 
-            fields: []
-          },
+          record: new MarcRecord({
+            leader: 'test-leader',
+            fields: [
+              {tag: '001', value: '000030000'}
+            ]
+          }, {subfieldValues: false}),
           subrecords: []
         };
 
@@ -110,7 +112,7 @@ describe('ui actions', () => {
           status: 200,
           json: sinon.stub().resolves(result)
         });
-    
+
         const fetchRecordThunk = fetchRecord(30000, 'SOURCE');
 
         const dispatchSpy = sinon.spy();
@@ -120,16 +122,16 @@ describe('ui actions', () => {
           expect(dispatchSpy).to.have.been.calledWith(actions.setSourceRecord(sinon.match.object, sinon.match.array, sinon.match.number));
           done();
         }).catch(done);
-        
+
       });
 
       it('should dispatch setSourceRecordError on 404', () => {
 
         const result = {
-          leader: 'test-leader', 
+          leader: 'test-leader',
           fields: []
         };
-    
+
         fetchStub.resolves({
           status: 404,
           json: sinon.stub().resolves(result)
@@ -158,7 +160,7 @@ describe('ui actions', () => {
         fetchRecordThunk(dispatchSpy).then(() => {
           expect(dispatchSpy).to.have.been.calledWith(actions.setSourceRecordError(sinon.match.string));
         });
-        
+
       });
     });
   });

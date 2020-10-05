@@ -26,8 +26,8 @@
 *
 */
 
-import MarcRecord from 'marc-record-js';
-import { decorateFieldsWithUuid } from '../../record-utils';
+import {MarcRecord} from '@natlibfi/marc-record';
+import {decorateFieldsWithUuid} from '../../record-utils';
 
 const record = new MarcRecord({
   leader: '00000cam^a22006134i^4500',
@@ -109,7 +109,7 @@ const record = new MarcRecord({
       ]
     }
   ]
-});
+}, {subfieldValues: false});
 
 decorateFieldsWithUuid(record);
 

@@ -29,16 +29,15 @@
 'use strict';
 import express from 'express';
 import path from 'path';
-import { logger, expressWinston } from 'server/logger';
-import { readEnvironmentVariable } from 'server/utils';
-import { sessionController } from 'server/session-controller';
-import { marcIOController } from 'server/marc-io-controller';
-import { mergeController } from './merge-controller';
-import { sruController } from './sru-controller';
+import {logger, expressWinston} from 'server/logger';
+import {sessionController} from 'server/session-controller';
+import {marcIOController} from 'server/marc-io-controller';
+import {mergeController} from './merge-controller';
+import {sruController} from './sru-controller';
 import cookieParser from 'cookie-parser';
+import {port} from './config';
 
 //const NODE_ENV = readEnvironmentVariable('NODE_ENV', 'dev');
-const PORT = readEnvironmentVariable('HTTP_PORT', 3001);
 
 const app = express();
 process.on('SIGINT', () => {
@@ -56,6 +55,6 @@ app.use('/merge', mergeController);
 app.use(express.static(path.resolve(__dirname, 'public')));
 
 
-const server = app.listen(PORT, () => logger.log('info', `Application started on port ${PORT}`));
+const server = app.listen(port, () => logger.log('info', `Application started on port ${port}`));
 
 server.timeout = 1800000; // Half an hour

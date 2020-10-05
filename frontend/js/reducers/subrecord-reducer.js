@@ -26,20 +26,23 @@
 *
 */
 
-import MarcRecord from 'marc-record-js';
-import { Map, List } from 'immutable';
-import { SubrecordActionTypes, RecordSaveStatus } from 'commons/constants';
+import {MarcRecord} from '@natlibfi/marc-record';
+import {Map, List} from 'immutable';
+import {SubrecordActionTypes, RecordSaveStatus} from 'commons/constants';
 import _ from 'lodash';
 
 import {RESET_WORKSPACE} from '../constants/action-type-constants';
-import {SET_SOURCE_RECORD, SET_TARGET_RECORD, SET_MERGED_RECORD, RESET_SOURCE_RECORD, RESET_TARGET_RECORD } from '../ui-actions';
+import {SET_SOURCE_RECORD, SET_TARGET_RECORD, SET_MERGED_RECORD, RESET_SOURCE_RECORD, RESET_TARGET_RECORD} from '../ui-actions';
 
-import { 
-  INSERT_SUBRECORD_ROW, REMOVE_SUBRECORD_ROW, CHANGE_SOURCE_SUBRECORD_ROW, CHANGE_TARGET_SUBRECORD_ROW, 
-  SET_SUBRECORD_ACTION, SET_MERGED_SUBRECORDS, SET_MERGED_SUBRECORD, SET_MERGED_SUBRECORD_ERROR, CHANGE_SUBRECORD_ROW, 
+import {
+  INSERT_SUBRECORD_ROW, REMOVE_SUBRECORD_ROW, CHANGE_SOURCE_SUBRECORD_ROW, CHANGE_TARGET_SUBRECORD_ROW,
+  SET_SUBRECORD_ACTION, SET_MERGED_SUBRECORDS, SET_MERGED_SUBRECORD, SET_MERGED_SUBRECORD_ERROR, CHANGE_SUBRECORD_ROW,
   EXPAND_SUBRECORD_ROW, COMPRESS_SUBRECORD_ROW, ADD_SOURCE_SUBRECORD_FIELD, REMOVE_SOURCE_SUBRECORD_FIELD,
   UPDATE_SUBRECORD_ARRANGEMENT, EDIT_MERGED_SUBRECORD, SAVE_SUBRECORD_START, SAVE_SUBRECORD_SUCCESS, SAVE_SUBRECORD_FAILURE,
-  TOGGLE_COMPACT_SUBRECORD_VIEW } from '../constants/action-type-constants';
+  TOGGLE_COMPACT_SUBRECORD_VIEW
+} from '../constants/action-type-constants';
+
+
 
 const INITIAL_STATE = Map({
   index: List()
@@ -57,7 +60,7 @@ export default function subrecords(state = INITIAL_STATE, action) {
     case CHANGE_TARGET_SUBRECORD_ROW:
       return changeTargetSubrecordRow(state, action.fromRowId, action.toRowId);
 
-    case CHANGE_SUBRECORD_ROW: 
+    case CHANGE_SUBRECORD_ROW:
       return changeSubrecordRow(state, action.fromRowIndex, action.toRowIndex);
     case SET_SUBRECORD_ACTION:
       return setSubrecordAction(state, action.rowId, action.actionType);
@@ -65,10 +68,10 @@ export default function subrecords(state = INITIAL_STATE, action) {
       return action.rows.reduce((state, row) => {
         state = setUnmodifiedMergedRecord(state, row.rowId, row.record);
         state = setSubrecordAction(state, row.rowId, action.actionType);
-        
-        if (row.error) 
+
+        if (row.error)
           return setMergedSubrecordError(state, row.rowId, row.error);
-        else 
+        else
           return setMergedSubrecord(state, row.rowId, row.record);
       }, state);
 
@@ -91,7 +94,7 @@ export default function subrecords(state = INITIAL_STATE, action) {
       return setTargetSubrecords(state, action.record, action.subrecords || []);
     case SET_MERGED_RECORD:
       return resetMergedSubrecordsActions(state, action.record);
-    
+
     case EXPAND_SUBRECORD_ROW:
       return expandRow(state, action.rowId);
     case COMPRESS_SUBRECORD_ROW:
@@ -135,7 +138,7 @@ export function addField(state, rowId, field) {
   } else {
     record.insertField(field);
   }
-  
+
   return state
     .setIn([rowId, 'mergedRecord'], setFieldSelected(record, field))
     .setIn([rowId, 'sourceRecord'], setFieldSelected(sourceRecord, field));
@@ -158,7 +161,7 @@ function setFieldSelected(record, field) {
       recordField.fromOther = true;
       recordField.wasUsed = true;
     });
-  return new MarcRecord(record);
+  return new MarcRecord(record, {subfieldValues: false});
 }
 
 function setFieldUnselected(record, field) {
@@ -168,7 +171,7 @@ function setFieldUnselected(record, field) {
       recordField.fromOther = false;
       recordField.wasUsed = false;
     });
-  return new MarcRecord(record);
+  return new MarcRecord(record, {subfieldValues: false});
 }
 
 
@@ -323,7 +326,7 @@ export function setSubrecordAction(state, rowId, actionType) {
   if (actionType === SubrecordActionTypes.UNSET) {
     return state.update(rowId, createEmptyRow(), row => row.set('selectedAction', undefined));
   } else {
-    return state.update(rowId, createEmptyRow(), row => row.set('selectedAction', actionType));  
+    return state.update(rowId, createEmptyRow(), row => row.set('selectedAction', actionType));
   }
 }
 
@@ -332,7 +335,7 @@ export function setMergedSubrecord(state, rowId, record) {
 }
 
 export function handleSubrecordSaveStart(state, rowId) {
-  return state.update(rowId, createEmptyRow(), row => row.set('saveStatus', RecordSaveStatus.SAVE_ONGOING)); 
+  return state.update(rowId, createEmptyRow(), row => row.set('saveStatus', RecordSaveStatus.SAVE_ONGOING));
 }
 
 export function handleSubrecordSaveSuccess(state, rowId, record) {
@@ -343,7 +346,7 @@ export function handleSubrecordSaveSuccess(state, rowId, record) {
   });
 }
 
-export function handleSubrecordSaveFailure(state, rowId, error) {  
+export function handleSubrecordSaveFailure(state, rowId, error) {
   return state.update(rowId, createEmptyRow(), row => {
     return row
       .set('saveError', error)
@@ -366,7 +369,7 @@ function moveRow(fromRowIndex, toRowIndex, list) {
   return listWithoutRow
     .setSize(requiredListSize)
     .insert(toRowIndex, rowToMove);
-    
+
 }
 
 let rowIdSeq = 1;

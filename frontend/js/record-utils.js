@@ -27,15 +27,15 @@
 */
 
 import _ from 'lodash';
-import uuid from 'uuid';
+import {v4 as uuid} from 'uuid';
 
 const FUTURE_HOST_ID_PLACEHOLDER = '(FI-MELINDA)[future-host-id]';
 
 
 export function fieldHasSubfield(code, value) {
-  const querySubfield = { code, value };
+  const querySubfield = {code, value};
 
-  return function(field) {
+  return function (field) {
     return field.subfields.some(subfield => _.isEqual(subfield, querySubfield));
   };
 }
@@ -84,18 +84,18 @@ export function selectFirstValue(field, subcode) {
 
 export function decorateFieldsWithUuid(record) {
   record.fields.forEach(field => {
-    field.uuid = uuid.v4();
+    field.uuid = uuid();
   });
 }
 
 export function setRecordId(record, newId) {
 
-  record.fields = record.fields.filter(function(field) {
+  record.fields = record.fields.filter(function (field) {
     return field.tag !== '001';
   });
 
   record.fields.unshift({
-    uuid: uuid.v4(),
+    uuid: uuid(),
     tag: '001',
     value: newId
   });
@@ -104,12 +104,12 @@ export function setRecordId(record, newId) {
 
 export function resetRecordId(record) {
 
-  record.fields = record.fields.filter(function(field) {
+  record.fields = record.fields.filter(function (field) {
     return field.tag !== '001';
   });
 
   record.fields.unshift({
-    uuid: uuid.v4(),
+    uuid: uuid(),
     tag: '001',
     value: '000000000'
   });
@@ -156,7 +156,7 @@ function normalizeSub_6(subfield) {
 export function isLinkedFieldOf(queryField) {
   const [queryTag, queryLinkNumber] = getLink(queryField);
 
-  return function(field) {
+  return function (field) {
 
     const linkInLinkedField = getLink(field);
     const [linkTag, linkNumber] = linkInLinkedField;
@@ -170,8 +170,8 @@ export function isLinkedFieldOf(queryField) {
 }
 
 export function toOnlySubfields(tag, subfieldCodes) {
-  return function(field) {
-    if (field.tag === tag) { 
+  return function (field) {
+    if (field.tag === tag) {
       const subfields = field.subfields.filter(s => _.includes(subfieldCodes, s.code));
       return _.assign({}, field, {subfields});
     }

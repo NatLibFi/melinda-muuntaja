@@ -28,27 +28,25 @@
 
 import express from 'express';
 import cors from 'cors';
-import { readEnvironmentVariable, corsOptions, requireBodyParams } from 'server/utils';
-import { logger } from 'server/logger';
+import {corsOptions, requireBodyParams} from 'server/utils';
 import bodyParser from 'body-parser';
-import MarcRecord from 'marc-record-js';
+import {MarcRecord} from '@natlibfi/marc-record';
 import cookieParser from 'cookie-parser';
-import HttpStatus from 'http-status-codes';
-import { commitMerge } from './melinda-merge-update';
-import { readSessionMiddleware } from 'server/session-controller';
+import httpStatus from 'http-status';
+import {commitMerge} from './melinda-merge-update';
+import {readSessionMiddleware} from 'server/session-controller';
 import _ from 'lodash';
-import { createArchive } from './archive-service';
+import {createArchive} from './archive-service';
+import {createApiClient} from '@natlibfi/melinda-rest-api-client-js';
+import {createSubrecordPicker} from '@natlibfi/melinda-commons';
+import {createLogger} from '@natlibfi/melinda-backend-commons';
+import {sruUrl, restApiUrl} from './config';
 
-const MelindaClient = require('@natlibfi/melinda-api-client');
-const apiUrl = readEnvironmentVariable('MELINDA_API');
 
-const defaultConfig = {
-  endpoint: apiUrl,
-  user: '',
-  password: ''
-};
 
-logger.log('info', `merge-controller endpoint: ${defaultConfig.endpoint}`);
+const logger = createLogger();
+
+logger.log('info', `merge-controller endpoint: ${restApiUrl}`);
 
 export const mergeController = express();
 
@@ -56,31 +54,39 @@ mergeController.use(cookieParser());
 mergeController.use(bodyParser.json({limit: '15mb'}));
 mergeController.use(readSessionMiddleware);
 mergeController.set('etag', false);
-
 mergeController.options('/commit-merge', cors(corsOptions)); // enable pre-flight
+mergeController.post('/commit-merge', cors(corsOptions), requireSession, requireBodyParams('operationType', 'subrecordMergeType', 'otherRecord', 'mergedRecord', 'unmodifiedRecord'), initCommit);
 
-mergeController.post('/commit-merge', cors(corsOptions), requireSession, requireBodyParams('operationType', 'subrecordMergeType', 'otherRecord', 'mergedRecord', 'unmodifiedRecord'), (req, res) => {
-
+function initCommit(req, res) {
   const {username, password} = req.session;
 
-  const { operationType, subrecordMergeType } = req.body;
+  const {operationType, subrecordMergeType} = req.body;
 
   const [otherRecord, mergedRecord, unmodifiedRecord] =
-        [req.body.otherRecord, req.body.mergedRecord, req.body.unmodifiedRecord].map(transformToMarcRecordFamily);
+    [req.body.otherRecord, req.body.mergedRecord, req.body.unmodifiedRecord].map(transformToMarcRecordFamily);
 
-  const preferredRecord = req.body.preferredRecord ? transformToMarcRecordFamily(req.body.preferredRecord) : undefined;
+  const preferredRecord = req.body.preferredRecord ? transformToMarcRecordFamily(req.body.preferredRecord) : {record: new MarcRecord()};
+
+  const subrecordPicker = createSubrecordPicker(sruUrl, true);
 
   const clientConfig = {
-    ...defaultConfig,
-    user: username,
-    password: password
+    restApiUrl,
+    restApiUsername: username,
+    restApiPassword: password,
+    cataloger: username
   };
 
-  const client = new MelindaClient(clientConfig);
+  const client = createApiClient(clientConfig);
+
+  logger.log('debug', `Operation type: ${JSON.stringify(operationType)}`);
+  logger.log('debug', `Subrecord merge type: ${JSON.stringify(subrecordMergeType)}`);
+  logger.log('debug', `Other record: ${JSON.stringify(otherRecord)}`);
+  logger.log('debug', `Prefered record: ${JSON.stringify(preferredRecord)}`);
+  logger.log('debug', `Merged record: ${JSON.stringify(mergedRecord)}`);
 
   commitMerge(client, operationType, subrecordMergeType, otherRecord, preferredRecord, mergedRecord)
     .then((response) => {
-      logger.log('info', 'Commit merge successful', response);
+      logger.log('info', `Commit merge successful ${JSON.stringify(response)}`);
       const mergedMainRecordResult = _.get(response, '[0]');
 
       createArchive(username, otherRecord, preferredRecord, mergedRecord, unmodifiedRecord, mergedMainRecordResult.recordId).then((res) => {
@@ -90,48 +96,63 @@ mergeController.post('/commit-merge', cors(corsOptions), requireSession, require
       const createdRecordId = mergedMainRecordResult.recordId;
       const subrecordIdList = _.chain(response).filter(res => res.operation === 'CREATE').map('recordId').tail().value();
 
-      loadRecord(client, createdRecordId).then(({record, subrecords}) => {
+      client.read(createdRecordId).then((record) =>
+        Promise.resolve(subrecordPicker.readAllSubrecords(createdRecordId)).then(({records}) => {
+          if (record === undefined) {
+            logger.log('debug', `Record ${createdRecordId} appears to be empty record.`);
+            return res.sendStatus(httpStatus.NOT_FOUND);
+          }
+          const subrecords = records;
+          const subrecordsById = _.zipObject(subrecords.map(selectRecordId), subrecords);
+          const subrecordsInRequestOrder = subrecordIdList.map(id => subrecordsById[id]);
 
-        if (record.fields.length === 0) {
-          logger.log('debug', `Record ${createdRecordId} appears to be empty record.`);
-          return res.sendStatus(404);
-        }
+          if (_.difference(subrecords, subrecordsInRequestOrder).length !== 0) {
+            logger.log('info', `Warning: merge request had ${subrecords.length} subrecords while merged response had ${subrecordsInRequestOrder.length}`);
+          }
 
-        const subrecordsById = _.zipObject(subrecords.map(selectRecordId), subrecords);
+          const response = _.extend({}, mergedMainRecordResult, {
+            record,
+            subrecords: subrecordsInRequestOrder
+          });
 
-        const subrecordsInRequestOrder = subrecordIdList.map(id => subrecordsById[id]);
-
-        if (_.difference(subrecords, subrecordsInRequestOrder).length !== 0) {
-          logger.log('info', `Warning: merge request had ${subrecords.length} subrecords while merged response had ${subrecordsInRequestOrder.length}`);
-        }
-
-        const response = _.extend({}, mergedMainRecordResult, {
-          record,
-          subrecords: subrecordsInRequestOrder
-        });
-
-        res.send(response);
+          res.status(httpStatus.OK).send(response);
+        }).catch(error => {
+          logger.log('error', error);
+          return res.status(httpStatus.INTERNAL_SERVER_ERROR).send(error);
+        })
+      ).catch(error => {
+        logger.log('error', error);
+        return res.status(httpStatus.INTERNAL_SERVER_ERROR).send(error);
       });
-
-
     }).catch(error => {
-      logger.log('error', 'Commit merge error', error);
-      res.status(500).send(error);
+      logger.log('error', error);
+      res.status(httpStatus.INTERNAL_SERVER_ERROR).send(error);
     });
 
-});
+  function transformToMarcRecordFamily(json) {
+    if (!json) return;
 
-function loadRecord(client, id) {
-  return new Promise((resolve, reject) => {
-    client.loadChildRecords(id, {handle_deleted: 1, include_parent: 1}).then((records) => {
-      logger.log('debug', `Record ${id} with subrecords loaded`);
-      const record = _.head(records);
-      const subrecords = _.tail(records);
+    return {
+      record: transformToMarcRecord(json.record),
+      subrecords: json.subrecords.map(transformToMarcRecord)
+    };
+  }
 
-      return resolve({record, subrecords});
+  function transformToMarcRecord(json) {
+    const {sourceRecordId, preferredRecordId} = json;
+    return {...new MarcRecord(json, {subfieldValues: false}), sourceRecordId, preferredRecordId};
+  }
 
-    }).catch(reject).done();
-  });
+  function selectRecordId(record) {
+
+    const field001List = record.fields.filter(field => field.tag === '001');
+
+    if (field001List.length === 0) {
+      throw new Error('Could not parse record id');
+    } else {
+      return field001List[0].value;
+    }
+  }
 }
 
 function requireSession(req, res, next) {
@@ -140,33 +161,7 @@ function requireSession(req, res, next) {
 
   if (username && password) {
     return next();
-  } else {
-    res.sendStatus(HttpStatus.UNAUTHORIZED);
   }
 
-}
-
-function transformToMarcRecordFamily(json) {
-  if (!json) return;
-
-  return {
-    record: transformToMarcRecord(json.record),
-    subrecords: json.subrecords.map(transformToMarcRecord)
-  };
-}
-
-function transformToMarcRecord(json) {
-  const { sourceRecordId, preferredRecordId } = json;
-  return { ...new MarcRecord(json), sourceRecordId, preferredRecordId };
-}
-
-function selectRecordId(record) {
-
-  const field001List = record.fields.filter(field => field.tag === '001');
-
-  if (field001List.length === 0) {
-    throw new Error('Could not parse record id');
-  } else {
-    return field001List[0].value;
-  }
+  res.sendStatus(httpStatus.UNAUTHORIZED);
 }

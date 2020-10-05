@@ -28,14 +28,14 @@
 
 import {executeTransaction, RollbackError} from './async-transaction';
 import _ from 'lodash';
-import { logger } from 'server/logger';
-import uuid from 'uuid';
+import {logger} from 'server/logger';
+import {v4 as uuid} from 'uuid';
 
 const FUTURE_HOST_ID_PLACEHOLDER = '(FI-MELINDA)[future-host-id]';
 
 export function commitMerge(client, operationType, subrecordMergeType, otherRecord, preferredRecord, mergedRecord) {
 
-  const jobId = uuid.v4().slice(0,8);
+  const jobId = uuid().slice(0, 8);
 
   if (operationType == 'CREATE') {
     return createRecord(mergedRecord.record).then(saveSubrecords).catch(error => {
@@ -78,7 +78,7 @@ export function commitMerge(client, operationType, subrecordMergeType, otherReco
         };
       });
     }
-    
+
     const mergedSubrecordActions = mergedRecord.subrecords.map(record => {
       const originalRecord = preferredRecord ? findRecordById(getRecordId(record), preferredRecord.subrecords) : null;
 
@@ -99,11 +99,11 @@ export function commitMerge(client, operationType, subrecordMergeType, otherReco
     return executeTransaction(_.concat(
       otherSubrecordActions,
       mergedSubrecordActions
-    ), [mergedRecordRollbackAction]).then(function(results) {
+    ), [mergedRecordRollbackAction]).then(function (results) {
       results.unshift(res);
       logger.log('info', `${jobId}] Commit merge job ${jobId} completed.`);
       return results;
-    }).catch(function(error) {
+    }).catch(function (error) {
       if (error instanceof RollbackError) {
         logger.log('error', `${jobId}] Rollback failed`);
         logger.log('error', jobId, error);
@@ -124,21 +124,21 @@ export function commitMerge(client, operationType, subrecordMergeType, otherReco
   function createRecord(record) {
     logger.log('info', `${jobId}] Creating new record`);
 
-    return client.createRecord(record, {bypass_low_validation: 1, bypass_index_check: 1}).then(res => {
-      logger.log('info', `${jobId}] Create record ok for ${res.recordId}`, res.messages);
+    return client.create(record, {noop: 0, unique: 0}).then(res => {
+      logger.log('info', `${jobId}] Create record ok for ${res.recordId}`), res.messages;
       return _.assign({}, res, {operation: 'CREATE'});
     }).catch(err => {
-      logger.log('info', `${jobId}] Failed to create record`, err);
+      logger.log('info', `${jobId}] Failed to create record ${err.status} - ${err.message}`);
       throw err;
     });
   }
 
   function undeleteRecordFromMelinda(recordId) {
     logger.log('info', `${jobId}] Undeleting ${recordId}`);
-    return client.loadRecord(recordId, {handle_deleted:1, no_rerouting: 1}).then(function(record) {
-      record.fields = record.fields.filter(field => field.tag !== 'STA');
+    return client.read(recordId).then(({record}) => {
+      record.get(/^STA$/u).forEach(field => record.removeField(field));
       updateRecordLeader(record, 5, 'c');
-      return client.updateRecord(record, {bypass_low_validation: 1, handle_deleted: 1, no_rerouting: 1, bypass_index_check: 1}).then(function(res) {
+      return client.updateRecord({params: {noop: 0}, body: JSON.stringify(record)}, recordId).then(res => {
         logger.log('info', `${jobId}] Undelete ok for ${recordId}`, res.messages);
         return _.assign({}, res, {operation: 'UNDELETE'});
       });
@@ -151,11 +151,11 @@ export function commitMerge(client, operationType, subrecordMergeType, otherReco
   function deleteRecordFromMelinda(record) {
     const recordId = getRecordId(record);
     logger.log('info', `${jobId}] Deleting ${recordId}`);
-    
+
     record.appendField(['STA', '', '', 'a', 'DELETED']);
     updateRecordLeader(record, 5, 'd');
 
-    return client.updateRecord(record, {bypass_low_validation: 1, handle_deleted: 1, no_rerouting: 1, bypass_index_check: 1}).then(function(res) {
+    return client.update(record, recordId, {noop: 0}).then(res => {
       logger.log('info', `${jobId}] Delete ok for ${recordId}`, res.messages);
       return _.assign({}, res, {operation: 'DELETE'});
     }).catch(err => {
@@ -166,10 +166,9 @@ export function commitMerge(client, operationType, subrecordMergeType, otherReco
 
   function updateRecord(record) {
     const recordId = getRecordId(record);
-
     logger.log('info', `${jobId}] Updating record ${recordId}`);
-    
-    return client.updateRecord(record, {bypass_low_validation: 1, bypass_index_check: 1}).then(res => {
+
+    return client.update(record, recordId, {noop: 0}).then(res => {
       logger.log('info', `${jobId}] Update record ok for ${recordId}`, res.messages);
       return _.assign({}, res, {operation: 'UPDATE'});
     }).catch(err => {
@@ -180,10 +179,10 @@ export function commitMerge(client, operationType, subrecordMergeType, otherReco
 
   function deleteRecordById(recordId) {
     logger.log('info', `${jobId}] Deleting ${recordId}`);
-    return client.loadRecord(recordId, {handle_deleted: 1, no_rerouting: 1}).then(function(record) {
+    return client.read(recordId).then(({record}) => {
       record.appendField(['STA', '', '', 'a', 'DELETED']);
       updateRecordLeader(record, 5, 'd');
-      return client.updateRecord(record, {bypass_low_validation: 1, handle_deleted: 1, no_rerouting: 1, bypass_index_check: 1}).then(function(res) {
+      return client.update(record, recordId, {noop: 0}).then(res => {
         logger.log('info', `${jobId}] Delete ok for ${recordId}`, res.messages);
         return _.assign({}, res, {operation: 'DELETE'});
       });
@@ -195,22 +194,21 @@ export function commitMerge(client, operationType, subrecordMergeType, otherReco
 }
 
 function setParentRecordId(id) {
-  return function(subrecord) {
-
-    subrecord.fields = subrecord.fields.map(field => {
-      if (field.tag === '773') {
-        field.subfields = field.subfields.map(sub => {
-          if (sub.code === 'w' && sub.value === FUTURE_HOST_ID_PLACEHOLDER) {
-            return _.assign({}, sub, {value: `(FI-MELINDA)${id}`});
-          }
-          return sub;
-        });
-      }
+  return (subrecord) => {
+    logger.log('debug', `Setting parent id ${id} to subrecord`);
+    const f773s = subrecord.get(/^773$/u);
+    const updatedF773s = f773s.map(field => {
+      field.subfields = field.subfields.map(sub => {
+        if (sub.code === 'w' && sub.value === FUTURE_HOST_ID_PLACEHOLDER) {
+          return _.assign({}, sub, {value: `(FI-MELINDA)${id}`});
+        }
+        return sub;
+      });
       return field;
     });
-
+    f773s.forEach(field => subrecord.removeField(field));
+    updatedF773s.forEach(field => subrecord.appendField(field));
     return subrecord;
-
   };
 }
 
@@ -221,7 +219,7 @@ function validateIds(family) {
 
   const invalidOtherSubrecordIndex = _.findIndex(family.subrecords, (record) => !isValidId(getRecordId(record)));
   if (invalidOtherSubrecordIndex !== -1) {
-    return notValid(`Id not found for ${invalidOtherSubrecordIndex+1}. subrecord from record.`); 
+    return notValid(`Id not found for ${invalidOtherSubrecordIndex + 1}. subrecord from record.`);
   }
 
   return {
@@ -229,9 +227,9 @@ function validateIds(family) {
   };
 
   function notValid(message) {
-    return { 
-      error: new Error(message) 
-    }; 
+    return {
+      error: new Error(message)
+    };
   }
 }
 
@@ -240,13 +238,17 @@ function findRecordById(recordId, records) {
 }
 
 function isValidId(id) {
-  return id !== undefined && !isNaN(id);
+  return id !== undefined && !isNaN(id) && id !== '';
 }
 
 function getRecordId(record) {
-  return _.get(record.fields.filter(f => f.tag == '001'), '[0].value');
+  const [f001] = record.get(/^001$/);
+  if (f001 === undefined) {
+    return '';
+  }
+  return f001.value;
 }
 
 function updateRecordLeader(record, index, characters) {
-  record.leader = record.leader.substr(0,index) + characters + record.leader.substr(index+characters.length);
+  record.leader = record.leader.substr(0, index) + characters + record.leader.substr(index + characters.length);
 }

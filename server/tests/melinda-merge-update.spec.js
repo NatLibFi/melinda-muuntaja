@@ -29,28 +29,30 @@
 import sinon from 'sinon';
 import chai from 'chai';
 import sinonChai from 'sinon-chai';
+import {MarcRecord} from '@natlibfi/marc-record';
+import {commitMerge} from '../melinda-merge-update';
+
 chai.use(sinonChai);
 const expect = chai.expect;
-import { commitMerge } from '../melinda-merge-update';
 
-import MarcRecord from 'marc-record-js';
-
-describe('melinda merge update', function() {
-  describe('commitMerge', function() {
+describe('melinda merge update', function () {
+  describe('commitMerge', function () {
     let clientStub;
 
     beforeEach(() => {
-      clientStub = createClientStub();
+      clientStub = {
+        create: sinon.stub(),
+        update: sinon.stub()
+      };
     });
 
-    it('returns metadata of successful create operation', function(done) {
+    it('returns metadata of successful create operation', function (done) {
       const expectedRecordId = 15;
 
-      clientStub.updateRecord.resolves('UPDATE-OK');
-      clientStub.createRecord.resolves(createSuccessResponse(expectedRecordId));
+      clientStub.create.onCall(0).resolves(createSuccessResponse(expectedRecordId));
 
       const [other, merged] = [createRecordFamily(), createRecordFamily()];
-  
+
       commitMerge(clientStub, 'CREATE', 'MERGE', other, null, merged)
         .then(res => {
           expect(res).not.to.be.undefined;
@@ -60,14 +62,13 @@ describe('melinda merge update', function() {
         .catch(done);
     });
 
-    it('returns metadata of successful update operation', function(done) {
+    it('returns metadata of successful update operation', function (done) {
       const expectedRecordId = 123456789;
 
-      clientStub.updateRecord.resolves(createSuccessResponse(expectedRecordId));
-      clientStub.createRecord.resolves('CREATE-OK');
+      clientStub.update.onCall(0).resolves(createSuccessResponse(expectedRecordId));
 
       const [other, preferred, merged] = [createRecordFamily(), createRecordFamily(), createRecordFamily(expectedRecordId)];
-    
+
       commitMerge(clientStub, 'UPDATE', 'MERGE', other, preferred, merged)
         .then(res => {
           expect(res).not.to.be.undefined;
@@ -78,7 +79,7 @@ describe('melinda merge update', function() {
     });
 
 
-    it('requires that preferred record has id', function(done) {
+    it('requires that preferred record has id', function (done) {
 
       const [other, preferred, merged] = [createRecordFamily(), createRecordFamily(), createRecordFamily()];
 
@@ -90,23 +91,16 @@ describe('melinda merge update', function() {
   });
 });
 
-function createClientStub() {
-  return {
-    updateRecord: sinon.stub(),
-    createRecord: sinon.stub()
-  };
-}
-
 function expectFulfillmentToNotBeCalled(done) {
   return () => done(new Error('Fulfillment handler was called unexpectedly.'));
 }
 
 function expectErrorMessage(msg, done) {
-  return function(err) {
+  return function (err) {
     try {
       expect(err.message).to.equal(msg);
       done();
-    } catch(e) {
+    } catch (e) {
       done(e);
     }
   };
@@ -121,23 +115,24 @@ function createRecordFamily(id = false) {
 }
 
 function createRecord(id = false) {
-  const record = new MarcRecord();
-  if (id) record.appendControlField(['001', id]);
+  if (id) {
+    return MarcRecord.fromString(`001    ${id}`);
+  }
 
-  return record;
+  return new MarcRecord();
 }
 
 function createSuccessResponse(recordId) {
-  return { 
-    messages: [ { code: '0018', message: `Document: ${recordId} was updated successfully.` } ],
+  return {
+    messages: [{code: '0018', message: `Document: ${recordId} was updated successfully.`}],
     errors: [],
-    triggers: [ 
-      { code: '0101', message: 'Field SID with text "$$c757724$$boula" is a duplicate entry in the INDEX file.' },
-      { code: '0101', message: 'Field SID with text "$$c757724$$boula" is a duplicate entry in the INDEX file.' } 
+    triggers: [
+      {code: '0101', message: 'Field SID with text "$$c757724$$boula" is a duplicate entry in the INDEX file.'},
+      {code: '0101', message: 'Field SID with text "$$c757724$$boula" is a duplicate entry in the INDEX file.'}
     ],
-    warnings: [ 
-      { code: '0121', message: 'Document is duplicate in the database (Matched against System No. 003342333 by LOCATE command).' },
-      { code: '0121', message: 'Document is duplicate in the database (Matched against System No. 000698067 by LOCATE command).' } 
+    warnings: [
+      {code: '0121', message: 'Document is duplicate in the database (Matched against System No. 003342333 by LOCATE command).'},
+      {code: '0121', message: 'Document is duplicate in the database (Matched against System No. 000698067 by LOCATE command).'}
     ],
     recordId: recordId
   };

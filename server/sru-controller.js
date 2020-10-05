@@ -28,16 +28,17 @@
 
 import express from 'express';
 import cors from 'cors';
-import { readEnvironmentVariable, corsOptions } from 'server/utils';
-import { logger } from 'server/logger';
-import marc_record_converters from '@natlibfi/marc-record-converters';
+import {readEnvironmentVariable, corsOptions} from 'server/utils';
+import {logger} from 'server/logger';
 import createSruClient from '@natlibfi/sru-client';
+import {MARCXML} from '@natlibfi/marc-record-serializers';
 
-const RECORDS_PER_PAGE = 10;
+const RECORDS_PER_PAGE = 25;
 const sruClient = createSruClient({
-  serverUrl: readEnvironmentVariable('SRU_URL'),
+  url: readEnvironmentVariable('SRU_URL'),
   recordSchema: 'marcxml',
-  maximumRecords: RECORDS_PER_PAGE
+  maxRecordsPerRequest: RECORDS_PER_PAGE,
+  retrieveAll: false
 });
 
 export const sruController = express();
@@ -46,19 +47,15 @@ sruController.options('/', cors(corsOptions)); // enable pre-flight
 
 sruController.get('/', cors(corsOptions), (req, res) => {
   const records = [];
-  const { q, page = 1 } = req.query;
+  const {q, page = 1} = req.query;
   const startRecord = (page - 1) * RECORDS_PER_PAGE + 1;
-  
+
   logger.log('info', `SRU query: '${q}'`);
 
   sruClient.searchRetrieve({query: req.query.q, offset: startRecord})
-    .on('record', record => {
+    .on('record', xmlString => {
       if (records.length < RECORDS_PER_PAGE) {
-        records.push(record);
-
-        if (records.length === RECORDS_PER_PAGE) {
-          sendResponse();
-        }
+        records.push(MARCXML.from(xmlString, {subfieldValues: false}));
       }
     })
     .on('end', () => {
@@ -73,11 +70,13 @@ sruController.get('/', cors(corsOptions), (req, res) => {
 
   function sendResponse() {
     logger.log('info', `SRU records found: ${records.length}`);
-    res.send({
-      numberOfRecords: records.length,
-      numberOfPages: Math.ceil(records.length / RECORDS_PER_PAGE),
-      currentPage: page,
-      records: records.map(recordxml => marc_record_converters.marc21slimXML.from(recordxml)),
+    Promise.all(records).then(recordsDone => {
+      res.send({
+        numberOfRecords: records.length,
+        numberOfPages: Math.ceil(records.length / RECORDS_PER_PAGE),
+        currentPage: page,
+        records: recordsDone
+      });
     });
   }
 });

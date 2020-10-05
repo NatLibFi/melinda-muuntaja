@@ -26,12 +26,12 @@
 *
 */
 
-import { Map } from 'immutable'; 
-import {CLEAR_MERGED_RECORD, SET_MERGED_RECORD_ERROR, SET_MERGED_RECORD, ADD_SOURCE_RECORD_FIELD, REMOVE_SOURCE_RECORD_FIELD, EDIT_MERGED_RECORD } from '../ui-actions';
-import { SAVE_RECORD_START, SAVE_RECORD_SUCCESS, SAVE_RECORD_FAILURE } from '../constants/action-type-constants';
+import {Map} from 'immutable';
+import {CLEAR_MERGED_RECORD, SET_MERGED_RECORD_ERROR, SET_MERGED_RECORD, ADD_SOURCE_RECORD_FIELD, REMOVE_SOURCE_RECORD_FIELD, EDIT_MERGED_RECORD} from '../ui-actions';
+import {SAVE_RECORD_START, SAVE_RECORD_SUCCESS, SAVE_RECORD_FAILURE} from '../constants/action-type-constants';
 import {RESET_WORKSPACE} from '../constants/action-type-constants';
-import { DEFAULT_MERGED_RECORD } from '../root-reducer';
-import MarcRecord from 'marc-record-js';
+import {DEFAULT_MERGED_RECORD} from '../root-reducer';
+import {MarcRecord} from '@natlibfi/marc-record';
 
 const INITIAL_STATE = Map({
   state: 'EMPTY'
@@ -48,9 +48,9 @@ export default function mergedRecord(state = INITIAL_STATE, action) {
       return setMergedRecord(state, action.record);
     case SAVE_RECORD_SUCCESS:
       return handleSaveRecordSuccess(state, action.record);
-    case SAVE_RECORD_FAILURE: 
+    case SAVE_RECORD_FAILURE:
       return handleSaveRecordFailure(state, action.error);
-    case SAVE_RECORD_START: 
+    case SAVE_RECORD_START:
       return handleSaveRecordStart(state);
     case EDIT_MERGED_RECORD:
       return updateMergedRecord(state, action.record);
@@ -118,14 +118,13 @@ export function addField(state, field) {
   } else {
     record.insertField(field);
   }
-  
-  return state.set('record', new MarcRecord(record));
+  return state.set('record', new MarcRecord(record, {subfieldValues: false}));
 }
 
 export function removeField(state, field) {
   const record = state.get('record');
   record.fields = record.fields.filter(currentField => currentField.uuid !== field.uuid);
-  return state.set('record', new MarcRecord(record));
+  return state.set('record', new MarcRecord(record, {subfieldValues: false}));
 }
 
 function isControlField(field) {

@@ -56,15 +56,15 @@ export const preset = {
 export function validateMergeCandidates(validationFunctions, preferredRecord, otherRecord, preferredHasSubrecords, otherRecordHasSubrecords) {
   const validationResults = validationFunctions.map(fn => fn(preferredRecord, otherRecord, preferredHasSubrecords, otherRecordHasSubrecords));
   return Promise.all(validationResults).then(results => {
-    
+
     const failures = results.filter(result => result.valid === false);
-    
+
     if (failures.length > 0) {
       const failureMessages = failures.map(failure => failure.validationFailureMessage);
 
       throw new MergeValidationError('Merge validation failed', failureMessages);
     }
-    
+
     return {
       valid: true
     };
@@ -79,10 +79,10 @@ export function recordsHaveDifferentIds(preferredRecord, otherRecord) {
 }
 
 export function recordsHaveDifferentLOWTags(preferredRecord, otherRecord) {
-  
+
   const preferredRecordLibraryTagList = getLibraryTagList(preferredRecord);
   const otherRecordLibraryTagList = getLibraryTagList(otherRecord);
-  
+
   const libraryTagsInBoth = _.intersection(preferredRecordLibraryTagList, otherRecordLibraryTagList);
 
   return {
@@ -92,10 +92,10 @@ export function recordsHaveDifferentLOWTags(preferredRecord, otherRecord) {
 }
 
 export function recordsHaveSameType(preferredRecord, otherRecord) {
-  
+
   var preferredRecordType = preferredRecord.leader.substr(6,1);
   var otherRecordType = otherRecord.leader.substr(6,1);
-  
+
   return {
     valid: preferredRecordType === otherRecordType,
     validationFailureMessage: `Records are of different type (leader/6): ${preferredRecordType} - ${otherRecordType}`
@@ -177,7 +177,6 @@ export function preferredRecordFromFENNI(preferredRecord, otherRecord) {
 
 export function preferredRecordHasAlephSplitFields(preferredRecord) {
   const splitFields = preferredRecord.fields.filter(isSplitField);
-
   const splitFieldTags = _.uniq(splitFields.map(field => field.tag));
 
   return {
@@ -188,7 +187,6 @@ export function preferredRecordHasAlephSplitFields(preferredRecord) {
 
 export function otherRecordHasAlephSplitFields(preferredRecord, otherRecord) {
   const splitFields = otherRecord.fields.filter(isSplitField);
-
   const splitFieldTags = _.uniq(splitFields.map(field => field.tag));
 
   return {
@@ -196,7 +194,6 @@ export function otherRecordHasAlephSplitFields(preferredRecord, otherRecord) {
     validationFailureMessage: `The long field ${splitFieldTags.join(', ')} in other record has been split to multiple fields. Check that it looks ok.`
   };
 }
-
 
 function isSplitField(field) {
   if (field.subfields !== undefined && field.subfields.length > 0) {
@@ -223,11 +220,10 @@ function isSuppressed(record) {
 }
 
 function isDeleted(record) {
-
   if (checkLeader()) return true;
   if (checkDELFields()) return true;
   if (checkSTAFields()) return true;
-  
+
   return false;
 
 
@@ -250,9 +246,7 @@ function isDeleted(record) {
       .some(subfield => subfield.value.toLowerCase() === 'deleted')
       .value();
   }
-
 }
-
 
 function getRecordId(record) {
   var field001ValuesList = record.fields.filter(field => field.tag === '001').map(field => field.value);

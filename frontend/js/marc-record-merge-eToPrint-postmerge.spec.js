@@ -26,15 +26,15 @@
 *
 */
 import _ from 'lodash';
-import { expect } from 'chai';
+import {expect} from 'chai';
 import path from 'path';
 import fs from 'fs';
 import * as MarcRecordMergePostmergeService from './marc-record-merge-postmerge-service';
 import * as eToPrintPostmerge from './config/e-to-print/postmerge/eToPrint-postmerge.js';
-import { decorateFieldsWithUuid } from './record-utils';
-import uuid from 'uuid';
+import {decorateFieldsWithUuid} from './record-utils';
+import {v4 as uuid} from 'uuid';
 
-import MarcRecord from 'marc-record-js';
+import {MarcRecord} from '@natlibfi/marc-record';
 
 const TEST_CASE_SEPARATOR = '\n\n\n\n';
 
@@ -44,9 +44,9 @@ describe('marc-record-merge-eToPrint-postmerge', () => {
 
   const files = fs.readdirSync(storiesPath);
   const storyFiles = files.filter(filename => filename.substr(-6) === '.story').sort();
-  
+
   storyFiles.map(loadStoriesFromFile).forEach(testSuite => {
-    
+
     describe(testSuite.suiteName, () => {
 
       testSuite.testCases.forEach(testCase => {
@@ -56,10 +56,10 @@ describe('marc-record-merge-eToPrint-postmerge', () => {
 
           // console.log('mergedRecord(2): ', mergedRecord.toString());
           // console.log('expected: ', testCase.expectedMergedRecord.toString());
-          
+
           expect(mergedRecord.toString()).to.eql(testCase.expectedMergedRecord.toString());
           expect(notes || []).to.eql(testCase.notes);
-          
+
         });
       });
     });
@@ -122,7 +122,7 @@ function parseStories(storyText) {
         const equalFieldsInOther = otherRecord.fields.filter(f => fieldsEqual(field, f));
 
         const uuidCandidates = _.concat(equalFieldsInPreferred, equalFieldsInOther).map(field => field.uuid);
-        field.uuid = _.get(uuidCandidates, '[0]', uuid.v4());
+        field.uuid = _.get(uuidCandidates, '[0]', uuid());
       });
 
       const expectedMergedRecordStartIndex = lines.indexOf('Expected record after postmerge:') + 1;
@@ -136,7 +136,7 @@ function parseStories(storyText) {
         .map(matchResult => matchResult[1])
         .value();
 
-      return { testName, preferredRecord, otherRecord, mergedRecord, expectedMergedRecord, notes };
+      return {testName, preferredRecord, otherRecord, mergedRecord, expectedMergedRecord, notes};
     });
 
 }

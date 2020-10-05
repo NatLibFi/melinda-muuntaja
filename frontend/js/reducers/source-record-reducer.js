@@ -26,10 +26,10 @@
 *
 */
 
-import { Map } from 'immutable'; 
-import {LOAD_SOURCE_RECORD, SET_SOURCE_RECORD, SET_SOURCE_RECORD_ERROR, SET_SOURCE_RECORD_ID, ADD_SOURCE_RECORD_FIELD, REMOVE_SOURCE_RECORD_FIELD, RESET_SOURCE_RECORD } from '../ui-actions';
+import {Map} from 'immutable';
+import {LOAD_SOURCE_RECORD, SET_SOURCE_RECORD, SET_SOURCE_RECORD_ERROR, SET_SOURCE_RECORD_ID, ADD_SOURCE_RECORD_FIELD, REMOVE_SOURCE_RECORD_FIELD, RESET_SOURCE_RECORD} from '../ui-actions';
 import {RESET_WORKSPACE} from '../constants/action-type-constants';
-import MarcRecord from 'marc-record-js';
+import {MarcRecord} from '@natlibfi/marc-record';
 
 const INITIAL_STATE = Map({
   state: 'EMPTY'
@@ -45,7 +45,7 @@ export default function sourceRecord(state = INITIAL_STATE, action) {
       return setSourceRecordError(state, action.error);
     case SET_SOURCE_RECORD_ID:
       return setSourceRecordId(state, action.recordId);
-    case ADD_SOURCE_RECORD_FIELD: 
+    case ADD_SOURCE_RECORD_FIELD:
       return setFieldSelected(state, action.field);
     case REMOVE_SOURCE_RECORD_FIELD:
       return setFieldUnselected(state, action.field);
@@ -61,11 +61,11 @@ export function loadSourceRecord(state, recordId) {
     id: recordId,
     state: 'LOADING'
   });
-  
+
 }
 
 export function setSourceRecord(state, record, subrecords) {
-  
+
   return state
     .updateIn(['state'], () => 'LOADED')
     .updateIn(['hasSubrecords'], () => subrecords && subrecords.length > 0)
@@ -90,8 +90,7 @@ export function setFieldSelected(state, field) {
       recordField.fromOther = true;
       recordField.wasUsed = true;
     });
-  return state.set('record', new MarcRecord(record));
-
+  return state.set('record', new MarcRecord(record, {subfieldValues: false}));
 }
 
 export function setFieldUnselected(state, field) {
@@ -102,5 +101,5 @@ export function setFieldUnselected(state, field) {
       recordField.fromOther = false;
       recordField.wasUsed = false;
     });
-  return state.set('record', new MarcRecord(record));
+  return state.set('record', new MarcRecord(record, {subfieldValues: false}));
 }

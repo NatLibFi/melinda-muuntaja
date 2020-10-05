@@ -31,9 +31,9 @@ import sinon from 'sinon';
 import chai from 'chai';
 import sinonChai from 'sinon-chai';
 import archiver from 'archiver';
-import { __RewireAPI__ as RewireAPI } from '../archive-service';
-import { createArchive } from '../archive-service';
-import MarcRecord from 'marc-record-js';
+import {__RewireAPI__ as RewireAPI} from '../archive-service';
+import {createArchive} from '../archive-service';
+import {MarcRecord} from '@natlibfi/marc-record';
 const Writable = require('stream').Writable;
 
 const expect = chai.expect;
@@ -43,36 +43,36 @@ chai.use(sinonChai);
 describe('Archive service', () => {
 
   const username = 'test-user';
-  
+
   const otherRecord = {
-    record: new MarcRecord({fields: [{ tag: '001', value: '1' }]}),
+    record: new MarcRecord({fields: [{tag: '001', value: '1'}]}, {subfieldValues: false}),
     subrecords: []
   };
-  
+
   const preferredRecord = {
-    record: new MarcRecord({fields: [{ tag: '001', value: '2' }]}),
+    record: new MarcRecord({fields: [{tag: '001', value: '2'}]}, {subfieldValues: false}),
     subrecords: []
   };
-  
+
   const mergedRecord = {
-    record: new MarcRecord({fields: [{ tag: '001', value: '3' }]}),
+    record: new MarcRecord({fields: [{tag: '001', value: '3'}]}, {subfieldValues: false}),
     subrecords: []
   };
 
   const unmodifiedMergedRecord = {
-    record: new MarcRecord({fields: [{ tag: '001', value: '3' }]}),
+    record: new MarcRecord({fields: [{tag: '001', value: '3'}]}, {subfieldValues: false}),
     subrecords: []
   };
 
   const mergedRecordId = '234723';
-  
+
   describe('createArchive without subrecords', () => {
 
     let archiveAppendSpy;
 
     beforeEach(() => {
       const createWriteStreamStub = sinon.stub();
-    
+
       const mockedStream = new Writable({
         write(chunk, encoding, callback) {
           callback();
@@ -80,11 +80,11 @@ describe('Archive service', () => {
       });
 
       mockedStream.on('finish', () => mockedStream.emit('close'));
-    
+
       RewireAPI.__Rewire__('fs', {
         createWriteStream: createWriteStreamStub.returns(mockedStream)
       });
-      RewireAPI.__Rewire__('archiver', function(type) {
+      RewireAPI.__Rewire__('archiver', function (type) {
         const archive = archiver(type);
         archiveAppendSpy = sinon.spy(archive, 'append');
         return archive;
@@ -104,7 +104,7 @@ describe('Archive service', () => {
     it('adds preferred record to the archive', () => {
       expect(callsTo(archiveAppendSpy)).to.deep.include({data: preferredRecord.record.toString(), name: 'preferred.txt'});
     });
-    
+
     it('adds merged record to the archive', () => {
       expect(callsTo(archiveAppendSpy)).to.deep.include({data: mergedRecord.record.toString(), name: 'merged.txt'});
     });
@@ -120,7 +120,7 @@ describe('Archive service', () => {
     it('adds metadata to the archive', () => {
       const metadata = JSON.parse(metadataCall(archiveAppendSpy).data);
       expect(metadata.date).to.not.be.undefined;
-      delete(metadata.date);
+      delete (metadata.date);
 
       expect(metadata).to.eql({
         username,
@@ -137,7 +137,7 @@ describe('Archive service', () => {
 
     beforeEach(() => {
       const createWriteStreamStub = sinon.stub();
-    
+
       const mockedStream = new Writable({
         write(chunk, encoding, callback) {
           callback();
@@ -145,11 +145,11 @@ describe('Archive service', () => {
       });
 
       mockedStream.on('finish', () => mockedStream.emit('close'));
-    
+
       RewireAPI.__Rewire__('fs', {
         createWriteStream: createWriteStreamStub.returns(mockedStream)
       });
-      RewireAPI.__Rewire__('archiver', function(type) {
+      RewireAPI.__Rewire__('archiver', function (type) {
         const archive = archiver(type);
         archiveAppendSpy = sinon.spy(archive, 'append');
         return archive;
@@ -171,14 +171,14 @@ describe('Archive service', () => {
     it('adds subrecords of other record to the archive', () => {
       expect(callsTo(archiveAppendSpy).map(n => n.name)).to.include('other-subrecords.txt');
     });
-    
+
     it('adds subrecords of preferred record to the archive', () => {
       expect(callsTo(archiveAppendSpy).map(n => n.name)).to.include('preferred-subrecords.txt');
     });
 
     it('adds subrecords of merged record to the archive', () => {
       expect(callsTo(archiveAppendSpy).map(n => n.name)).to.include('merged-subrecords.txt');
-    });    
+    });
 
     it('adds subrecords of merged record to the archive', () => {
       expect(callsTo(archiveAppendSpy).map(n => n.name)).to.include('merged-unmodified-subrecords.txt');
@@ -194,10 +194,10 @@ function metadataCall(archiveAppendSpy) {
 }
 
 function callsTo(archiveAppendSpy) {
-  return _.range(0,archiveAppendSpy.callCount).map(key => {
+  return _.range(0, archiveAppendSpy.callCount).map(key => {
     return {
       data: archiveAppendSpy.getCall(key).args[0],
       name: archiveAppendSpy.getCall(key).args[1].name
     };
-  }); 
+  });
 }

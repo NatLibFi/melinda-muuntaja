@@ -42,7 +42,7 @@ export class MergeDialog extends React.Component {
     response: PropTypes.object,
     mergeStatus: PropTypes.string,
     statusInfo: PropTypes.string
-  }
+  };
 
   close(event) {
     event.preventDefault();
@@ -70,10 +70,10 @@ export class MergeDialog extends React.Component {
       return <div className="response-container"><div className="red lighten-5">{response.message}</div></div>;
     }
 
-    const triggers = response.triggers.filter(usefulMessage).map(this.renderSingleMessage);
-    const warnings = response.warnings.filter(usefulMessage).map(this.renderSingleMessage);
-    const errors = response.errors.map(this.renderSingleMessage);
-    const messages = response.messages.map(this.renderSingleMessage);
+    const triggers = response.triggers === undefined ? [] : response.triggers.filter(usefulMessage).map(this.renderSingleMessage);
+    const warnings = response.warnings === undefined ? [] : response.warnings.filter(usefulMessage).map(this.renderSingleMessage);
+    const errors = response.errors === undefined ? [] : response.errors.map(this.renderSingleMessage);
+    const messages = response.messages === undefined ? [] : response.messages.map(this.renderSingleMessage);
     const fi = this.props.mergeStatus === 'COMMIT_MERGE_ERROR' ? 'Tietueiden tallentamisessa tapahtui virhe' : this.props.message;
 
     return (
