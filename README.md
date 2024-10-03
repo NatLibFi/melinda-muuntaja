@@ -1,3 +1,6 @@
+# ARCHIVED
+This repository is archaived. New version of Melinda muuntaja ui can be found [here](https://github.com/NatLibFi/melinda-ui-muuntaja)
+
 # UI for transforming MARC records [![Build Status](https://travis-ci.org/NatLibFi/melinda-muuntaja.svg?branch=master)](https://travis-ci.org/NatLibFi/melinda-muuntaja)
 ## Building the application
 
